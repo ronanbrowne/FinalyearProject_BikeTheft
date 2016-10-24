@@ -1,0 +1,46 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:paddingLeft="16dp"
+android:paddingRight="16dp"
+android:paddingTop="60dp"
+tools:context="com.example.ronan.practicenavigationdrawer.DatabaseFragment">
+
+
+    <TextView
+        android:paddingTop="20dp"
+        android:id="@+id/heading"
+        android:textStyle="bold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="viewing all bikes repoted Stolen" />
+
+<ListView
+    android:id="@+id/list"
+    android:paddingTop="24dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:divider="@null"
+    android:dividerHeight="1dp"
+    android:orientation="vertical" />
+
+
+<!-- Empty view is only visible when the list has no items. ***************************************to be implemented-->
+<TextView
+    android:id="@+id/empty_view"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_centerInParent="true"
+    android:textAppearance="?android:textAppearanceMedium" />
+
+<!-- Loading indicator is only shown before the first load -->
+<ProgressBar
+    android:id="@+id/loading_indicator"
+    style="@style/Widget.AppCompat.ProgressBar"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_centerInParent="true"
+    android:visibility="gone" />
+
+</RelativeLayout>

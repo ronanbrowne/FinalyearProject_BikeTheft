@@ -1,0 +1,190 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="60dp"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:orientation="vertical"
+    tools:context="com.example.ronan.practicenavigationdrawer.EditFragment">
+
+
+
+    <TextView
+        android:paddingTop="16dp"
+        android:textStyle="bold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Update bike detals or stolen status: " />
+
+    <!-- Image upload layout -->
+    <LinearLayout
+        android:id="@+id/container_gender"
+        android:paddingTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <!-- Label Upload -->
+        <TextView
+            android:layout_gravity="top"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Upload Image"
+            style="@style/CategoryStyle"
+            />
+
+        <ImageView
+            android:id="@+id/upload_image"
+            android:src="@drawable/uploadimage"
+            android:layout_width="250dp"
+            android:layout_height="100dp"
+            android:layout_marginTop="25dp" />
+
+
+
+        <android.support.design.widget.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="16dp"
+            android:clickable="true"
+            app:fabSize="mini"
+            app:srcCompat="@drawable/ic_camera_enhance_black_24dp"
+            android:id="@+id/floatingUpload"
+            android:layout_gravity="bottom"/>
+
+
+
+    </LinearLayout>
+
+    <!-- Overview category -->
+    <LinearLayout
+        android:paddingTop="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <!-- Label -->
+        <TextView
+            android:text="Bike Details"
+            style="@style/CategoryStyle"
+            />
+
+        <!-- Input fields -->
+        <LinearLayout
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="2"
+            android:paddingLeft="4dp"
+            android:orientation="vertical">
+
+            <!-- Make field -->
+            <EditText
+                android:id="@+id/edit_bike_make"
+                android:hint="Bike Make"
+                android:inputType="textCapWords"
+                style="@style/EditorFieldStyle" />
+
+            <!-- Model field -->
+            <EditText
+                android:id="@+id/edit_bike_model"
+                style="@style/EditorFieldStyle"
+                android:hint="Bike Model"
+                />
+
+            <!-- color field -->
+            <EditText
+                android:id="@+id/edit_bike_colour"
+                android:hint="Bike Colour"
+                style="@style/EditorFieldStyle"
+               />
+
+            <!-- size field -->
+            <EditText
+                android:id="@+id/edit_bike_size"
+                android:hint="Bike Frame Size"
+                android:inputType="number"
+                style="@style/EditorFieldStyle" />
+
+
+            <!-- other field -->
+            <EditText
+                android:id="@+id/edit_othe_features"
+                android:hint="Other Features"
+                style="@style/EditorFieldStyle" />
+
+
+
+        </LinearLayout>
+    </LinearLayout>
+
+
+
+    <LinearLayout
+        android:paddingTop="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+
+    <!-- Stolen Bike  -->
+
+        <TextView
+            android:text="Bike has been Stolen"
+            style="@style/CategoryStyle"
+            />
+
+
+
+        <LinearLayout
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="2"
+            android:paddingLeft="4dp"
+            android:orientation="vertical">
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Stolen"
+                android:id="@+id/bike_stolen"
+                style="@style/EditorFieldStyle"
+                android:checked="false" />
+
+            <!-- other field -->
+            <EditText
+                android:id="@+id/edit_last_seen"
+                android:hint="Last known Location"
+                android:visibility="invisible"
+                android:paddingTop="12dp"
+                style="@style/EditorFieldStyle"
+               />
+
+
+
+
+
+        </LinearLayout>
+        </LinearLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="16dp"
+        android:clickable="true"
+        app:fabSize="mini"
+        app:srcCompat="@drawable/ic_add_black_24dp"
+        android:id="@+id/floatingConfirmEdit"
+        android:layout_gravity="right"/>
+
+    <!--<Button-->
+        <!--android:layout_marginTop="50dp"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="Update Bike"-->
+        <!--android:id="@+id/button"-->
+        <!--android:layout_gravity="center_horizontal" />-->
+
+</LinearLayout>

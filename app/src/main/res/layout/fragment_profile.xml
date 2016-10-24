@@ -1,0 +1,122 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="60dp"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:orientation="vertical"
+    tools:context="com.example.ronan.practicenavigationdrawer.Profile_Fragment">
+
+
+
+    <TextView
+        android:paddingTop="16dp"
+        android:textStyle="bold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Update user profile: " />
+
+    <!-- Overview category -->
+    <LinearLayout
+        android:paddingTop="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <!-- Label -->
+        <TextView
+            android:text="User Details: "
+            style="@style/CategoryStyle"
+            />
+
+
+
+        <!-- Input fields -->
+        <LinearLayout
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="2"
+            android:paddingLeft="4dp"
+            android:orientation="vertical">
+
+            <!-- Name field -->
+            <EditText
+                android:id="@+id/username"
+                android:hint="Choose a user name"
+                android:inputType="textCapWords"
+                style="@style/EditorFieldStyle" />
+
+            <!-- color field -->
+            <EditText
+                android:id="@+id/email"
+                android:hint="Email"
+                android:inputType="textCapWords"
+                style="@style/EditorFieldStyle" />
+
+            <!-- size field -->
+            <EditText
+                android:id="@+id/city"
+                android:hint="City"
+                android:inputType="textCapWords"
+                style="@style/EditorFieldStyle" />
+
+
+            <!-- other field -->
+            <EditText
+                android:id="@+id/country"
+                android:hint="Country"
+                android:inputType="textCapWords"
+                style="@style/EditorFieldStyle" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Gender category -->
+    <LinearLayout
+        android:id="@+id/container_gender"
+        android:paddingTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <!-- Label Upload -->
+        <TextView
+            android:layout_gravity="top"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Upload Image"
+            style="@style/CategoryStyle"
+            />
+
+        <ImageView
+            android:id="@+id/upload_imageView"
+            android:layout_marginTop="25dp"
+            android:layout_width="150dp"
+            android:layout_height="150dp" />
+
+
+
+        <!-- add image  -->
+        <Button
+            android:layout_gravity="top"
+            android:id="@+id/imageuploadButton"
+            android:layout_height="48dp"
+            android:layout_marginLeft="36dp"
+            android:layout_width="wrap_content"
+            android:text="image"/>
+
+
+    </LinearLayout>
+
+
+    <Button
+        android:layout_marginTop="50dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Update Profile"
+        android:id="@+id/profile_button"
+        android:layout_gravity="center_horizontal" />
+
+
+</LinearLayout>

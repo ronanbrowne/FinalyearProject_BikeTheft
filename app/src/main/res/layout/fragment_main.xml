@@ -1,0 +1,156 @@
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingTop="60dp"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    tools:context="com.example.ronan.practicenavigationdrawer.MainFragment">
+
+    <TextView
+        android:paddingTop="16dp"
+        android:textStyle="bold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Register new bike here: " />
+
+
+    <!-- Image Upload -->
+    <LinearLayout
+        android:id="@+id/container_gender"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="20dp">
+
+        <!-- Label Upload -->
+        <TextView
+            style="@style/CategoryStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:text="Upload Image" />
+
+
+        <ImageView
+            android:id="@+id/upload_image"
+            android:src="@drawable/uploadimage"
+            android:layout_width="250dp"
+            android:layout_height="100dp"
+            android:layout_marginTop="25dp" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="16dp"
+            android:clickable="true"
+            app:fabSize="mini"
+            app:srcCompat="@drawable/ic_camera_enhance_black_24dp"
+            android:id="@+id/floatingUpload"
+            android:layout_gravity="bottom"/>
+
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:paddingTop="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+
+
+        <!-- Label -->
+        <TextView
+            style="@style/CategoryStyle"
+            android:text="Bike Details"
+            android:id="@+id/textView" />
+
+        <!-- Input fields -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:orientation="vertical"
+            android:paddingLeft="4dp">
+
+            <!-- make field -->
+            <EditText
+                android:id="@+id/edit_bike_make"
+                style="@style/EditorFieldStyle"
+                android:hint="Bike Make"
+                />
+
+            <!-- make field -->
+            <EditText
+                android:id="@+id/edit_bike_model"
+                style="@style/EditorFieldStyle"
+                android:hint="Bike Model"
+                 />
+
+            <!-- color field -->
+            <EditText
+                android:id="@+id/edit_bike_colour"
+                style="@style/EditorFieldStyle"
+                android:hint="Bike Colour"
+                />
+
+            <!-- size field -->
+            <EditText
+                android:id="@+id/edit_bike_size"
+                style="@style/EditorFieldStyle"
+                android:hint="Bike Frame Size"
+                android:inputType="number" />
+
+
+            <!-- other field -->
+            <EditText
+                android:id="@+id/edit_othe_features"
+                style="@style/EditorFieldStyle"
+                android:hint="Other Features"
+                 />
+
+            <!--android:layout_width="173dp"-->
+            <!--may romive margin right just for my pohone -->
+            <android.support.design.widget.FloatingActionButton
+
+                android:layout_width="wrap_content"
+                android:layout_gravity="right"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginRight="16dp"
+                android:clickable="true"
+                app:fabSize="mini"
+                app:srcCompat="@drawable/ic_add_black_24dp"
+                android:id="@+id/floatingAdd"
+               />
+
+        </LinearLayout>
+    </LinearLayout>
+
+
+    <!-- Overview category -->
+
+
+
+
+
+    <Button
+        android:id="@+id/add_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="25dp"
+        android:visibility="gone"
+        android:text="Add Bike" />
+
+
+
+
+
+</LinearLayout>
+

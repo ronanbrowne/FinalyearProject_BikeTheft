@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_register"
+            android:icon="@drawable/ic_motorcycle_black_24dp"
+            android:title="Register Bike" />
+        <item
+            android:id="@+id/nav_edit"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="Edit Bike" />
+        <item
+            android:id="@+id/nav_db"
+            android:icon="@drawable/ic_menu_slideshow"
+            android:title="View Stolen Database" />
+
+
+        <item
+            android:id="@+id/nav_profile"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="Edit user profile" />
+
+        <item
+            android:id="@+id/nav_about"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="About" />
+
+    </group>
+
+    <item android:title="Communicate">
+        <menu>
+            <item
+                android:id="@+id/nav_chat"
+                android:icon="@drawable/ic_menu_share"
+                android:title="Community Chat" />
+            <item
+                android:id="@+id/nav_contact"
+                android:icon="@drawable/ic_menu_send"
+                android:title="Contact Us" />
+        </menu>
+    </item>
+
+</menu>

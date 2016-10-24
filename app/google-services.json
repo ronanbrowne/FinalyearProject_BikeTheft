@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "23200377085",
+    "firebase_url": "https://findmybike-1a1af.firebaseio.com",
+    "project_id": "findmybike-1a1af",
+    "storage_bucket": "findmybike-1a1af.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:23200377085:android:0d7fe81eb61fd784",
+        "android_client_info": {
+          "package_name": "com.example.ronan.practicenavigationdrawer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "23200377085-117k0ijoquoim66mif1vk6ngjqfijmq8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.ronan.practicenavigationdrawer",
+            "certificate_hash": "478BD55BF73C373C6D00CB546EDD4A2B93A6B337"
+          }
+        },
+        {
+          "client_id": "23200377085-ti41suqmc3815a4gf6qc6aa5ml2joa9j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDd7ehgknDo__3Z82l6qTY7XYLjioW1MAg"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "23200377085-ti41suqmc3815a4gf6qc6aa5ml2joa9j.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
