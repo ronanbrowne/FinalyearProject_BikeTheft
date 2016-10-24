@@ -202,7 +202,7 @@ public class MainFragment extends Fragment {
         }
     }
 
-    //helper method to covert bitmap image into base64 for storage in Firebase DB
+    //helper method to covert bitmap image into base64 for storage in Firebase Database
     private String imageConvertBase64(Bitmap pic) {
         Bitmap image = pic;//your image
         ByteArrayOutputStream bYtE = new ByteArrayOutputStream();
