@@ -1,15 +1,27 @@
-<LinearLayout
+
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    tools:context="com.example.ronan.practicenavigationdrawer.EditFragment">
+    >
+
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:paddingTop="60dp"
     android:paddingLeft="16dp"
     android:paddingRight="16dp"
-    android:orientation="vertical"
-    tools:context="com.example.ronan.practicenavigationdrawer.EditFragment">
+    android:orientation="vertical" >
 
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
 
 
     <TextView
@@ -121,7 +133,6 @@
     </LinearLayout>
 
 
-
     <LinearLayout
         android:paddingTop="16dp"
         android:layout_width="match_parent"
@@ -154,17 +165,14 @@
                 android:checked="false" />
 
             <!-- other field -->
+
             <EditText
                 android:id="@+id/edit_last_seen"
                 android:hint="Last known Location"
                 android:visibility="invisible"
                 android:paddingTop="12dp"
                 style="@style/EditorFieldStyle"
-               />
-
-
-
-
+                />
 
         </LinearLayout>
         </LinearLayout>
@@ -173,6 +181,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp"
         android:clickable="true"
         app:fabSize="mini"
         app:srcCompat="@drawable/ic_add_black_24dp"
@@ -187,4 +196,6 @@
         <!--android:id="@+id/button"-->
         <!--android:layout_gravity="center_horizontal" />-->
 
+
 </LinearLayout>
+</ScrollView>
