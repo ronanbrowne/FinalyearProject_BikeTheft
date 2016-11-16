@@ -74,12 +74,14 @@ public class EditFragmentList extends Fragment {
                 TextView colorView = (TextView) v.findViewById(R.id.color);
                 TextView otherView = (TextView) v.findViewById(R.id.other);
                 bike_image = (ImageView) v.findViewById(R.id.bike_image);
+                TextView lastlocationView = (TextView) v.findViewById(R.id.loaction);
 
                 //setting the textViews to Bike data
                 makeView.setText(model.getMake());
                 sizeView.setText(String.valueOf(model.getFrameSize()));
                 colorView.setText(model.getColor());
                 otherView.setText(model.getOther());
+                lastlocationView.setText(model.getLastSeen());
 
                 //call method to set image, which turns base64 string to image
                 getBitMapFromString(model.getImageBase64());

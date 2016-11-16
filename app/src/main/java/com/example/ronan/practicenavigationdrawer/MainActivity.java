@@ -3,8 +3,6 @@ package com.example.ronan.practicenavigationdrawer;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.View;
@@ -195,6 +193,7 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
+        android.app.FragmentManager fm = getFragmentManager();
 
         if (id == R.id.nav_register) {
             //setFragment
@@ -225,13 +224,21 @@ public class MainActivity extends AppCompatActivity
             fragmentTransaction.replace(R.id.fragment_container, profileFragment);
             fragmentTransaction.commit();
 
-        } else if (id == R.id.nav_chat) {
+        } else if (id == R.id.map_data) {
 
-            //setFragment
-            ChatFragment chatFragment = new ChatFragment();
-            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.fragment_container, chatFragment);
-            fragmentTransaction.commit();
+//
+//            Intent a = new Intent(MainActivity.this, MapsActivity.class);
+//            startActivity(a);
+
+
+            fm.beginTransaction().replace(R.id.fragment_container, new GmapFragment()).commit();
+
+//            GmapFragment mapFragment = new GmapFragment();
+//            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+//            fragmentTransaction.replace(R.id.fragment_container, mapFragment);
+//            fragmentTransaction.commit();
+
+
 
         } else if (id == R.id.nav_contact) {
 

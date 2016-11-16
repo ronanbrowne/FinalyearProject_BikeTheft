@@ -11,8 +11,10 @@ public class BikeData {
     private String imageBase64;
     private String lastSeen;
     private boolean stolen;
+    private double latitude;
+    private double longditude;
 
-    public BikeData(String make, int frameSize, String color, String other, boolean  stolen, String imageBase64, String model,String lastSeen) {
+    public BikeData(String make, int frameSize, String color, String other, boolean  stolen, String imageBase64, String model,String lastSeen, double latitude, double longditude) {
         this.make = make;
         this.frameSize = frameSize;
         this.color = color;
@@ -21,6 +23,9 @@ public class BikeData {
         this.imageBase64 = imageBase64;
         this.model = model;
         this.lastSeen = lastSeen;
+        this.latitude = latitude;
+        this.longditude = longditude;
+
     }
 
     public String getImageBase64() {
@@ -34,6 +39,18 @@ public class BikeData {
 
     public BikeData() {
 
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public double getLongditude() {
+        return longditude;
+    }
+
+    public String getOtherFeatures() {
+        return otherFeatures;
     }
 
     public String getLastSeen() {

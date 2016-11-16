@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Locale;
 
 import static android.R.attr.bitmap;
+import static android.R.attr.data;
 import static android.R.attr.name;
 
 
@@ -66,8 +67,8 @@ public class EditFragment extends Fragment {
     String email="";
     private FirebaseUser mFirebaseUser;
     String key_passed_fromList;
-    double latitude;
-    double longitude;
+    double latitude = 0;
+    double longitud = 0;
     TextView infoText;
     String name;
 
@@ -120,7 +121,7 @@ public class EditFragment extends Fragment {
         }
 
 
-        BikeData mybike = new BikeData("test make",22,"red","other",true,"dfsffdss","Model","last seen");
+        BikeData mybike = new BikeData("test make",22,"red","other",true,"dfsffdss","Model","last seen",latitude,longitud);
 
         @Override
         public void onCancelled(DatabaseError databaseError) {
@@ -218,7 +219,7 @@ public class EditFragment extends Fragment {
 
 
 
-                BikeData newBike = new BikeData(make, frameSize, color, other, stolen, base64, model,lastSeen);
+                BikeData newBike = new BikeData(make, frameSize, color, other, stolen, base64, model,lastSeen,latitude,longitud);
                 mDatabase.setValue(newBike);
 
                 if (stolen) {
@@ -307,6 +308,11 @@ public class EditFragment extends Fragment {
                 for(int i = 0; i < address.getMaxAddressLineIndex(); i++) {
                     addressName += " --- " + address.getAddressLine(i);
                 }
+
+                //assigning class variables
+                latitude = address.getLatitude();
+                longitud = address.getLongitude();
+
                 infoText.setVisibility(View.VISIBLE);
                 infoText.setText("Latitude: " + address.getLatitude() + "\n" +
                         "Longitude: " + address.getLongitude() + "\n" +
@@ -322,6 +328,8 @@ public class EditFragment extends Fragment {
 
     //extract bitmap helper, this sets image view
     public void getBitMapFromString(String imageAsString) {
+
+        if(imageAsString!=null){
         if (imageAsString.equals("No image") || imageAsString == null) {
             // bike_image.setImageResource(R.drawable.not_uploaded);
             Log.v("***", "No image Found");
@@ -330,6 +338,9 @@ public class EditFragment extends Fragment {
             byte[] decodedString = Base64.decode(imageAsString, Base64.DEFAULT);
             Bitmap bitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
             upload_image.setImageBitmap(bitmap);
+        }
+        }else{
+            Log.v("***", "Null paramater passed into getBitMapFromString");
         }
     }
 

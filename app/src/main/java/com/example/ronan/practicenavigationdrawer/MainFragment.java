@@ -155,7 +155,7 @@ public class MainFragment extends Fragment {
 
                 //error handeling
                 if ((make != null && !make.isEmpty()) || (model != null && !model.isEmpty()) ||  (color != null && !color.isEmpty()) || (framSizeString != null && !framSizeString.isEmpty())) {
-                    BikeData newBike = new BikeData(make, frameSize, color, other, stolen, base64, model, "Last seen location");
+                    BikeData newBike = new BikeData(make, frameSize, color, other, stolen, base64, model, "Last seen location",0,0);
 
                     //get id part of email
                  email = email.split("@")[0];
