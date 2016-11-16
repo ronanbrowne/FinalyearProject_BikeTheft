@@ -4,7 +4,10 @@ package com.example.ronan.practicenavigationdrawer;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
@@ -19,6 +22,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -31,8 +35,11 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
 import static android.R.attr.bitmap;
+import static android.R.attr.name;
 
 
 /**
@@ -53,11 +60,17 @@ public class EditFragment extends Fragment {
     private CheckBox bikeStolen;
     private FloatingActionButton imageUpload;
     private FloatingActionButton comfirmEdit;
+    private FloatingActionButton geoCode;
     private ImageView upload_image;
     String base64 = "No image";
     String email="";
     private FirebaseUser mFirebaseUser;
     String key_passed_fromList;
+    double latitude;
+    double longitude;
+    TextView infoText;
+    String name;
+
 
     private static final int SELECT_PICTURE = 0;
 
@@ -140,7 +153,7 @@ public class EditFragment extends Fragment {
 
 
 
-
+        infoText = (TextView) rootView.findViewById(R.id.infoText);
         bikeMake = (EditText) rootView.findViewById(R.id.edit_bike_make);
         bikeLastSeen = (EditText) rootView.findViewById(R.id.edit_last_seen);
         bikeModel = (EditText) rootView.findViewById(R.id.edit_bike_model);
@@ -151,6 +164,7 @@ public class EditFragment extends Fragment {
         upload_image = (ImageView) rootView.findViewById(R.id.upload_image);
         imageUpload = (FloatingActionButton) rootView.findViewById(R.id.floatingUpload);
         comfirmEdit = (FloatingActionButton) rootView.findViewById(R.id.floatingConfirmEdit);
+        geoCode = (FloatingActionButton) rootView.findViewById(R.id.floatingGeoCode);
        // update = (Button) rootView.findViewById(R.id.button);
         // Inflate the layout for this fragment
 
@@ -159,8 +173,10 @@ public class EditFragment extends Fragment {
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if(bikeStolen.isChecked()){
                     bikeLastSeen.setVisibility(View.VISIBLE);
+                    geoCode.setVisibility(View.VISIBLE);
                 }else{
                     bikeLastSeen.setVisibility(View.INVISIBLE);
+                    geoCode.setVisibility(View.INVISIBLE);
 
                 }
             }
@@ -229,10 +245,80 @@ public class EditFragment extends Fragment {
             }
         });
 
+        geoCode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new GeocodeAsyncTask().execute();
+            }
+        });
+
         mDatabase.addValueEventListener(bikeListener);
 
         return rootView;
     }// end oncreate
+
+
+
+
+
+    class GeocodeAsyncTask extends AsyncTask<Void, Void, Address> {
+
+        String errorMessage = "";
+
+        @Override
+        protected void onPreExecute() {
+            infoText.setVisibility(View.INVISIBLE);
+            name = bikeLastSeen.getText().toString();
+           // latitude = Double.parseDouble(latitudeEdit.getText().toString());
+           // longitude = Double.parseDouble(longitudeEdit.getText().toString());
+        }
+
+        @Override
+        protected Address doInBackground(Void ... none) {
+            Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
+            List<Address> addresses = null;
+
+
+                try {
+                    addresses = geocoder.getFromLocationName(name, 1);
+
+
+
+                } catch (IOException e) {
+                    errorMessage = "Service not available";
+                    Log.e(TAG, errorMessage, e);
+                }
+
+
+            if(addresses != null && addresses.size() > 0)
+                return addresses.get(0);
+
+            return null;
+        }
+
+        protected void onPostExecute(Address address) {
+            if(address == null) {
+
+                infoText.setVisibility(View.VISIBLE);
+                infoText.setText("No addrress");
+            }
+            else {
+                String addressName = "";
+                for(int i = 0; i < address.getMaxAddressLineIndex(); i++) {
+                    addressName += " --- " + address.getAddressLine(i);
+                }
+                infoText.setVisibility(View.VISIBLE);
+                infoText.setText("Latitude: " + address.getLatitude() + "\n" +
+                        "Longitude: " + address.getLongitude() + "\n" +
+                        "Address: " + addressName);
+
+
+                Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Co-ordinates added to theft hotspot map", Toast.LENGTH_SHORT);
+                toast.show();
+            }
+        }
+    }//end async
+
 
     //extract bitmap helper, this sets image view
     public void getBitMapFromString(String imageAsString) {

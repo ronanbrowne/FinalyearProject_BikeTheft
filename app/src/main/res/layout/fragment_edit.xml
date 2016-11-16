@@ -48,14 +48,13 @@
             style="@style/CategoryStyle"
             />
 
+
         <ImageView
             android:id="@+id/upload_image"
             android:src="@drawable/uploadimage"
             android:layout_width="250dp"
-            android:layout_height="100dp"
+            android:layout_height="74dp"
             android:layout_marginTop="25dp" />
-
-
 
         <android.support.design.widget.FloatingActionButton
             android:layout_width="wrap_content"
@@ -68,15 +67,22 @@
             android:layout_gravity="bottom"/>
 
 
-
     </LinearLayout>
+
+    <!--<View-->
+        <!--android:layout_marginTop="16dp"-->
+        <!--android:layout_width="fill_parent"-->
+        <!--android:layout_height="1dp"-->
+        <!--android:background="@color/colorPrimary" />-->
 
     <!-- Overview category -->
     <LinearLayout
-        android:paddingTop="16dp"
+        android:paddingTop="32dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
+
+
 
         <!-- Label -->
         <TextView
@@ -134,7 +140,7 @@
 
 
     <LinearLayout
-        android:paddingTop="16dp"
+        android:paddingTop="32dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
@@ -143,10 +149,10 @@
     <!-- Stolen Bike  -->
 
         <TextView
+            android:layout_marginTop="-9dp"
             android:text="Bike has been Stolen"
             style="@style/CategoryStyle"
             />
-
 
 
         <LinearLayout
@@ -160,22 +166,61 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Stolen"
+
                 android:id="@+id/bike_stolen"
                 style="@style/EditorFieldStyle"
                 android:checked="false" />
 
-            <!-- other field -->
+            <!-- geo code layout -->
+            <LinearLayout
+                android:paddingTop="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
+            <!-- last seen field -->
             <EditText
                 android:id="@+id/edit_last_seen"
                 android:hint="Last known Location"
                 android:visibility="invisible"
                 android:paddingTop="16dp"
-                style="@style/EditorFieldStyle"
+                android:layout_width="wrap_content"
+
+                android:layout_height="wrap_content"
+                />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    />
+
+                <!-- geo loaction seen field -->
+                <android.support.design.widget.FloatingActionButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginTop="16dp"
+                    android:clickable="true"
+                    android:visibility="invisible"
+                    app:fabSize="mini"
+                    app:srcCompat="@drawable/ic_add_location_black_24dp"
+                    android:id="@+id/floatingGeoCode"
+                    android:layout_gravity="right"/>
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/infoText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="output"
+                android:paddingTop="16dp"
+                style="@style/CategoryStyle"
                 />
 
         </LinearLayout>
-        </LinearLayout>
+    </LinearLayout>
 
     <android.support.design.widget.FloatingActionButton
         android:layout_width="wrap_content"
@@ -188,13 +233,13 @@
         android:id="@+id/floatingConfirmEdit"
         android:layout_gravity="right"/>
 
-    <!--<Button-->
-        <!--android:layout_marginTop="50dp"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:text="Update Bike"-->
-        <!--android:id="@+id/button"-->
-        <!--android:layout_gravity="center_horizontal" />-->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="16dp"
+        style="@style/CategoryStyle"
+        />
+
 
 
 </LinearLayout>
