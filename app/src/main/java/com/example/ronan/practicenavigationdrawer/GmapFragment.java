@@ -24,6 +24,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import static com.example.ronan.practicenavigationdrawer.R.drawable.user;
 
@@ -31,7 +32,7 @@ import static com.example.ronan.practicenavigationdrawer.R.drawable.user;
 public class GmapFragment extends Fragment implements OnMapReadyCallback {
 
 //    private MapView mapView;
-//    private GoogleMap gMap;
+    private GoogleMap gMap;
 //
     private DatabaseReference stolenBikesDatabse;
 
@@ -64,7 +65,19 @@ public class GmapFragment extends Fragment implements OnMapReadyCallback {
         }
     };
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+//        MapFragment mapFragment = (MapFragment) getActivity()
+//                .getFragmentManager().findFragmentById(R.id.map);
+//        if (mapFragment != null)
+//            getActivity().getFragmentManager().beginTransaction()
+//                    .remove(mapFragment).commit();
+//
+//
 
+
+    }
 
     @Nullable
     @Override
@@ -72,6 +85,7 @@ public class GmapFragment extends Fragment implements OnMapReadyCallback {
 
       //  firebase
         stolenBikesDatabse = FirebaseDatabase.getInstance().getReference().child("Stolen Bikes");
+        stolenBikesDatabse.addValueEventListener(bikeListener);
 
 
         return inflater.inflate(R.layout.fragment_map, container,false);
@@ -89,13 +103,27 @@ public class GmapFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
+        this.gMap = googleMap;
         stolenBikesDatabse.addValueEventListener(bikeListener);
 
 
-        LatLng marker = new LatLng(53.3498, -6.2603);
+        //create arraylist of markers that will hold co-ordinates
+        List<LatLng> marker = new ArrayList<>();
+        //loop through all co ordinates
+       for(int i =0 ;  i < latitude.size();i++){
 
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(marker, 13));
 
-        googleMap.addMarker(new MarkerOptions().title("Hello Dublin!").position(marker));
+           //create new marker with co-ordinates
+           marker.add(new LatLng(latitude.get(i), longditude.get(i)));
+
+           googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.get(0), 3));
+
+           googleMap.addMarker(new MarkerOptions().title("**Specific details to be put here **!").position(marker.get(i)));
+
+
+
+        }
+
+
     }
 }

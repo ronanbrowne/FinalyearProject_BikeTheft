@@ -3,6 +3,7 @@ package com.example.ronan.practicenavigationdrawer;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.View;
@@ -195,6 +196,8 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
         android.app.FragmentManager fm = getFragmentManager();
 
+
+
         if (id == R.id.nav_register) {
             //setFragment
             MainFragment mainFragment = new MainFragment();
@@ -203,6 +206,8 @@ public class MainActivity extends AppCompatActivity
             fragmentTransaction.commit();
 
         } else if (id == R.id.nav_edit) {
+
+            getFragmentManager().beginTransaction().remove(new GmapFragment()).commit();
             //setFragment
             EditFragmentList editFragment = new EditFragmentList();
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
@@ -211,6 +216,15 @@ public class MainActivity extends AppCompatActivity
 
 
         } else if (id == R.id.nav_db) {
+
+
+
+
+
+            Fragment f = getSupportFragmentManager().findFragmentByTag("map");
+            FragmentTransaction ft=getSupportFragmentManager().beginTransaction(); ft.remove(f);
+
+
             //setFragment
             DatabaseFragment databaseFragment = new DatabaseFragment();
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
@@ -225,6 +239,7 @@ public class MainActivity extends AppCompatActivity
             fragmentTransaction.commit();
 
         } else if (id == R.id.map_data) {
+
 
 //
 //            Intent a = new Intent(MainActivity.this, MapsActivity.class);

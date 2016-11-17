@@ -62,6 +62,7 @@ public class DatabaseFragment extends Fragment {
 
                 // Find the TextView IDs of list_item.xml
                 TextView makeView = (TextView) v.findViewById(R.id.make);
+                TextView modelView = (TextView) v.findViewById(R.id.model);
                 TextView sizeView = (TextView) v.findViewById(R.id.size);
                 TextView colorView = (TextView) v.findViewById(R.id.color);
                 TextView otherView = (TextView) v.findViewById(R.id.other);
@@ -72,6 +73,7 @@ public class DatabaseFragment extends Fragment {
 
                 //setting the textViews to Bike data
                 makeView.setText(model.getMake());
+                modelView.setText(model.getModel());
                 sizeView.setText(String.valueOf(model.getFrameSize()));
                 colorView.setText(model.getColor());
                 otherView.setText(model.getOther());

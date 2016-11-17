@@ -70,6 +70,7 @@ public class EditFragmentList extends Fragment {
 
                 // Find the TextView IDs of list_item.xml
                 TextView makeView = (TextView) v.findViewById(R.id.make);
+                TextView modelView = (TextView) v.findViewById(R.id.model);
                 TextView sizeView = (TextView) v.findViewById(R.id.size);
                 TextView colorView = (TextView) v.findViewById(R.id.color);
                 TextView otherView = (TextView) v.findViewById(R.id.other);
@@ -78,6 +79,7 @@ public class EditFragmentList extends Fragment {
 
                 //setting the textViews to Bike data
                 makeView.setText(model.getMake());
+                modelView.setText(model.getModel());
                 sizeView.setText(String.valueOf(model.getFrameSize()));
                 colorView.setText(model.getColor());
                 otherView.setText(model.getOther());
@@ -104,8 +106,9 @@ public class EditFragmentList extends Fragment {
                 //http://stackoverflow.com/questions/27484245/pass-data-between-two-fragments-without-using-activity
                 DataHolderClass.getInstance().setDistributor_id(itemRef.getKey());
 
-                Toast toast = Toast.makeText(getActivity().getApplicationContext(), itemRef.getKey(), Toast.LENGTH_SHORT);
-                toast.show();
+                    //*testing
+              //  Toast toast = Toast.makeText(getActivity().getApplicationContext(), itemRef.getKey(), Toast.LENGTH_SHORT);
+              //  toast.show();
 
                 EditFragment editFragment = new EditFragment();
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();

@@ -99,7 +99,6 @@ public class EditFragment extends Fragment {
 
             bikeMake.setText(mybike.getMake());
             bikeModel.setText(mybike.getModel());
-            bikeLastSeen.setText(mybike.getLastSeen());
             bikeColor.setText(mybike.getColor());
             bikeSize.setText(String.valueOf(mybike.getFrameSize()));
             bikeOther.setText(mybike.getOther());
