@@ -81,7 +81,7 @@ public class MainFragment extends Fragment {
         }
 
         //for dev purposes output whos logged in , may remove
-        Toast toast = Toast.makeText(getActivity().getApplicationContext(), "user email"+email, Toast.LENGTH_SHORT);
+        Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Logged in as: "+email, Toast.LENGTH_SHORT);
         toast.show();
 
 
@@ -155,7 +155,7 @@ public class MainFragment extends Fragment {
 
                 //error handeling
                 if ((make != null && !make.isEmpty()) || (model != null && !model.isEmpty()) ||  (color != null && !color.isEmpty()) || (framSizeString != null && !framSizeString.isEmpty())) {
-                    BikeData newBike = new BikeData(make, frameSize, color, other, stolen, base64, model, "Last seen location");
+                    BikeData newBike = new BikeData(make, frameSize, color, other, stolen, base64, model, "N/A",0,0);
 
                     //get id part of email
                  email = email.split("@")[0];
@@ -164,7 +164,7 @@ public class MainFragment extends Fragment {
 
                     //push is for multiple objects gives unique ID
                     // mDatabase.push().setValue(newBike);
-                    Toast toast = Toast.makeText(getActivity().getApplicationContext(), "BikeData Registered", Toast.LENGTH_SHORT);
+                    Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Bike Data Registered", Toast.LENGTH_SHORT);
                     toast.show();
 
                 } else {

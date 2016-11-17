@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group android:checkableBehavior="single">
+    <group android:checkableBehavior="single"
+        android:title="Bike Managment">
         <item
             android:id="@+id/nav_register"
             android:icon="@drawable/ic_motorcycle_black_24dp"
@@ -15,29 +16,40 @@
             android:icon="@drawable/ic_menu_slideshow"
             android:title="View Stolen Database" />
 
-
         <item
-            android:id="@+id/nav_profile"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Edit user profile" />
+            android:id="@+id/map_data"
+            android:icon="@drawable/ic_add_location_black_24dp"
+            android:title="Theft Map Analytics " />
 
-        <item
-            android:id="@+id/nav_about"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="About" />
+
+
+
 
     </group>
 
     <item android:title="Communicate">
         <menu>
+
             <item
-                android:id="@+id/nav_chat"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Community Chat" />
+                android:id="@+id/nav_about"
+                android:icon="@drawable/ic_menu_manage"
+                android:title="About" />
+
             <item
                 android:id="@+id/nav_contact"
                 android:icon="@drawable/ic_menu_send"
                 android:title="Contact Us" />
+        </menu>
+    </item>
+
+    <item android:title="User">
+        <menu>
+
+            <item
+                android:id="@+id/nav_profile"
+                android:icon="@drawable/ic_menu_manage"
+                android:title="Edit user profile" />
+
         </menu>
     </item>
 
