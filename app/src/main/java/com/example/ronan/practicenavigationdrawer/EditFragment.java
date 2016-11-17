@@ -17,7 +17,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -35,12 +34,9 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
-import static android.R.attr.bitmap;
-import static android.R.attr.data;
-import static android.R.attr.name;
 
 
 /**
@@ -51,7 +47,7 @@ public class EditFragment extends Fragment {
     //For logcat
     private static final String TAG = "Edit_Bike_Fragment";
 
-    //variables
+    //variables for UI
     private EditText bikeMake;
     private EditText bikeModel;
     private EditText bikeColor;
@@ -63,9 +59,10 @@ public class EditFragment extends Fragment {
     private FloatingActionButton comfirmEdit;
     private FloatingActionButton geoCode;
     private ImageView upload_image;
+
     String base64 = "No image";
     String email="";
-    private FirebaseUser mFirebaseUser;
+
     String key_passed_fromList;
     double latitude = 0;
     double longitud = 0;
@@ -80,23 +77,46 @@ public class EditFragment extends Fragment {
     //Firebase variables
     private DatabaseReference mDatabase;
     private DatabaseReference stolenBikesDatabse;
+    private boolean inStolenDB = false;
+    private FirebaseUser mFirebaseUser;
 
-    //declaring ValueEvent Listener
+    //holds all DB keys for bikes listed as stolen
+    List<String> stolenKeysList;
+
+    //event listener for checking if bike is on stolen DB used to give correct user feedback
+    ValueEventListener ifStolen = new ValueEventListener() {
+        @Override
+        public void onDataChange(DataSnapshot dataSnapshot) {
+            stolenKeysList = new ArrayList<>();
+            //adding keys to array list for later oomparison
+            for (DataSnapshot snapshot :  dataSnapshot.getChildren()) {
+                stolenKeysList.add(snapshot.getKey());
+            }
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+            Log.v("*", "Error on ifStolen ValueEventListener: "+ databaseError.toString());
+
+        }
+    }; //end listener
+
+    //declaring ValueEvent Listener to poulate UI fields from DB
     ValueEventListener bikeListener = new ValueEventListener() {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
 
             if(dataSnapshot.getValue(BikeData.class)==null){
 
-                Log.v(TAG, "doing nothing" );
+                Log.v(TAG, "doing nothing snapshot null" );
                 return;
+
             }
 
+            //grab snapshot and put in bike Object
             mybike = dataSnapshot.getValue(BikeData.class);
-//***is null pointer            Log.v(TAG, "object**" + mybike.toString());
 
-
-
+            //set UI fields from data
             bikeMake.setText(mybike.getMake());
             bikeModel.setText(mybike.getModel());
             bikeColor.setText(mybike.getColor());
@@ -105,10 +125,7 @@ public class EditFragment extends Fragment {
             base64 = mybike.getImageBase64();
             getBitMapFromString(base64);
 
-           //   bikeStolen.setChecked(mybike.isStolen());
-
-
-
+            //handel chackbox
             if (mybike.isStolen()) {
                 bikeStolen.setChecked(true);
                 Log.v(TAG, "if**" + bikeStolen.toString());
@@ -152,7 +169,7 @@ public class EditFragment extends Fragment {
         }
 
 
-
+        //get UI id's
         infoText = (TextView) rootView.findViewById(R.id.infoText);
         bikeMake = (EditText) rootView.findViewById(R.id.edit_bike_make);
         bikeLastSeen = (EditText) rootView.findViewById(R.id.edit_last_seen);
@@ -168,6 +185,7 @@ public class EditFragment extends Fragment {
        // update = (Button) rootView.findViewById(R.id.button);
         // Inflate the layout for this fragment
 
+        //listener for checkbox, reveal extra stolen options if stolen
         bikeStolen.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -182,6 +200,7 @@ public class EditFragment extends Fragment {
             }
         });
 
+        //upload image
         imageUpload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -201,11 +220,13 @@ public class EditFragment extends Fragment {
         stolenBikesDatabse = FirebaseDatabase.getInstance().getReference().child("Stolen Bikes");
 
         mDatabase.addValueEventListener(bikeListener);
-
+        stolenBikesDatabse.addValueEventListener(ifStolen);
         //update buton
         comfirmEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                stolenBikesDatabse.addValueEventListener(ifStolen);
 
                 //grab data from fields
                 boolean stolen = bikeStolen.isChecked();
@@ -221,30 +242,51 @@ public class EditFragment extends Fragment {
                 BikeData newBike = new BikeData(make, frameSize, color, other, stolen, base64, model,lastSeen,latitude,longitud);
                 mDatabase.setValue(newBike);
 
+
+                //looping through arraylist of DB keys for all stolen bikes
+                for (String temp : stolenKeysList){
+                    //if the currect keq is also in stolen db mark as true
+                    if(key_passed_fromList.equals(temp)){
+                        inStolenDB = true;
+                    }else{
+                        inStolenDB=false;
+                    }
+                }//end for
+
                 if (stolen) {
-
-
-
-                    //  bikeStolen.setChecked(true);
+                    //add current bike to stolen DB use same key value.
                     stolenBikesDatabse.child(key_passed_fromList).setValue(newBike);
-
+                    //user feedback
                     Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Added to stolen DB", Toast.LENGTH_SHORT);
                     toast.show();
                 }
 
+                //bike stolen checkbox is false
                 if (!stolen) {
-                    //  bikeStolen.setChecked(false);
-                    stolenBikesDatabse.child(key_passed_fromList).removeValue();
+                    //make sure its in stolen DB to Display collect message
+                    if(inStolenDB) {
+                        // remove from DB
+                        stolenBikesDatabse.child(key_passed_fromList).removeValue();
 
-                   // stolenBikesDatabse.addValueEventListener(bikeListener);
+                        //user output
+                        Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Removed from stolen DB", Toast.LENGTH_SHORT);
+                        toast.show();
 
-                    Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Removed from stolen DB", Toast.LENGTH_SHORT);
-                    toast.show();
+                        //reset check
+                        inStolenDB=false;
+                    }
+                    //other wise diffrent output to user
+                    else{
+                        Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Bike updated", Toast.LENGTH_SHORT);
+                        toast.show();
+                    }
+
                 }
 
             }
         });
 
+        //floating action button for the geocoding - gets lat and long co-ordinates
         geoCode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -260,7 +302,7 @@ public class EditFragment extends Fragment {
 
 
 
-
+//AsyncTask for getting geocoiding
     class GeocodeAsyncTask extends AsyncTask<Void, Void, Address> {
 
         String errorMessage = "";
@@ -352,8 +394,6 @@ public class EditFragment extends Fragment {
         if (resultCode == -1) {
 
             Uri imageUri = data.getData();
-
-            //
             bitmap = null;
             try {
                 bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), imageUri);
@@ -380,4 +420,4 @@ public class EditFragment extends Fragment {
 
     }
 
-}
+}//end class
