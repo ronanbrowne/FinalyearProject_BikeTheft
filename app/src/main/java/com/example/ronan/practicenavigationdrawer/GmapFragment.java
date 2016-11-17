@@ -31,9 +31,9 @@ import static com.example.ronan.practicenavigationdrawer.R.drawable.user;
 
 public class GmapFragment extends Fragment implements OnMapReadyCallback {
 
-//    private MapView mapView;
+
     private GoogleMap gMap;
-//
+
     private DatabaseReference stolenBikesDatabse;
 
     BikeData mybike = new BikeData("test make",22,"red","other",true,"dfsffdss","Model","last seen",0,0);
@@ -68,15 +68,6 @@ public class GmapFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-//        MapFragment mapFragment = (MapFragment) getActivity()
-//                .getFragmentManager().findFragmentById(R.id.map);
-//        if (mapFragment != null)
-//            getActivity().getFragmentManager().beginTransaction()
-//                    .remove(mapFragment).commit();
-//
-//
-
-
     }
 
     @Nullable
@@ -112,17 +103,19 @@ public class GmapFragment extends Fragment implements OnMapReadyCallback {
         //loop through all co ordinates
        for(int i =0 ;  i < latitude.size();i++){
 
+           //error handeling co-ordinates cant be 0,0
+           // (0,0, which is DB default if none entered when registering stolen bike)
+           if(latitude.get(i)!=0 || longditude.get(i)!=0) {
 
-           //create new marker with co-ordinates
-           marker.add(new LatLng(latitude.get(i), longditude.get(i)));
+               //create new marker with co-ordinates
+               marker.add(new LatLng(latitude.get(i), longditude.get(i)));
 
-           googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.get(0), 3));
+               googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.get(0), 3));
 
-           googleMap.addMarker(new MarkerOptions().title("**Specific details to be put here **!").position(marker.get(i)));
+               googleMap.addMarker(new MarkerOptions().title("**Specific details to be put here **!").position(marker.get(i)));
 
-
-
-        }
+           }
+        }//end for
 
 
     }
