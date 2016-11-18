@@ -229,16 +229,47 @@
         </LinearLayout>
     </LinearLayout>
 
-    <android.support.design.widget.FloatingActionButton
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:paddingTop="20dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginRight="16dp"
-        android:layout_marginTop="16dp"
-        android:clickable="true"
-        app:fabSize="mini"
-        app:srcCompat="@drawable/ic_add_black_24dp"
-        android:id="@+id/floatingConfirmEdit"
-        android:layout_gravity="right"/>
+        android:orientation="horizontal">
+
+
+
+        <android.support.design.widget.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="16dp"
+            android:clickable="true"
+            app:fabSize="mini"
+            app:srcCompat="@drawable/ic_delete_forever_black_24dp"
+            android:id="@+id/floatingDelete"
+            android:layout_gravity="right"/>
+
+
+        <RelativeLayout
+            android:id="@+id/rlRight"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="right">
+
+
+        <android.support.design.widget.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="16dp"
+
+            android:clickable="true"
+            app:fabSize="mini"
+            app:srcCompat="@drawable/ic_done_all_black_24dp"
+            android:id="@+id/floatingConfirmEdit"
+            android:layout_gravity="right"/>
+
+        </RelativeLayout>r
+
+        </LinearLayout>
 
     <TextView
         android:layout_width="wrap_content"

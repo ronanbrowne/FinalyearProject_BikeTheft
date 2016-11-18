@@ -18,6 +18,8 @@ public class BikeData {
     private double latitude;
     private double longditude;
 
+
+
     //constructor
     public BikeData(String make, int frameSize, String color, String other, boolean  stolen, String imageBase64, String model,String lastSeen, double latitude, double longditude) {
         this.make = make;

@@ -1,6 +1,8 @@
 package com.example.ronan.practicenavigationdrawer;
 
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -12,6 +14,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -58,7 +61,9 @@ public class EditFragment extends Fragment {
     private FloatingActionButton imageUpload;
     private FloatingActionButton comfirmEdit;
     private FloatingActionButton geoCode;
+    private FloatingActionButton floatingDelete;
     private ImageView upload_image;
+    private boolean geoCodeClicked;
 
     String base64 = "No image";
     String email="";
@@ -82,6 +87,34 @@ public class EditFragment extends Fragment {
 
     //holds all DB keys for bikes listed as stolen
     List<String> stolenKeysList;
+
+    //dialog listener for pop up to confirm delete
+    DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            switch (which){
+                case DialogInterface.BUTTON_POSITIVE:
+                    stolenBikesDatabse.child(key_passed_fromList).removeValue();
+                    mDatabase.removeValue();
+
+                    FragmentManager fm = getFragmentManager();
+                    fm.beginTransaction().replace(R.id.fragment_container, new EditFragmentList()).commit();
+
+                    //feedback
+                    Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Delete successful", Toast.LENGTH_SHORT);
+                    toast.show();
+
+                    break;
+
+                case DialogInterface.BUTTON_NEGATIVE:
+
+                    //feedback
+                    Toast toastCanceled = Toast.makeText(getActivity().getApplicationContext(), "Delete canceled", Toast.LENGTH_SHORT);
+                    toastCanceled.show();
+                    break;
+            }
+        }
+    };
 
     //event listener for checking if bike is on stolen DB used to give correct user feedback
     ValueEventListener ifStolen = new ValueEventListener() {
@@ -122,6 +155,7 @@ public class EditFragment extends Fragment {
             bikeColor.setText(mybike.getColor());
             bikeSize.setText(String.valueOf(mybike.getFrameSize()));
             bikeOther.setText(mybike.getOther());
+            bikeLastSeen.setText(mybike.getLastSeen());
             base64 = mybike.getImageBase64();
             getBitMapFromString(base64);
 
@@ -155,6 +189,7 @@ public class EditFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        geoCodeClicked=false;
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_edit, container, false);
 
@@ -182,6 +217,7 @@ public class EditFragment extends Fragment {
         imageUpload = (FloatingActionButton) rootView.findViewById(R.id.floatingUpload);
         comfirmEdit = (FloatingActionButton) rootView.findViewById(R.id.floatingConfirmEdit);
         geoCode = (FloatingActionButton) rootView.findViewById(R.id.floatingGeoCode);
+        floatingDelete = (FloatingActionButton) rootView.findViewById(R.id.floatingDelete);
        // update = (Button) rootView.findViewById(R.id.button);
         // Inflate the layout for this fragment
 
@@ -254,11 +290,23 @@ public class EditFragment extends Fragment {
                 }//end for
 
                 if (stolen) {
-                    //add current bike to stolen DB use same key value.
-                    stolenBikesDatabse.child(key_passed_fromList).setValue(newBike);
-                    //user feedback
-                    Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Added to stolen DB", Toast.LENGTH_SHORT);
-                    toast.show();
+
+                    if((lastSeen != null && !lastSeen.isEmpty() &&!lastSeen.equals("N/A"))){
+
+                        if(geoCodeClicked) {
+                            //add current bike to stolen DB use same key value.
+                            stolenBikesDatabse.child(key_passed_fromList).setValue(newBike);
+                            //user feedback
+                            Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Added to stolen DB", Toast.LENGTH_SHORT);
+                            toast.show();
+                        }
+                        else{ Toast toast = Toast.makeText(getActivity().getApplicationContext(), "retrieve geo code first", Toast.LENGTH_SHORT);
+                            toast.show();}
+                    }else{
+                        Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Last seen can not be blank if stolen", Toast.LENGTH_SHORT);
+                        toast.show();
+                    }
+
                 }
 
                 //bike stolen checkbox is false
@@ -283,7 +331,7 @@ public class EditFragment extends Fragment {
 
                 }
 
-            }
+            }//on click
         });
 
         //floating action button for the geocoding - gets lat and long co-ordinates
@@ -291,6 +339,19 @@ public class EditFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 new GeocodeAsyncTask().execute();
+
+            }
+        });
+
+        floatingDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+                builder.setMessage("Are you sure you wish to delete?").setPositiveButton("Yes", dialogClickListener)
+                        .setNegativeButton("No", dialogClickListener).show();
+
+
             }
         });
 
@@ -298,6 +359,7 @@ public class EditFragment extends Fragment {
 
         return rootView;
     }// end oncreate
+
 
 
 
@@ -362,6 +424,7 @@ public class EditFragment extends Fragment {
 
                 Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Co-ordinates added to theft hotspot map", Toast.LENGTH_SHORT);
                 toast.show();
+                geoCodeClicked =true;
             }
         }
     }//end async

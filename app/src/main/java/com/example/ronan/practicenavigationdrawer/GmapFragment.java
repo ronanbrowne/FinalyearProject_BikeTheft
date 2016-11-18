@@ -36,7 +36,7 @@ public class GmapFragment extends Fragment implements OnMapReadyCallback {
 
     private DatabaseReference stolenBikesDatabse;
 
-    BikeData mybike = new BikeData("test make",22,"red","other",true,"dfsffdss","Model","last seen",0,0);
+    BikeData mybike = new BikeData();
 
     ArrayList<Double> latitude = new ArrayList<>();
     ArrayList<Double> longditude = new ArrayList<>();
@@ -105,7 +105,9 @@ public class GmapFragment extends Fragment implements OnMapReadyCallback {
 
            //error handeling co-ordinates cant be 0,0
            // (0,0, which is DB default if none entered when registering stolen bike)
-           if(latitude.get(i)!=0 || longditude.get(i)!=0) {
+
+
+
 
                //create new marker with co-ordinates
                marker.add(new LatLng(latitude.get(i), longditude.get(i)));
@@ -114,8 +116,11 @@ public class GmapFragment extends Fragment implements OnMapReadyCallback {
 
                googleMap.addMarker(new MarkerOptions().title("**Specific details to be put here **!").position(marker.get(i)));
 
-           }
+
+
+
         }//end for
+
 
 
     }
