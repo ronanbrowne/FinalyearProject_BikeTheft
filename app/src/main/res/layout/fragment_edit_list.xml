@@ -17,14 +17,16 @@ android:paddingTop="60dp"
 
     <TextView
         android:paddingTop="20dp"
+        android:textStyle="bold"
         android:id="@+id/heading"
+        android:padding="12dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Select Bike you wish to edit:" />
 
 <ListView
     android:id="@+id/list"
-    android:paddingTop="24dp"
+    android:paddingTop="35dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:divider="@null"
@@ -42,12 +44,12 @@ android:paddingTop="60dp"
 
 <!-- Loading indicator is only shown before the first load -->
 <ProgressBar
-    android:id="@+id/loading_indicator"
+    android:id="@+id/loading_indicator_edit"
     style="@style/Widget.AppCompat.ProgressBar"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_centerInParent="true"
-    android:visibility="gone" />
+     />
 
 </RelativeLayout>
     </FrameLayout>

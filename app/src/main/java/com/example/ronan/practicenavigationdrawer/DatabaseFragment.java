@@ -17,9 +17,12 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseListAdapter;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 
 public class DatabaseFragment extends Fragment {
@@ -36,12 +39,14 @@ public class DatabaseFragment extends Fragment {
     }
 
 
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_database, container, false);
+         View rootView = inflater.inflate(R.layout.fragment_database, container, false);
 
         ListView myListView = (ListView) rootView.findViewById(R.id.list);
         myListView.setDivider(ContextCompat.getDrawable(getActivity(), R.drawable.divider));
@@ -51,6 +56,9 @@ public class DatabaseFragment extends Fragment {
         mDatabaseStolen = FirebaseDatabase.getInstance().getReference().child("Stolen Bikes");
         // Query bikeQuery = mDatabaseStolen.orderByChild("other").equalTo("It's Class");
 
+      //  get ID of loading bar
+        final View loadingIndicator = rootView.findViewById(R.id.loading_indicator);
+
 
         // set up the Firebase Specific ListAdapter
         // here we set content of list items
@@ -58,6 +66,21 @@ public class DatabaseFragment extends Fragment {
                 (getActivity(), BikeData.class, R.layout.list_item, mDatabaseStolen) {
             @Override
             protected void populateView(View v, BikeData model, int position) {
+
+                //handeling diplaying of loading bar
+                mDatabaseStolen.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+
+                        loadingIndicator.setVisibility(View.GONE);
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
 
 
                 // Find the TextView IDs of list_item.xml
