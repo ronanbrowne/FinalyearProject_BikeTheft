@@ -18,7 +18,7 @@ android:paddingTop="60dp"
 
 
     <TextView
-        android:paddingTop="35dp"
+        android:paddingTop="20dp"
         android:id="@+id/heading"
         android:textStyle="bold"
         android:padding="12dp"
@@ -28,7 +28,7 @@ android:paddingTop="60dp"
 
 <ListView
     android:id="@+id/list"
-    android:paddingTop="24dp"
+    android:paddingTop="35dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:divider="@null"

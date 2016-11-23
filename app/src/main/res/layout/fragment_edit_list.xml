@@ -17,6 +17,7 @@ android:paddingTop="60dp"
 
     <TextView
         android:paddingTop="20dp"
+        android:textStyle="bold"
         android:id="@+id/heading"
         android:padding="12dp"
         android:layout_width="wrap_content"
