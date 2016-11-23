@@ -16,13 +16,15 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 
 /**
@@ -31,7 +33,7 @@ import com.google.firebase.database.FirebaseDatabase;
 public class EditFragmentList extends Fragment {
 
     private FirebaseUser mFirebaseUser;
-    private DatabaseReference mDatabaseStolen;
+    private DatabaseReference usersBikesDatabase;
     private String email;
     ImageView bike_image;
 
@@ -54,19 +56,39 @@ public class EditFragmentList extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_edit_list, container, false);
 
         final ListView myListView = (ListView) rootView.findViewById(R.id.list);
+        //  get ID of loading bar
+        final View loadingIndicator = rootView.findViewById(R.id.loading_indicator_edit);
+
 
         //set the divider
         myListView.setDivider(ContextCompat.getDrawable(getActivity(), R.drawable.divider));
         myListView.setDividerHeight(1);
 
         //Firebase DB setup
-        mDatabaseStolen = FirebaseDatabase.getInstance().getReference().child("Bikes Registered By User").child(email);
+        usersBikesDatabase = FirebaseDatabase.getInstance().getReference().child("Bikes Registered By User").child(email);
 
         // here we set content of list items
         final FirebaseListAdapter<BikeData> bikeAdapter = new FirebaseListAdapter<BikeData>
-                (getActivity(), BikeData.class, R.layout.list_item, mDatabaseStolen) {
+                (getActivity(), BikeData.class, R.layout.list_item, usersBikesDatabase) {
             @Override
             protected void populateView(View v, BikeData model, int position) {
+
+
+
+                //handeling diplaying of loading bar
+                usersBikesDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+
+                        loadingIndicator.setVisibility(View.GONE);
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
 
                 // Find the TextView IDs of list_item.xml
                 TextView makeView = (TextView) v.findViewById(R.id.make);

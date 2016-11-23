@@ -18,9 +18,10 @@ android:paddingTop="60dp"
 
 
     <TextView
-        android:paddingTop="20dp"
+        android:paddingTop="35dp"
         android:id="@+id/heading"
         android:textStyle="bold"
+        android:padding="12dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="viewing all bikes repoted Stolen" />
@@ -50,7 +51,9 @@ android:paddingTop="60dp"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_centerInParent="true"
-    android:visibility="gone" />
+    />
+
+
 
 </RelativeLayout>
 

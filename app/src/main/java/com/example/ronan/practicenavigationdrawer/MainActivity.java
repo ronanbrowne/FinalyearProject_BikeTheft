@@ -61,9 +61,6 @@ public class MainActivity extends AppCompatActivity
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
 
 
-
-
-
         FirebaseAuth.AuthStateListener mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -71,9 +68,9 @@ public class MainActivity extends AppCompatActivity
                 if (user != null) {
                     // User is signed in
 
-                    Log.d("look_here***", "onAuthStateChanged:signed_in:" + user.getUid()+user.getEmail());
-                    mEmail= user.getEmail();
-                    mUsername  = mEmail.split("@")[0];
+                    Log.d("look_here***", "onAuthStateChanged:signed_in:" + user.getUid() + user.getEmail());
+                    mEmail = user.getEmail();
+                    mUsername = mEmail.split("@")[0];
                     Log.d("look_here***", "onAuthStateChanged:signed_in:" + mEmail);
 
                     mDatabase = FirebaseDatabase.getInstance().getReference().child("User Profile Data");
@@ -83,17 +80,17 @@ public class MainActivity extends AppCompatActivity
                     SimpleDateFormat sdf = new SimpleDateFormat("MMM MM dd, yyyy h:mm a");
                     String dateString = sdf.format(date);
 
-                    UserData userDaat = new UserData("Enter City",mUsername,"imageValue",dateString,mEmail,"Enter Country");
+                    UserData userDaat = new UserData("Enter City", mUsername, "imageValue", dateString, mEmail, "Enter Country");
 
                     mDatabase.child(mUsername).setValue(userDaat);
 
 
                 } else {
                     // User is signed out
-                  //  Not signed in, launch the Sign In activity
-           startActivity(new Intent(MainActivity.this, SignIn.class));
-            finish();
-            //return;
+                    //  Not signed in, launch the Sign In activity
+                    startActivity(new Intent(MainActivity.this, SignIn.class));
+                    finish();
+                    //return;
                     Log.d("look_here***", "onAuthStateChanged:signed_out");
                     return;
                 }
@@ -144,13 +141,12 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         //set text in Navagation bar
-        View header=navigationView.getHeaderView(0);
-        emailNavBar = (TextView)header.findViewById(R.id.email);
+        View header = navigationView.getHeaderView(0);
+        emailNavBar = (TextView) header.findViewById(R.id.email);
 
-        if(mFirebaseUser ==null){
+        if (mFirebaseUser == null) {
             emailNavBar.setText("no login");
-        }
-      else {
+        } else {
             emailNavBar.setText(mFirebaseUser.getEmail());
         }
     }
@@ -182,7 +178,7 @@ public class MainActivity extends AppCompatActivity
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
-        }else if (id == R.id.action_sign_out){
+        } else if (id == R.id.action_sign_out) {
             mFirebaseAuth.signOut();
         }
 
@@ -195,7 +191,6 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         android.app.FragmentManager fm = getFragmentManager();
-
 
 
         if (id == R.id.nav_register) {
@@ -218,11 +213,9 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_db) {
 
 
-
-
-
             Fragment f = getSupportFragmentManager().findFragmentByTag("map");
-            FragmentTransaction ft=getSupportFragmentManager().beginTransaction(); ft.remove(f);
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.remove(f);
 
 
             //setFragment
@@ -254,7 +247,6 @@ public class MainActivity extends AppCompatActivity
 //            fragmentTransaction.commit();
 
 
-
         } else if (id == R.id.nav_contact) {
 
             //setFragment
@@ -270,7 +262,7 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    public void setnav(String email){
+    public void setnav(String email) {
         emailNavBar.setText(mEmail);
     }
 }
