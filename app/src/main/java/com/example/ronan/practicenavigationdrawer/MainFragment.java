@@ -1,6 +1,8 @@
 package com.example.ronan.practicenavigationdrawer;
 
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -8,6 +10,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,6 +31,9 @@ import com.google.firebase.storage.StorageReference;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import static android.app.Activity.RESULT_CANCELED;
+import static android.app.Activity.RESULT_OK;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -44,6 +50,10 @@ public class MainFragment extends Fragment {
     private FloatingActionButton addFloat;
 
 
+
+
+
+
     private Button add;
    // private Button imageUpload;
     private ImageView mThumbnailPreview;
@@ -52,6 +62,7 @@ public class MainFragment extends Fragment {
 
     String base64 = "No image";
     private static final int SELECT_PICTURE = 0;
+    static final int REQUEST_IMAGE_CAPTURE = 1;
 
     //DB refrence
     private DatabaseReference mDatabase;
@@ -66,6 +77,24 @@ public class MainFragment extends Fragment {
     public MainFragment() {
         // Required empty public constructor
     }
+
+    //dialog listener for pop up to decide to launch camera or gallery
+    DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            switch (which){
+                case DialogInterface.BUTTON_POSITIVE:
+                    //gallery
+                    dispatchGrabImageFromGalleryItent();
+                    break;
+
+                case DialogInterface.BUTTON_NEGATIVE:
+                    //camera
+                    dispatchTakePictureIntent();
+                    break;
+            }
+        }
+    };
 
 
     @Override
@@ -108,23 +137,12 @@ public class MainFragment extends Fragment {
 
 
         //handel click event to upload a picter to app
-        mThumbnailPreview.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent();
-                intent.setType("image/*");
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(Intent.createChooser(intent, "Select Picture"), SELECT_PICTURE);
-            }
-        });
-
         upload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent();
-                intent.setType("image/*");
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(Intent.createChooser(intent, "Select Picture"), SELECT_PICTURE);
+              AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+                builder.setMessage("Use picture from Gallery or launch camera?").setPositiveButton("Gallery", dialogClickListener)
+                        .setNegativeButton("Camera", dialogClickListener).show();
             }
         });
 
@@ -180,25 +198,57 @@ public class MainFragment extends Fragment {
 
     }
 
-    //Do this on result of activity , after we get the pic.
+    //method to launch cam
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        //check a app can handel this
+        if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+        }
+    }
+
+    //method to launch cGalery
+
+    public void dispatchGrabImageFromGalleryItent(){
+        Intent galleryIntent = new Intent();
+        galleryIntent.setType("image/*");
+        galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(galleryIntent, "Select Picture"), SELECT_PICTURE);
+    }
+
+
+
+
+
+    //Do this on result of activity , choose depending on result code
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == -1) {
-
-            Uri imageUri = data.getData();
-
-            //
-            bitmap = null;
-            try {
-                bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), imageUri);
-            } catch (IOException e) {
-                e.printStackTrace();
-                Log.v("Exception", " : " + e.toString());
+        if (requestCode == 0) {
+            if (resultCode == RESULT_OK) {
+                Uri imageUri = data.getData();
+                bitmap = null;
+                try {
+                    bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), imageUri);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Log.v("Exception", " : " + e.toString());
+                }
+                mThumbnailPreview.setImageBitmap(bitmap);
+                base64 = imageConvertBase64(bitmap);
+            }else if (resultCode == RESULT_CANCELED) {
+                Log.i("message", "the user cancelled the request" );
             }
-
-            mThumbnailPreview.setImageBitmap(bitmap);
-            base64 = imageConvertBase64(bitmap);
+        }
+        if (requestCode == 1) {
+            if (resultCode == RESULT_OK) {
+                Bundle extras = data.getExtras();
+                Bitmap imageBitmap = (Bitmap) extras.get("data");
+                mThumbnailPreview.setImageBitmap(imageBitmap);
+                base64 = imageConvertBase64(imageBitmap);
+            }else if (resultCode == RESULT_CANCELED) {
+                Log.i("message", "the user cancelled the request" );
+            }
         }
     }
 
@@ -207,10 +257,8 @@ public class MainFragment extends Fragment {
         Bitmap image = pic;//your image
         ByteArrayOutputStream bYtE = new ByteArrayOutputStream();
         image.compress(Bitmap.CompressFormat.PNG, 100, bYtE);
-        // image.recycle();
         byte[] byteArray = bYtE.toByteArray();
         String imageFile = Base64.encodeToString(byteArray, Base64.DEFAULT);
-
         return imageFile;
 
     }
