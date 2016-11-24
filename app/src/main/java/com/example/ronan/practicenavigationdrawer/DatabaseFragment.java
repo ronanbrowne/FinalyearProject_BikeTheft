@@ -17,6 +17,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -53,6 +55,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
+import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.example.ronan.practicenavigationdrawer.R.id.mapwhere;
 import static com.google.android.gms.wearable.DataMap.TAG;
@@ -67,6 +70,7 @@ public class DatabaseFragment extends Fragment {
     EditText street;
     EditText radius;
     Button query;
+    Button closeMap;
 
     double latitude = 0;
     double Longitude = 0;
@@ -95,7 +99,6 @@ public class DatabaseFragment extends Fragment {
         public void onDataChange(DataSnapshot dataSnapshot) {
 
             for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-
                 mybike = snapshot.getValue(BikeData.class);
                 latitudeArray.add(mybike.getLatitude());
                 longditudeArray.add(mybike.getLongditude());
@@ -139,9 +142,7 @@ public class DatabaseFragment extends Fragment {
                 @Override
                 public void onMapReady(GoogleMap gMap) {
                     googleMap = gMap;
-
                     mDatabaseStolen.addValueEventListener(bikeListener);
-
                     if (googleMap != null) {
                         googleMap.getUiSettings().setAllGesturesEnabled(true);
                         LatLng dub = new LatLng(53.3498, -6.2603);
@@ -150,7 +151,6 @@ public class DatabaseFragment extends Fragment {
                         CameraPosition cameraPosition = new CameraPosition.Builder().target(dub).zoom(10f).build();
                         CameraUpdate cameraUpdate = CameraUpdateFactory.newCameraPosition(cameraPosition);
                         googleMap.moveCamera(cameraUpdate);
-
                     }
                 }
             });
@@ -160,7 +160,9 @@ public class DatabaseFragment extends Fragment {
         street = (EditText) rootView.findViewById(R.id.streetgeo);
         radius = (EditText) rootView.findViewById(R.id.radius);
         query = (Button) rootView.findViewById(R.id.runQuery);
+        closeMap = (Button) rootView.findViewById(R.id.closeMap);
         frameLayout = (FrameLayout) rootView.findViewById(R.id.mapwhere);
+        frameLayout.setVisibility(View.GONE);
 
         ListView myListView = (ListView) rootView.findViewById(R.id.list);
         myListView.setDivider(ContextCompat.getDrawable(getActivity(), R.drawable.divider));
@@ -179,14 +181,11 @@ public class DatabaseFragment extends Fragment {
                 (getActivity(), BikeData.class, R.layout.list_item, mDatabaseStolen) {
             @Override
             protected void populateView(View v, BikeData model, int position) {
-
                 //handeling diplaying of loading bar
                 mDatabaseStolen.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-
                         loadingIndicator.setVisibility(View.GONE);
-
                     }
 
                     @Override
@@ -203,8 +202,6 @@ public class DatabaseFragment extends Fragment {
                 TextView colorView = (TextView) v.findViewById(R.id.color);
                 TextView otherView = (TextView) v.findViewById(R.id.other);
                 TextView lastlocationView = (TextView) v.findViewById(R.id.loaction);
-
-
                 bike_image = (ImageView) v.findViewById(R.id.bike_image);
 
                 //setting the textViews to Bike data
@@ -223,21 +220,24 @@ public class DatabaseFragment extends Fragment {
         //set adapter on our listView
         myListView.setAdapter(bikeAdapter);
 
+        closeMap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Animation backDoww = AnimationUtils.loadAnimation(getContext(),
+                        R.anim.slidedown);
+                frameLayout.startAnimation(backDoww);
+                frameLayout.setVisibility(View.GONE);
+            }
+        });
+
 
         query.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                for (int i = 0; i < frameLayout.getChildCount(); i++) {
-                    View v = frameLayout.getChildAt(i);
-                    v.setVisibility(View.GONE);
-                    v.postInvalidate();
-                }
-
-
-                frameLayout.setVisibility(VISIBLE);
-
-                Log.v("***", "click");
+                Animation bottomUp = AnimationUtils.loadAnimation(getContext(),
+                        R.anim.slide);
+                frameLayout.startAnimation(bottomUp);
+                frameLayout.setVisibility(View.VISIBLE);
                 r = Integer.parseInt(radius.getText().toString());
                 GeocodeAsyncTaskForQuery asyncTaskForQuery = new GeocodeAsyncTaskForQuery();
                 asyncTaskForQuery.execute();
@@ -245,8 +245,6 @@ public class DatabaseFragment extends Fragment {
                     Thread.sleep(2000);
                 } catch (InterruptedException e) {
                 }
-
-
             }
         });
 
@@ -306,11 +304,9 @@ public class DatabaseFragment extends Fragment {
                 LatLng userInput = new LatLng(latitude, Longitude);
                 drawOnMap(userInput, r);
 
-                Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Latitude: " + address.getLatitude() + "\n" +
+                Log.v("Co-ordinates", "Latitude: " + address.getLatitude() + "\n" +
                         "Longitude: " + address.getLongitude() + "\n" +
-                        "Address: " + addressName, Toast.LENGTH_SHORT);
-                toast.show();
-                //  geoCodeClicked = true;
+                        "Address: ");
             }
         }
     }//end async
