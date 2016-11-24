@@ -1,6 +1,5 @@
-<FrameLayout
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
 
@@ -8,53 +7,104 @@
     android:background="#FFFFFF"
     tools:context="com.example.ronan.practicenavigationdrawer.DatabaseFragment">
 
-<RelativeLayout
-android:layout_width="match_parent"
-android:layout_height="match_parent"
-android:paddingLeft="16dp"
-android:paddingRight="16dp"
-android:paddingTop="60dp"
->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="12dp">
 
 
-    <TextView
-        android:paddingTop="20dp"
-        android:id="@+id/heading"
-        android:textStyle="bold"
-        android:padding="12dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="viewing all bikes repoted Stolen" />
+        <TextView
+            android:id="@+id/heading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="12dp"
+            android:paddingTop="20dp"
+            android:text="Viewing all bikes repoted Stolen"
+            android:textStyle="bold" />
 
-<ListView
-    android:id="@+id/list"
-    android:paddingTop="35dp"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:divider="@null"
-    android:dividerHeight="1dp"
-    android:orientation="vertical" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingTop="8dp">
+
+            <EditText
+                android:id="@+id/streetgeo"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="search area" />
+
+            <EditText
+                android:id="@+id/radius"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="radius" />
+
+            <Button
+                android:id="@+id/runQuery"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Run query" />
 
 
-<!-- Empty view is only visible when the list has no items. ***************************************to be implemented-->
-<TextView
-    android:id="@+id/empty_view"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_centerInParent="true"
-    android:textAppearance="?android:textAppearanceMedium" />
+        </LinearLayout>
 
-<!-- Loading indicator is only shown before the first load -->
-<ProgressBar
-    android:id="@+id/loading_indicator"
-    style="@style/Widget.AppCompat.ProgressBar"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_centerInParent="true"
-    />
+        <!-- Empty view is only visible when the list has no items. ***************************************to be implemented-->
+        <TextView
+            android:id="@+id/empty_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:textAppearance="?android:textAppearanceMedium" />
+
+        <!-- Loading indicator is only shown before the first load -->
+        <ProgressBar
+            android:id="@+id/loading_indicator"
+            style="@style/Widget.AppCompat.ProgressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal" />
 
 
 
-</RelativeLayout>
 
-    </FrameLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+
+                <ListView
+                    android:id="@+id/list"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:divider="@null"
+                    android:dividerHeight="1dp"
+                    android:orientation="vertical"
+                    android:paddingTop="8dp" />
+
+                <FrameLayout
+                    android:visibility="gone"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:name="com.google.android.gms.maps.SupportMapFragment"
+                    android:id="@+id/mapwhere" />
+
+
+            </LinearLayout>
+
+
+
+
+    </LinearLayout>
+
+
+</FrameLayout>

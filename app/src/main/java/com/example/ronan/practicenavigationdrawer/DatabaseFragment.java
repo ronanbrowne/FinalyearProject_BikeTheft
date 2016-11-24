@@ -1,62 +1,175 @@
 package com.example.ronan.practicenavigationdrawer;
 
-import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
+import android.graphics.Color;
+import android.location.Address;
+import android.location.Geocoder;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseListAdapter;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.maps.android.SphericalUtil;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
+
+import static android.view.View.VISIBLE;
+import static com.example.ronan.practicenavigationdrawer.R.id.mapwhere;
+import static com.google.android.gms.wearable.DataMap.TAG;
 
 
 public class DatabaseFragment extends Fragment {
 
     private DatabaseReference mDatabaseStolen;
-    ListView myList;
+    SupportMapFragment mSupportMapFragment;
     ImageView bike_image;
 
-    FirebaseDatabase ff;
+    EditText street;
+    EditText radius;
+    Button query;
 
+    double latitude = 0;
+    double Longitude = 0;
+
+    FrameLayout frameLayout;
+
+    String name;
+    int r;
+
+    Circle circle;
 
     public DatabaseFragment() {
         // Required empty public constructor
     }
 
+    private GoogleMap googleMap;
 
+    BikeData mybike = new BikeData();
+
+    ArrayList<Double> latitudeArray = new ArrayList<>();
+    ArrayList<Double> longditudeArray = new ArrayList<>();
+
+    //declaring ValueEvent Listener
+    ValueEventListener bikeListener = new ValueEventListener() {
+        @Override
+        public void onDataChange(DataSnapshot dataSnapshot) {
+
+            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+
+                mybike = snapshot.getValue(BikeData.class);
+                latitudeArray.add(mybike.getLatitude());
+                longditudeArray.add(mybike.getLongditude());
+                Log.v("nci", Arrays.toString(latitudeArray.toArray()));
+                Log.v("nci", Arrays.toString(longditudeArray.toArray()));
+
+            }
+
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+            Log.v("nci", "marker error : " + databaseError.toString());
+        }
+    };
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        //Firebase DB setup
+        mDatabaseStolen = FirebaseDatabase.getInstance().getReference().child("Stolen Bikes");
+        //mDatabaseStolen.addValueEventListener(bikeListener);
+
         // Inflate the layout for this fragment
-         View rootView = inflater.inflate(R.layout.fragment_database, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_database, container, false);
+
+
+        mSupportMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(mapwhere);
+        if (mSupportMapFragment == null) {
+            FragmentManager fragmentManager = getFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            mSupportMapFragment = SupportMapFragment.newInstance();
+            fragmentTransaction.replace(mapwhere, mSupportMapFragment).commit();
+        }
+
+
+        if (mSupportMapFragment != null) {
+            mSupportMapFragment.getMapAsync(new OnMapReadyCallback() {
+                @Override
+                public void onMapReady(GoogleMap gMap) {
+                    googleMap = gMap;
+
+                    mDatabaseStolen.addValueEventListener(bikeListener);
+
+                    if (googleMap != null) {
+                        googleMap.getUiSettings().setAllGesturesEnabled(true);
+                        LatLng dub = new LatLng(53.3498, -6.2603);
+                        // Marker marker = new Marker(sydney);
+
+                        CameraPosition cameraPosition = new CameraPosition.Builder().target(dub).zoom(10f).build();
+                        CameraUpdate cameraUpdate = CameraUpdateFactory.newCameraPosition(cameraPosition);
+                        googleMap.moveCamera(cameraUpdate);
+
+                    }
+                }
+            });
+        }
+
+
+        street = (EditText) rootView.findViewById(R.id.streetgeo);
+        radius = (EditText) rootView.findViewById(R.id.radius);
+        query = (Button) rootView.findViewById(R.id.runQuery);
+        frameLayout = (FrameLayout) rootView.findViewById(R.id.mapwhere);
 
         ListView myListView = (ListView) rootView.findViewById(R.id.list);
         myListView.setDivider(ContextCompat.getDrawable(getActivity(), R.drawable.divider));
         myListView.setDividerHeight(1);
 
-        //Firebase DB setup
-        mDatabaseStolen = FirebaseDatabase.getInstance().getReference().child("Stolen Bikes");
-        // Query bikeQuery = mDatabaseStolen.orderByChild("other").equalTo("It's Class");
 
-      //  get ID of loading bar
+        //  Query bikeQuery = mDatabaseStolen.orderByChild("other").equalTo("It's Class");
+
+        //  get ID of loading bar
         final View loadingIndicator = rootView.findViewById(R.id.loading_indicator);
 
 
@@ -111,8 +224,35 @@ public class DatabaseFragment extends Fragment {
         myListView.setAdapter(bikeAdapter);
 
 
+        query.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                for (int i = 0; i < frameLayout.getChildCount(); i++) {
+                    View v = frameLayout.getChildAt(i);
+                    v.setVisibility(View.GONE);
+                    v.postInvalidate();
+                }
+
+
+                frameLayout.setVisibility(VISIBLE);
+
+                Log.v("***", "click");
+                r = Integer.parseInt(radius.getText().toString());
+                GeocodeAsyncTaskForQuery asyncTaskForQuery = new GeocodeAsyncTaskForQuery();
+                asyncTaskForQuery.execute();
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                }
+
+
+            }
+        });
+
         return rootView;
     }
+
 
     //extract bitmap helper, this sets image view
     public void getBitMapFromString(String imageAsString) {
@@ -127,4 +267,92 @@ public class DatabaseFragment extends Fragment {
     }
 
 
-}
+    //AsyncTask for getting geocoiding from user input
+    class GeocodeAsyncTaskForQuery extends AsyncTask<Void, Void, Address> {
+        String errorMessage = "";
+
+        @Override
+        protected void onPreExecute() {
+            name = street.getText().toString();
+        }
+
+        @Override
+        protected Address doInBackground(Void... none) {
+            Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
+            List<Address> addresses = null;
+            try {
+                addresses = geocoder.getFromLocationName(name, 1);
+            } catch (IOException e) {
+                errorMessage = "Service not available";
+                Log.e(TAG, errorMessage, e);
+            }
+            if (addresses != null && addresses.size() > 0)
+                return addresses.get(0);
+            return null;
+        }
+
+        protected void onPostExecute(Address address) {
+            if (address == null) {
+                Toast toast = Toast.makeText(getActivity().getApplicationContext(), "address null", Toast.LENGTH_SHORT);
+                toast.show();
+            } else {
+                String addressName = "";
+                for (int i = 0; i < address.getMaxAddressLineIndex(); i++) {
+                    addressName += " --- " + address.getAddressLine(i);
+                }
+                //assigning class variables
+                latitude = address.getLatitude();
+                Longitude = address.getLongitude();
+                LatLng userInput = new LatLng(latitude, Longitude);
+                drawOnMap(userInput, r);
+
+                Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Latitude: " + address.getLatitude() + "\n" +
+                        "Longitude: " + address.getLongitude() + "\n" +
+                        "Address: " + addressName, Toast.LENGTH_SHORT);
+                toast.show();
+                //  geoCodeClicked = true;
+            }
+        }
+    }//end async
+
+
+    /**
+     * function to load map. If map is not created it will create it for you
+     */
+    public void drawOnMap(LatLng latLng, int radius) {
+
+        googleMap.clear();
+
+        if (circle != null) {
+            circle.remove();
+        }
+
+        circle = googleMap.addCircle(new CircleOptions()
+                .center(latLng)
+                .radius(radius)
+                .strokeColor(Color.rgb(0, 136, 255))
+                .fillColor(Color.argb(20, 0, 136, 255)));
+
+
+        //create arraylist of markers and co-ordinates that will hold co-ordinates
+        List<LatLng> coordinatesList = new ArrayList<>();
+        List<Marker> markers = new ArrayList<>();
+
+        //loop through all co ordinates
+        for (int i = 0; i < latitudeArray.size(); i++) {
+            //create new marker with co-ordinates
+            coordinatesList.add(new LatLng(latitudeArray.get(i), longditudeArray.get(i)));
+            //  googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.get(0), 3));
+            Marker marker = googleMap.addMarker(new MarkerOptions().title("**Specific details to be put here **!")
+                    .position(coordinatesList.get(i)).visible(false));
+            markers.add(marker);
+        }//end for
+
+        for (Marker marker : markers) {
+            if (SphericalUtil.computeDistanceBetween(latLng, marker.getPosition()) < radius) {
+                marker.setVisible(true);
+            }
+        }
+    }
+
+}//end class

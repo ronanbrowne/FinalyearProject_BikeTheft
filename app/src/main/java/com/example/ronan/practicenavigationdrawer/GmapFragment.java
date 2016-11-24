@@ -2,6 +2,7 @@ package com.example.ronan.practicenavigationdrawer;
 
 import android.annotation.TargetApi;
 import android.app.Fragment;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -14,6 +15,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.database.DataSnapshot;
@@ -30,6 +33,8 @@ import static com.example.ronan.practicenavigationdrawer.R.drawable.user;
 
 
 public class GmapFragment extends Fragment implements OnMapReadyCallback {
+
+
 
 
     private GoogleMap gMap;
@@ -102,26 +107,14 @@ public class GmapFragment extends Fragment implements OnMapReadyCallback {
         List<LatLng> marker = new ArrayList<>();
         //loop through all co ordinates
        for(int i =0 ;  i < latitude.size();i++){
-
-           //error handeling co-ordinates cant be 0,0
-           // (0,0, which is DB default if none entered when registering stolen bike)
-
-
-
-
                //create new marker with co-ordinates
                marker.add(new LatLng(latitude.get(i), longditude.get(i)));
-
-               googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.get(0), 3));
-
-               googleMap.addMarker(new MarkerOptions().title("**Specific details to be put here **!").position(marker.get(i)));
-
-
-
-
-        }//end for
+              googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.get(0), 3));
+               googleMap.addMarker(new MarkerOptions().title("**Specific details to be put here **!").position(marker.get(i)).visible(false));
+      }//end for
 
 
 
     }
+
 }

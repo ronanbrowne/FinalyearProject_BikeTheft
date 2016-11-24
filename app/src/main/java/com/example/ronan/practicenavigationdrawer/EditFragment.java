@@ -387,7 +387,7 @@ public class EditFragment extends Fragment {
         protected void onPreExecute() {
             infoText.setVisibility(View.INVISIBLE);
             name = bikeLastSeen.getText().toString();
-            // latitude = Double.parseDouble(latitudeEdit.getText().toString());
+            // latitudeArray = Double.parseDouble(latitudeEdit.getText().toString());
             // longitude = Double.parseDouble(longitudeEdit.getText().toString());
         }
 
