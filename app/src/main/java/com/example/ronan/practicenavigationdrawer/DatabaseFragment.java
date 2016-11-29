@@ -1,6 +1,5 @@
 package com.example.ronan.practicenavigationdrawer;
 
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -12,6 +11,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -31,8 +31,6 @@ import com.firebase.ui.database.FirebaseListAdapter;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
@@ -41,6 +39,8 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -55,58 +55,75 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
-import static android.view.View.GONE;
-import static android.view.View.VISIBLE;
+import static com.example.ronan.practicenavigationdrawer.R.id.make;
 import static com.example.ronan.practicenavigationdrawer.R.id.mapwhere;
+import static com.example.ronan.practicenavigationdrawer.R.id.model;
 import static com.google.android.gms.wearable.DataMap.TAG;
 
 
 public class DatabaseFragment extends Fragment {
 
-    private DatabaseReference mDatabaseStolen;
-    SupportMapFragment mSupportMapFragment;
-    ImageView bike_image;
+    public DatabaseFragment() {
+        // Required empty public constructor
+    }
 
+    private FirebaseUser mFirebaseUser;
+    private DatabaseReference mDatabaseStolen;
+    private DatabaseReference mDatabaseQuery;
+    SupportMapFragment mSupportMapFragment;
+
+    ImageView bike_image;
     EditText street;
     EditText radius;
     Button query;
     Button closeMap;
 
+    LatLng userInput1 = new LatLng(53.3498, 6.2603);
+    LatLng userInput = new LatLng(53.3498, -6.2603);
     double latitude = 0;
     double Longitude = 0;
 
     FrameLayout frameLayout;
-
-    String name;
+    String userInputAddress;
+    String email = "";
     int r;
 
     Circle circle;
-
-    public DatabaseFragment() {
-        // Required empty public constructor
-    }
-
     private GoogleMap googleMap;
 
     BikeData mybike = new BikeData();
 
     ArrayList<Double> latitudeArray = new ArrayList<>();
     ArrayList<Double> longditudeArray = new ArrayList<>();
+    ArrayList<BikeData> bikeReturned = new ArrayList<>();
+    ArrayList<String> bikekey = new ArrayList<>();
+
+
+     ListView myListView = null;
+
+
+
+
+
+    //===================================================================================
+    //=         Firebase listener to retrieve bikes in DB labeled as stolen sets up data for query also
+    //===================================================================================
 
     //declaring ValueEvent Listener
     ValueEventListener bikeListener = new ValueEventListener() {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
-
+            latitudeArray.clear();
+            longditudeArray.clear();
+            bikeReturned.clear();
             for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                 mybike = snapshot.getValue(BikeData.class);
                 latitudeArray.add(mybike.getLatitude());
                 longditudeArray.add(mybike.getLongditude());
                 Log.v("nci", Arrays.toString(latitudeArray.toArray()));
                 Log.v("nci", Arrays.toString(longditudeArray.toArray()));
-
+                bikeReturned.add(mybike);
             }
-
         }
 
         @Override
@@ -116,39 +133,60 @@ public class DatabaseFragment extends Fragment {
     };
 
 
+    //===================================================================================
+    //=         onCreateView
+    //===================================================================================
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        //Firebase DB setup
+
+        //set up firebase instances also get user email we use this for uniqe DB refrences
+        mDatabaseQuery = FirebaseDatabase.getInstance().getReference().child("QueryResults").child(email);
         mDatabaseStolen = FirebaseDatabase.getInstance().getReference().child("Stolen Bikes");
-        //mDatabaseStolen.addValueEventListener(bikeListener);
+
+        mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        if (mFirebaseUser != null) {
+            email = mFirebaseUser.getEmail();
+        }
+
+        //firbase DB does not allow @ in names of nodes so we split email at the @ take first bit
+        email = email.split("@")[0];
+
+        //Firebase DB setup
+        mDatabaseStolen.addValueEventListener(bikeListener);
 
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_database, container, false);
 
 
+        //handel the sliding map fragment
+        FragmentManager fragmentManager;
+        FragmentTransaction fragmentTransaction = null;
+
         mSupportMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(mapwhere);
         if (mSupportMapFragment == null) {
-            FragmentManager fragmentManager = getFragmentManager();
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentManager = getFragmentManager();
+            fragmentTransaction = fragmentManager.beginTransaction();
             mSupportMapFragment = SupportMapFragment.newInstance();
             fragmentTransaction.replace(mapwhere, mSupportMapFragment).commit();
-        }
+            //fragmentTransaction.remove(mSupportMapFragment);
 
+        }
 
         if (mSupportMapFragment != null) {
             mSupportMapFragment.getMapAsync(new OnMapReadyCallback() {
                 @Override
                 public void onMapReady(GoogleMap gMap) {
                     googleMap = gMap;
+                    googleMap.clear();
                     mDatabaseStolen.addValueEventListener(bikeListener);
                     if (googleMap != null) {
                         googleMap.getUiSettings().setAllGesturesEnabled(true);
-                        LatLng dub = new LatLng(53.3498, -6.2603);
-                        // Marker marker = new Marker(sydney);
 
-                        CameraPosition cameraPosition = new CameraPosition.Builder().target(dub).zoom(10f).build();
+                        //change location of camra based on user input
+                        CameraPosition cameraPosition = new CameraPosition.Builder().target(userInput1).zoom(9f).build();
                         CameraUpdate cameraUpdate = CameraUpdateFactory.newCameraPosition(cameraPosition);
                         googleMap.moveCamera(cameraUpdate);
                     }
@@ -161,39 +199,43 @@ public class DatabaseFragment extends Fragment {
         radius = (EditText) rootView.findViewById(R.id.radius);
         query = (Button) rootView.findViewById(R.id.runQuery);
         closeMap = (Button) rootView.findViewById(R.id.closeMap);
+        final View loadingIndicator = rootView.findViewById(R.id.loading_indicator);
+
+        //get and initally hide slide up map fragment
         frameLayout = (FrameLayout) rootView.findViewById(R.id.mapwhere);
         frameLayout.setVisibility(View.GONE);
 
-        ListView myListView = (ListView) rootView.findViewById(R.id.list);
+      //  ListView
+        myListView = (ListView) rootView.findViewById(R.id.list);
         myListView.setDivider(ContextCompat.getDrawable(getActivity(), R.drawable.divider));
         myListView.setDividerHeight(1);
 
 
-        //  Query bikeQuery = mDatabaseStolen.orderByChild("other").equalTo("It's Class");
-
-        //  get ID of loading bar
-        final View loadingIndicator = rootView.findViewById(R.id.loading_indicator);
 
 
-        // set up the Firebase Specific ListAdapter
-        // here we set content of list items
-        FirebaseListAdapter<BikeData> bikeAdapter = new FirebaseListAdapter<BikeData>
+
+
+
+        //===================================================================================
+        //=         Firebase specif list adapter loaded on first viewing
+        //===================================================================================
+        final FirebaseListAdapter<BikeData> bikeAdapter = new FirebaseListAdapter<BikeData>
                 (getActivity(), BikeData.class, R.layout.list_item, mDatabaseStolen) {
             @Override
             protected void populateView(View v, BikeData model, int position) {
-                //handeling diplaying of loading bar
+
+                //listening to see when data is called we hide loading bar then
                 mDatabaseStolen.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
+                        //
                         loadingIndicator.setVisibility(View.GONE);
                     }
-
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
 
                     }
-                });
-
+                });//end listener
 
                 // Find the TextView IDs of list_item.xml
                 TextView makeView = (TextView) v.findViewById(R.id.make);
@@ -214,12 +256,12 @@ public class DatabaseFragment extends Fragment {
                 //call method to set image, which turns base64 string to image
                 getBitMapFromString(model.getImageBase64());
 
-
             }
         };
         //set adapter on our listView
         myListView.setAdapter(bikeAdapter);
 
+        //click to close map and re-set the listview returning default query of all
         closeMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -227,32 +269,58 @@ public class DatabaseFragment extends Fragment {
                         R.anim.slidedown);
                 frameLayout.startAnimation(backDoww);
                 frameLayout.setVisibility(View.GONE);
+                myListView.setAdapter(bikeAdapter);
+                radius.setText("");
+                street.setText("");
             }
         });
 
-
+        //run query button
         query.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Animation bottomUp = AnimationUtils.loadAnimation(getContext(),
                         R.anim.slide);
                 frameLayout.startAnimation(bottomUp);
-                frameLayout.setVisibility(View.VISIBLE);
-                r = Integer.parseInt(radius.getText().toString());
-                GeocodeAsyncTaskForQuery asyncTaskForQuery = new GeocodeAsyncTaskForQuery();
-                asyncTaskForQuery.execute();
+                String tempRadius = radius.getText().toString();
+                userInputAddress = street.getText().toString();
+
+                //user validation make sure inputs not null
+                if ((userInputAddress != null && !userInputAddress.isEmpty()) || (tempRadius != null && !tempRadius.isEmpty())) {
+                    r = Integer.parseInt(radius.getText().toString());
+                    //getting co-ordinates
+                    GeocodeAsyncTaskForQuery asyncTaskForQuery = new GeocodeAsyncTaskForQuery();
+                    frameLayout.setVisibility(View.VISIBLE);
+                    asyncTaskForQuery.execute();
+
+//                    if(asyncTaskForQuery.getStatus() == AsyncTask.Status.FINISHED){
+//                        drawOnMap(userInput, r);
+//                    }
+
+                } else {
+                    Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Query fields can not be left blank", Toast.LENGTH_SHORT);
+                    toast.show();
+                }
                 try {
                     Thread.sleep(2000);
                 } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
+
+                //method to draw circle / display markers / change listview
+                drawOnMap(userInput, r);
             }
         });
+
 
         return rootView;
     }
 
 
-    //extract bitmap helper, this sets image view
+    //===================================================================================
+    //=         extract bitmap helper, this sets image view
+    //===================================================================================
+
     public void getBitMapFromString(String imageAsString) {
         if (imageAsString == "No image" || imageAsString == null) {
             // bike_image.setImageResource(R.drawable.not_uploaded);
@@ -265,13 +333,14 @@ public class DatabaseFragment extends Fragment {
     }
 
 
-    //AsyncTask for getting geocoiding from user input
+    //==============================================================================================
+    //=         handeling getting the Geocoding from user input - this is the lat / long co-ordinates
+    //==============================================================================================
     class GeocodeAsyncTaskForQuery extends AsyncTask<Void, Void, Address> {
         String errorMessage = "";
 
         @Override
         protected void onPreExecute() {
-            name = street.getText().toString();
         }
 
         @Override
@@ -279,7 +348,7 @@ public class DatabaseFragment extends Fragment {
             Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
             List<Address> addresses = null;
             try {
-                addresses = geocoder.getFromLocationName(name, 1);
+                addresses = geocoder.getFromLocationName(userInputAddress, 1);
             } catch (IOException e) {
                 errorMessage = "Service not available";
                 Log.e(TAG, errorMessage, e);
@@ -288,6 +357,7 @@ public class DatabaseFragment extends Fragment {
                 return addresses.get(0);
             return null;
         }
+
 
         protected void onPostExecute(Address address) {
             if (address == null) {
@@ -301,8 +371,8 @@ public class DatabaseFragment extends Fragment {
                 //assigning class variables
                 latitude = address.getLatitude();
                 Longitude = address.getLongitude();
-                LatLng userInput = new LatLng(latitude, Longitude);
-                drawOnMap(userInput, r);
+                userInput = new LatLng(latitude, Longitude);
+              //  drawOnMap(userInput, r);
 
                 Log.v("Co-ordinates", "Latitude: " + address.getLatitude() + "\n" +
                         "Longitude: " + address.getLongitude() + "\n" +
@@ -312,17 +382,19 @@ public class DatabaseFragment extends Fragment {
     }//end async
 
 
-    /**
-     * function to load map. If map is not created it will create it for you
-     */
+    //================================================================================
+    //=         method to draw circle and markers on map and change list view
+    //=================================================================================
     public void drawOnMap(LatLng latLng, int radius) {
 
         googleMap.clear();
 
+        //remove previous circle
         if (circle != null) {
             circle.remove();
         }
 
+        //draw radious
         circle = googleMap.addCircle(new CircleOptions()
                 .center(latLng)
                 .radius(radius)
@@ -333,6 +405,7 @@ public class DatabaseFragment extends Fragment {
         //create arraylist of markers and co-ordinates that will hold co-ordinates
         List<LatLng> coordinatesList = new ArrayList<>();
         List<Marker> markers = new ArrayList<>();
+        List<BikeData> queryBike = new ArrayList<>();
 
         //loop through all co ordinates
         for (int i = 0; i < latitudeArray.size(); i++) {
@@ -344,11 +417,79 @@ public class DatabaseFragment extends Fragment {
             markers.add(marker);
         }//end for
 
+
+        int i = 0;
+        queryBike.clear();
+
+        mDatabaseQuery.removeValue();
+
         for (Marker marker : markers) {
             if (SphericalUtil.computeDistanceBetween(latLng, marker.getPosition()) < radius) {
                 marker.setVisible(true);
+                //queryBike.clear();
+                queryBike.add(bikeReturned.get(i));
             }
+            i++;
         }
+
+
+        for (BikeData bike : queryBike) {
+             mDatabaseQuery.push().setValue(bike);
+        }
+
+        handelQuery();
+
+        //display markers
+        CameraPosition cameraPosition = new CameraPosition.Builder().target(latLng).zoom(11f).build();
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newCameraPosition(cameraPosition);
+        googleMap.moveCamera(cameraUpdate);
+
     }
 
+    //================================================================================
+    //=         query specif logic
+    //=================================================================================
+
+    public void handelQuery(){
+
+        final FirebaseListAdapter<BikeData> bikeAdapterQuery = new FirebaseListAdapter<BikeData>
+                (getActivity(), BikeData.class, R.layout.list_item, mDatabaseQuery) {
+            @Override
+            protected void populateView(View v, BikeData model, int position) {
+
+
+                // Find the TextView IDs of list_item.xml
+                TextView makeView = (TextView) v.findViewById(R.id.make);
+                TextView modelView = (TextView) v.findViewById(R.id.model);
+                TextView sizeView = (TextView) v.findViewById(R.id.size);
+                TextView colorView = (TextView) v.findViewById(R.id.color);
+                TextView otherView = (TextView) v.findViewById(R.id.other);
+                TextView lastlocationView = (TextView) v.findViewById(R.id.loaction);
+                bike_image = (ImageView) v.findViewById(R.id.bike_image);
+
+                // Log.v("***here", model.getModel());
+
+
+                //setting the textViews to Bike data
+                makeView.setText(model.getMake());
+                modelView.setText(model.getModel());
+                sizeView.setText(String.valueOf(model.getFrameSize()));
+                colorView.setText(model.getColor());
+                otherView.setText(model.getOther());
+                lastlocationView.setText(model.getLastSeen());
+                //call method to set image, which turns base64 string to image
+                getBitMapFromString(model.getImageBase64());
+
+            }
+        };
+
+
+        myListView.setAdapter(bikeAdapterQuery);
+
+
+    }//end query
+
+
+
 }//end class
+

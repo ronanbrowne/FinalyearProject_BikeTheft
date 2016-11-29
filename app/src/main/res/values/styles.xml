@@ -21,6 +21,7 @@
     <!-- Style for a category in the editor -->
     <style name="CategoryStyle">
         <item name="android:layout_height">wrap_content</item>
+        <item name="android:maxLines">1</item>
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_weight">1</item>
         <item name="android:paddingTop">16dp</item>
@@ -31,6 +32,7 @@
 
     <!-- Style for an EditText field in the editor -->
     <style name="EditorFieldStyle">
+        <item name="android:maxLines">1</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">match_parent</item>
 
