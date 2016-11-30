@@ -161,12 +161,14 @@ public class MainFragment extends Fragment {
                 String color = bikeColor.getText().toString();
                 String other = bikeOther.getText().toString();
 
+
+                //get id part of email
+                email = email.split("@")[0];
+
                 //error handeling
                 if ((make != null && !make.isEmpty()) || (model != null && !model.isEmpty()) || (color != null && !color.isEmpty()) || (framSizeString != null && !framSizeString.isEmpty())) {
-                    BikeData newBike = new BikeData(make, frameSize, color, other, stolen, base64, model, "N/A", 0, 0);
+                    BikeData newBike = new BikeData(make, frameSize, color, other, stolen, base64, model, "N/A", 0, 0,email);
 
-                    //get id part of email
-                    email = email.split("@")[0];
                     //single entry
                     mDatabase.child(email).push().setValue(newBike);
 

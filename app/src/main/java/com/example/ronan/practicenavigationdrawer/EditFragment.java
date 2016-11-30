@@ -37,7 +37,9 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
@@ -194,7 +196,7 @@ public class EditFragment extends Fragment {
         }
 
 
-        BikeData mybike = new BikeData("test make", 22, "red", "other", true, "dfsffdss", "Model", "last seen", latitude, longitud);
+        BikeData mybike = new BikeData("test make", 22, "red", "other", true, "dfsffdss", "Model", "last seen", latitude, longitud,email);
 
         @Override
         public void onCancelled(DatabaseError databaseError) {
@@ -294,7 +296,7 @@ public class EditFragment extends Fragment {
                 String lastSeen = bikeLastSeen.getText().toString();
 
 
-                BikeData newBike = new BikeData(make, frameSize, color, other, stolen, base64, model, lastSeen, latitude, longitud);
+                BikeData newBike = new BikeData(make, frameSize, color, other, stolen, base64, model, lastSeen, latitude, longitud,email);
                 mDatabase.setValue(newBike);
 
 
@@ -348,6 +350,8 @@ public class EditFragment extends Fragment {
                         toast.show();
                     }
                 }
+
+                Log.v("*date: ",getDate());
             }//on click
         });
 
@@ -507,6 +511,13 @@ public class EditFragment extends Fragment {
         galleryIntent.setType("image/*");
         galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(galleryIntent, "Select Picture"), SELECT_PICTURE);
+    }
+
+
+    public String getDate() {
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        return sdf.format(cal.getTime());
     }
 
 }//end class

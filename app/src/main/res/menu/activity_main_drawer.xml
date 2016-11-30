@@ -4,12 +4,16 @@
     <group android:checkableBehavior="single"
         android:title="Bike Managment">
         <item
+            android:id="@+id/nav_welcome"
+            android:icon="@drawable/ic_home_black_24dp"
+            android:title="Home Screen" />
+        <item
             android:id="@+id/nav_register"
             android:icon="@drawable/ic_motorcycle_black_24dp"
             android:title="Register Bike" />
         <item
             android:id="@+id/nav_edit"
-            android:icon="@drawable/ic_menu_gallery"
+            android:icon="@drawable/ic_mode_edit_black_24dp"
             android:title="Edit Bike" />
         <item
             android:id="@+id/nav_db"

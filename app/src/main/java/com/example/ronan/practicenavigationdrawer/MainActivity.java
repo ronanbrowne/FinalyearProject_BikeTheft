@@ -58,21 +58,6 @@ public class MainActivity extends AppCompatActivity
 
     private boolean mapOpen = false;
 
-//    @Override
-//    public View onCreateView(String name, Context context, AttributeSet attrs) {
-//
-//
-//
-//        LayoutInflater Li = LayoutInflater.from(getApplicationContext());
-//        View cv = Li.inflate(R.layout.fragment_map,null);
-//
-//
-//        fragment = (GmapFragment) getFragmentManager().findFragmentById(R.id.map);
-//
-//
-//        return super.onCreateView(name, context, attrs);
-//
-//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,7 +66,7 @@ public class MainActivity extends AppCompatActivity
 
 
         //setFragment
-        MainFragment mainFragment = new MainFragment();
+        WelcomeFragment mainFragment = new WelcomeFragment();
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.fragment_container, mainFragment);
         fragmentTransaction.commit();
@@ -244,7 +229,17 @@ public class MainActivity extends AppCompatActivity
         android.app.FragmentManager fm = getFragmentManager();
 
 
-        if (id == R.id.nav_register) {
+
+        if (id == R.id.nav_welcome) {
+            //setFragment
+             WelcomeFragment welcomeFragment = new WelcomeFragment();
+            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.fragment_container, welcomeFragment);
+            fragmentTransaction.commit();
+
+            mapOpen=false;
+
+        } else if  (id == R.id.nav_register) {
             //setFragment
             MainFragment mainFragment = new MainFragment();
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();

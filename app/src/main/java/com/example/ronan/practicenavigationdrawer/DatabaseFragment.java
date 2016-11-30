@@ -82,6 +82,7 @@ public class DatabaseFragment extends Fragment {
     LatLng userInput = new LatLng(53.3498, -6.2603);
     double latitude = 0;
     double Longitude = 0;
+    private boolean isMapFragmentVisavle = false;
 
     FrameLayout frameLayout;
     String userInputAddress;
@@ -269,6 +270,7 @@ public class DatabaseFragment extends Fragment {
                         R.anim.slidedown);
                 frameLayout.startAnimation(backDoww);
                 frameLayout.setVisibility(View.GONE);
+                isMapFragmentVisavle =false;
                 myListView.setAdapter(bikeAdapter);
                 radius.setText("");
                 street.setText("");
@@ -279,9 +281,14 @@ public class DatabaseFragment extends Fragment {
         query.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Animation bottomUp = AnimationUtils.loadAnimation(getContext(),
-                        R.anim.slide);
-                frameLayout.startAnimation(bottomUp);
+
+                //only do slide up animation if map was previously hidden
+                if(!isMapFragmentVisavle) {
+                    isMapFragmentVisavle = true;
+                    Animation bottomUp = AnimationUtils.loadAnimation(getContext(),
+                            R.anim.slide);
+                    frameLayout.startAnimation(bottomUp);
+                }
                 String tempRadius = radius.getText().toString();
                 userInputAddress = street.getText().toString();
 
@@ -308,7 +315,7 @@ public class DatabaseFragment extends Fragment {
                 }
 
                 //method to draw circle / display markers / change listview
-                drawOnMap(userInput, r);
+             //   drawOnMap(userInput, r);
             }
         });
 
@@ -351,10 +358,12 @@ public class DatabaseFragment extends Fragment {
                 addresses = geocoder.getFromLocationName(userInputAddress, 1);
             } catch (IOException e) {
                 errorMessage = "Service not available";
+
                 Log.e(TAG, errorMessage, e);
             }
             if (addresses != null && addresses.size() > 0)
                 return addresses.get(0);
+            Log.v("ground***:",addresses.get(0).toString());
             return null;
         }
 
@@ -372,11 +381,12 @@ public class DatabaseFragment extends Fragment {
                 latitude = address.getLatitude();
                 Longitude = address.getLongitude();
                 userInput = new LatLng(latitude, Longitude);
-              //  drawOnMap(userInput, r);
+               drawOnMap(userInput, r);
 
-                Log.v("Co-ordinates", "Latitude: " + address.getLatitude() + "\n" +
+                Log.v("Co-ordinates***", "Latitude: " + address.getLatitude() + "\n" +
                         "Longitude: " + address.getLongitude() + "\n" +
-                        "Address: ");
+                        "Address L: "+address.getLocality()+ "\n" +
+                        "Address L: "+address.getPostalCode());
             }
         }
     }//end async
@@ -386,6 +396,8 @@ public class DatabaseFragment extends Fragment {
     //=         method to draw circle and markers on map and change list view
     //=================================================================================
     public void drawOnMap(LatLng latLng, int radius) {
+
+        Log.v("LAt***","Latitude: "+latLng.latitude+"Longitude: "+latLng.longitude );
 
         googleMap.clear();
 

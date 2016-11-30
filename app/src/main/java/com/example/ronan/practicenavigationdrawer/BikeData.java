@@ -9,6 +9,7 @@ public class BikeData {
     //variables
     private String make;
     private String model;
+    private String registeredBy;
     private int frameSize;
     private String color;
     private String otherFeatures;
@@ -19,10 +20,10 @@ public class BikeData {
     private double longditude;
 
 
-
     //constructor
-    public BikeData(String make, int frameSize, String color, String other, boolean  stolen, String imageBase64, String model,String lastSeen, double latitude, double longditude) {
+    public BikeData(String make, int frameSize, String color, String other, boolean stolen, String imageBase64, String model, String lastSeen, double latitude, double longditude, String registeredBy) {
         this.make = make;
+        this.registeredBy = registeredBy;
         this.frameSize = frameSize;
         this.color = color;
         this.otherFeatures = other;
@@ -40,6 +41,11 @@ public class BikeData {
 
 
     //getters
+
+    public String getRegisteredBy() {
+        return registeredBy;
+    }
+
     public String getImageBase64() {
         return imageBase64;
     }
