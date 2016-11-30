@@ -117,6 +117,17 @@
 
         </LinearLayout>
 
+        <TextView
+            android:layout_toRightOf="@+id/fab"
+            android:layout_marginBottom="275dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#FFFFFF"
+            android:layout_marginRight="8dp"
+            app:layout_anchor="@id/floatingConfirmEdit"
+            app:layout_anchorGravity="top|center|"
+            android:text="Edit Profile"/>
+
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/floatingConfirmEdit"
             android:layout_width="wrap_content"

@@ -267,7 +267,7 @@ public class EditFragment extends Fragment {
             public void onClick(View view) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
                 builder.setMessage("Use picture from Gallery or launch camera?").setPositiveButton("Gallery", getDialogClickListenerImage)
-                        .setNegativeButton("Camera", dialogClickListener).show();
+                        .setNegativeButton("Camera", getDialogClickListenerImage).show();
 
             }
         });

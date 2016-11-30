@@ -7,55 +7,132 @@
     android:background="#FFFFFF"
     tools:context="com.example.ronan.practicenavigationdrawer.Profile_Fragment">
 
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingTop="60dp"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp"
-    android:orientation="vertical"
-    >
+    <android.support.design.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
 
 
-    <TextView
-        android:paddingTop="16dp"
-        android:textStyle="bold"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Update user profile: " />
-
-    <!-- Overview category -->
     <LinearLayout
-        android:paddingTop="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+
+        <LinearLayout
+            android:id="@+id/viewA"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@color/colorPrimaryDark"
+            android:orientation="vertical"
+            android:paddingTop="55dp">
+
+
+            <TextView
+                android:id="@+id/welcomeHeading"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:gravity="center_horizontal"
+                android:paddingTop="12dp"
+                android:text="User Profile"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:textColor="#ffffff" />
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/profile_image"
+                android:layout_width="170dp"
+                android:layout_height="170dp"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/backgroundimage1"
+                app:civ_border_color="#FFFFFF"
+                app:civ_border_width="2dp" />
+
+            <TextView
+                android:id="@+id/userProfile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:paddingTop="16dp"
+                android:text="User"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:textColor="#ffffff"
+                android:textStyle="bold" />
+
+            <!--<Button-->
+            <!--android:layout_gravity="right"-->
+            <!--android:padding="3dp"-->
+            <!--android:layout_marginRight="12dp"-->
+            <!--android:layout_marginBottom="12dp"-->
+            <!--android:id="@+id/editUser"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:background="@android:color/holo_blue_light"-->
+            <!--android:text="Edit Profile" />-->
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+
+            <TextView
+        android:id="@+id/overview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <!-- Label -->
-        <TextView
-            android:text="User Details: "
-            style="@style/CategoryStyle"
-            />
-
+        android:gravity="left"
+        android:padding="12dp"
+        android:text="Update profie"
+        android:textColor="@color/colorAccent"
+        android:textSize="16sp"
+        android:textStyle="bold" />
 
 
-        <!-- Input fields -->
+            <!-- Input fields -->
+
+
+
+
         <LinearLayout
+            android:layout_gravity="center_horizontal"
             android:layout_height="wrap_content"
-            android:layout_width="0dp"
-            android:layout_weight="2"
+            android:layout_width="wrap_content"
             android:paddingLeft="4dp"
             android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_face_black_24dp"/>
+
 
             <!-- Name field -->
             <EditText
                 android:id="@+id/username"
-                android:hint="Choose a user name"
+                android:hint="User name"
                 android:inputType="textCapWords"
                 style="@style/EditorFieldStyle" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_mail_outline_black_24dp"/>
 
             <!-- color field -->
             <EditText
@@ -64,69 +141,142 @@
                 android:inputType="textCapWords"
                 style="@style/EditorFieldStyle" />
 
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_add_location_black_24dp"/>
+
+
             <!-- size field -->
             <EditText
-                android:id="@+id/city"
-                android:hint="City"
+                android:id="@+id/address"
+                android:hint="Address"
                 android:inputType="textCapWords"
                 style="@style/EditorFieldStyle" />
 
-
-            <!-- other field -->
-            <EditText
-                android:id="@+id/country"
-                android:hint="Country"
-                android:inputType="textCapWords"
-                style="@style/EditorFieldStyle" />
         </LinearLayout>
-    </LinearLayout>
-
-    <!-- Gender category -->
-    <LinearLayout
-        android:id="@+id/container_gender"
-        android:paddingTop="20dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <!-- Label Upload -->
-        <TextView
-            android:layout_gravity="top"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Upload Image"
-            style="@style/CategoryStyle"
-            />
-
-        <ImageView
-            android:id="@+id/upload_imageView"
-            android:layout_marginTop="25dp"
-            android:layout_width="150dp"
-            android:layout_height="150dp" />
 
 
 
-        <!-- add image  -->
-        <Button
-            android:layout_gravity="top"
-            android:id="@+id/imageuploadButton"
-            android:layout_height="48dp"
-            android:layout_marginLeft="36dp"
-            android:layout_width="wrap_content"
-            android:text="image"/>
+        </LinearLayout>
 
 
-    </LinearLayout>
+            <android.support.design.widget.FloatingActionButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="90dp"
+                android:clickable="true"
+                app:fabSize="mini"
+                app:srcCompat="@drawable/ic_done_all_black_24dp"
+                android:id="@+id/floatingConfirmEditProfile"
+                android:layout_gravity="right"/>
 
 
-    <Button
-        android:layout_marginTop="50dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Update Profile"
-        android:id="@+id/profile_button"
-        android:layout_gravity="center_horizontal" />
 
 
 </LinearLayout>
-    </FrameLayout>
+
+</LinearLayout>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/updatePic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            app:fabSize="mini"
+            app:layout_anchor="@id/profile_image"
+            app:layout_anchorGravity="right|center_vertical"
+            app:srcCompat="@drawable/ic_camera_enhance_black_24dp" />
+
+    </android.support.design.widget.CoordinatorLayout>
+
+</FrameLayout>
+
+
+
+<!--<LinearLayout-->
+    <!--xmlns:android="http://schemas.android.com/apk/res/android"-->
+    <!--xmlns:tools="http://schemas.android.com/tools"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:paddingTop="60dp"-->
+    <!--android:paddingLeft="16dp"-->
+    <!--android:paddingRight="16dp"-->
+    <!--android:orientation="vertical"-->
+    <!--&gt;-->
+
+
+
+    <!--<TextView-->
+        <!--android:paddingTop="16dp"-->
+        <!--android:textStyle="bold"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="Update user profile: " />-->
+
+    <!--&lt;!&ndash; Overview category &ndash;&gt;-->
+    <!--<LinearLayout-->
+        <!--android:paddingTop="16dp"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:orientation="horizontal">-->
+
+       <!---->
+    <!--</LinearLayout>-->
+
+    <!--&lt;!&ndash; Gender category &ndash;&gt;-->
+    <!--<LinearLayout-->
+        <!--android:id="@+id/container_gender"-->
+        <!--android:paddingTop="20dp"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:orientation="horizontal">-->
+
+        <!--&lt;!&ndash; Label Upload &ndash;&gt;-->
+        <!--<TextView-->
+            <!--android:layout_gravity="top"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="Upload Image"-->
+            <!--style="@style/CategoryStyle"-->
+            <!--/>-->
+
+        <!--<ImageView-->
+            <!--android:id="@+id/upload_imageView"-->
+            <!--android:layout_marginTop="25dp"-->
+            <!--android:layout_width="150dp"-->
+            <!--android:layout_height="150dp" />-->
+
+
+
+        <!--&lt;!&ndash; add image  &ndash;&gt;-->
+        <!--<Button-->
+            <!--android:layout_gravity="top"-->
+            <!--android:id="@+id/imageuploadButton"-->
+            <!--android:layout_height="48dp"-->
+            <!--android:layout_marginLeft="36dp"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:text="image"/>-->
+
+
+    <!--</LinearLayout>-->
+
+
+    <!--<Button-->
+        <!--android:layout_marginTop="50dp"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="Update Profile"-->
+        <!--android:id="@+id/profile_button"-->
+        <!--android:layout_gravity="center_horizontal" />-->
+
+
+<!--</LinearLayout>-->
+

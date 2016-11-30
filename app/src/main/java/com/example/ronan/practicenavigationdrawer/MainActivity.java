@@ -98,9 +98,9 @@ public class MainActivity extends AppCompatActivity
                     SimpleDateFormat sdf = new SimpleDateFormat("MMM MM dd, yyyy h:mm a");
                     String dateString = sdf.format(date);
 
-                    UserData userDaat = new UserData("Enter City", mUsername, "imageValue", dateString, mEmail, "Enter Country");
+                    UserData userData = new UserData("Enter address", mUsername, "imageValue", dateString, mEmail);
 
-                    mDatabase.child(mUsername).setValue(userDaat);
+                    mDatabase.child(mUsername).setValue(userData);
 
 
                 } else {
