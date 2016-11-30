@@ -50,12 +50,8 @@ public class MainFragment extends Fragment {
     private FloatingActionButton addFloat;
 
 
-
-
-
-
     private Button add;
-   // private Button imageUpload;
+    // private Button imageUpload;
     private ImageView mThumbnailPreview;
 
     Bitmap bitmap;
@@ -66,12 +62,11 @@ public class MainFragment extends Fragment {
 
     //DB refrence
     private DatabaseReference mDatabase;
-    private  StorageReference storageRef;
+    private StorageReference storageRef;
 
     private FirebaseUser mFirebaseUser;
 
     String email = "User email";
-
 
 
     public MainFragment() {
@@ -82,7 +77,7 @@ public class MainFragment extends Fragment {
     DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
         @Override
         public void onClick(DialogInterface dialog, int which) {
-            switch (which){
+            switch (which) {
                 case DialogInterface.BUTTON_POSITIVE:
                     //gallery
                     dispatchGrabImageFromGalleryItent();
@@ -102,20 +97,22 @@ public class MainFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         //get current user
-            mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
         //if its not null grab email address
-        if (mFirebaseUser!=null) {
+        if (mFirebaseUser != null) {
             email = mFirebaseUser.getEmail();
         }
 
         //for dev purposes output whos logged in , may remove
-        Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Logged in as: "+email, Toast.LENGTH_SHORT);
+        Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Logged in as: " + email, Toast.LENGTH_SHORT);
         toast.show();
 
 
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+
+        //get map
 
         //get IDs
         bikeMake = (EditText) rootView.findViewById(R.id.edit_bike_make);
@@ -133,21 +130,15 @@ public class MainFragment extends Fragment {
         mDatabase = FirebaseDatabase.getInstance().getReference().child("Bikes Registered By User");
 
 
-
-
-
         //handel click event to upload a picter to app
         upload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-              AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+                AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
                 builder.setMessage("Use picture from Gallery or launch camera?").setPositiveButton("Gallery", dialogClickListener)
                         .setNegativeButton("Camera", dialogClickListener).show();
             }
         });
-
-
-
 
 
         addFloat.setOnClickListener(new View.OnClickListener() {
@@ -160,7 +151,6 @@ public class MainFragment extends Fragment {
                 String model = bikeModel.getText().toString();
 
 
-
                 String framSizeString = bikeFrameSize.getText().toString();
 
                 if (framSizeString != null || !framSizeString.isEmpty()) {
@@ -171,12 +161,14 @@ public class MainFragment extends Fragment {
                 String color = bikeColor.getText().toString();
                 String other = bikeOther.getText().toString();
 
-                //error handeling
-                if ((make != null && !make.isEmpty()) || (model != null && !model.isEmpty()) ||  (color != null && !color.isEmpty()) || (framSizeString != null && !framSizeString.isEmpty())) {
-                    BikeData newBike = new BikeData(make, frameSize, color, other, stolen, base64, model, "N/A",0,0);
 
-                    //get id part of email
-                 email = email.split("@")[0];
+                //get id part of email
+                email = email.split("@")[0];
+
+                //error handeling
+                if ((make != null && !make.isEmpty()) || (model != null && !model.isEmpty()) || (color != null && !color.isEmpty()) || (framSizeString != null && !framSizeString.isEmpty())) {
+                    BikeData newBike = new BikeData(make, frameSize, color, other, stolen, base64, model, "N/A", 0, 0,email);
+
                     //single entry
                     mDatabase.child(email).push().setValue(newBike);
 
@@ -189,7 +181,7 @@ public class MainFragment extends Fragment {
                     Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Please fill all required fields", Toast.LENGTH_SHORT);
                     toast.show();
                 }
-                            }
+            }
         });
 
         // Inflate the layout for this fragment
@@ -209,15 +201,12 @@ public class MainFragment extends Fragment {
 
     //method to launch cGalery
 
-    public void dispatchGrabImageFromGalleryItent(){
+    public void dispatchGrabImageFromGalleryItent() {
         Intent galleryIntent = new Intent();
         galleryIntent.setType("image/*");
         galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(galleryIntent, "Select Picture"), SELECT_PICTURE);
     }
-
-
-
 
 
     //Do this on result of activity , choose depending on result code
@@ -236,8 +225,8 @@ public class MainFragment extends Fragment {
                 }
                 mThumbnailPreview.setImageBitmap(bitmap);
                 base64 = imageConvertBase64(bitmap);
-            }else if (resultCode == RESULT_CANCELED) {
-                Log.i("message", "the user cancelled the request" );
+            } else if (resultCode == RESULT_CANCELED) {
+                Log.i("message", "the user cancelled the request");
             }
         }
         if (requestCode == 1) {
@@ -246,8 +235,8 @@ public class MainFragment extends Fragment {
                 Bitmap imageBitmap = (Bitmap) extras.get("data");
                 mThumbnailPreview.setImageBitmap(imageBitmap);
                 base64 = imageConvertBase64(imageBitmap);
-            }else if (resultCode == RESULT_CANCELED) {
-                Log.i("message", "the user cancelled the request" );
+            } else if (resultCode == RESULT_CANCELED) {
+                Log.i("message", "the user cancelled the request");
             }
         }
     }
@@ -262,7 +251,6 @@ public class MainFragment extends Fragment {
         return imageFile;
 
     }
-
 
 
 }

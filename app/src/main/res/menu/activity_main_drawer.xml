@@ -4,12 +4,16 @@
     <group android:checkableBehavior="single"
         android:title="Bike Managment">
         <item
+            android:id="@+id/nav_welcome"
+            android:icon="@drawable/ic_home_black_24dp"
+            android:title="Home Screen" />
+        <item
             android:id="@+id/nav_register"
             android:icon="@drawable/ic_motorcycle_black_24dp"
             android:title="Register Bike" />
         <item
             android:id="@+id/nav_edit"
-            android:icon="@drawable/ic_menu_gallery"
+            android:icon="@drawable/ic_mode_edit_black_24dp"
             android:title="Edit Bike" />
         <item
             android:id="@+id/nav_db"
@@ -21,24 +25,24 @@
             android:icon="@drawable/ic_add_location_black_24dp"
             android:title="Theft Map Analytics " />
 
-
-
-
-
     </group>
+
+    <item android:title="Anti-Theft Beacons">
+        <menu>
+            <item
+                android:id="@+id/nav_beacons"
+                android:icon="@drawable/ic_menu_send"
+                android:title="Manage Beacons" />
+        </menu>
+    </item>
+
 
     <item android:title="Communicate">
         <menu>
-
-            <item
-                android:id="@+id/nav_about"
-                android:icon="@drawable/ic_menu_manage"
-                android:title="About" />
-
             <item
                 android:id="@+id/nav_contact"
                 android:icon="@drawable/ic_menu_send"
-                android:title="Contact Us" />
+                android:title="About / Contact Us" />
         </menu>
     </item>
 
