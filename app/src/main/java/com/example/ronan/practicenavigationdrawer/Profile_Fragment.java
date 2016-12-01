@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -20,6 +21,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.ronan.practicenavigationdrawer.R;
 import com.google.firebase.auth.FirebaseAuth;
@@ -32,6 +34,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 
 import static android.R.attr.bitmap;
 import static android.app.Activity.RESULT_CANCELED;
@@ -66,19 +69,17 @@ public class Profile_Fragment extends Fragment {
     FloatingActionButton picUpdate;
 
     Bitmap bitmap;
-    String base64 = "No image";
+    String base64 = "imageValue";
 
-    String imageValue="";
-
-
+    String imageValue = "";
 
 
     ValueEventListener userDataListener = new ValueEventListener() {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
-            if(dataSnapshot.getValue(UserData.class)==null){
+            if (dataSnapshot.getValue(UserData.class) == null) {
 
-                Log.v("Profile_fragment", "datasnap shot returned null in userDataListener" );
+                Log.v("Profile_fragment", "datasnap shot returned null in userDataListener");
                 return;
             }
 
@@ -89,14 +90,11 @@ public class Profile_Fragment extends Fragment {
 
             imageValue = user.getUser_image_In_Base64();
 
+            if(!imageValue.equals("imageValue")){
+            getBitMapFromString(imageValue);}
 
-            if(imageValue.equals("imageValue")){
-                //do noghting
-            }
-            else{
-                getBitMapFromString(imageValue);
-            }
         }
+
         UserData user = new UserData();
 
         @Override
@@ -122,7 +120,7 @@ public class Profile_Fragment extends Fragment {
 
         //get instance of current user
         mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (mFirebaseUser!=null) {
+        if (mFirebaseUser != null) {
             email = mFirebaseUser.getEmail();
             usernameGlobal = email.split("@")[0];
         }
@@ -137,6 +135,12 @@ public class Profile_Fragment extends Fragment {
         update = (FloatingActionButton) rootView.findViewById(R.id.floatingConfirmEditProfile);
         picUpdate = (FloatingActionButton) rootView.findViewById(R.id.updatePic);
         upload_image = (ImageView) rootView.findViewById(R.id.profile_image);
+
+        //get default
+     //   Bitmap bitmap = ((BitmapDrawable)upload_image.getDrawable()).getBitmap();
+     //  base64= imageConvertBase64(bitmap);
+
+        picUpdate.setVisibility(View.VISIBLE);
 
         emailET.setText(email);
         profileHeading.setText(usernameGlobal);
@@ -153,19 +157,27 @@ public class Profile_Fragment extends Fragment {
         });
 
 
-                update.setOnClickListener(new View.OnClickListener() {
+        update.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                String username =  usernameET.getText().toString();
-                String email =  emailET.getText().toString();
-                String address =  addressET.getText().toString();
+                String username = usernameET.getText().toString();
+                String email = emailET.getText().toString();
+                String address = addressET.getText().toString();
 
 
+                //todo remove date
+                mDatabase = FirebaseDatabase.getInstance().getReference().child("User Profile Data");
+                long date = System.currentTimeMillis();
+                SimpleDateFormat sdf = new SimpleDateFormat("MMM MM dd, yyyy h:mm a");
+                String dateString = sdf.format(date);
+                UserData userData = new UserData(address, username, base64, dateString, email);
 
-                UserData userData = new UserData(address,username,"imageValue","dateString",email);
 
                 mDatabase.child(usernameGlobal).setValue(userData);
+
+                Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Profile Updated", Toast.LENGTH_SHORT);
+                toast.show();
 
 
             }

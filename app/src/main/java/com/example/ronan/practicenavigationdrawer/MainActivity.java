@@ -91,16 +91,15 @@ public class MainActivity extends AppCompatActivity
                     mUsername = mEmail.split("@")[0];
                     Log.d("look_here***", "onAuthStateChanged:signed_in:" + mEmail);
 
-                    mDatabase = FirebaseDatabase.getInstance().getReference().child("User Profile Data");
+   //                 mDatabase = FirebaseDatabase.getInstance().getReference().child("User Profile Data");
+//
+//                    long date = System.currentTimeMillis();
+//                    SimpleDateFormat sdf = new SimpleDateFormat("MMM MM dd, yyyy h:mm a");
+//                    String dateString = sdf.format(date);
+//                    UserData userData = new UserData("Enter address", mUsername, "imageValue", dateString, mEmail);
+//
+//                    mDatabase.child(mUsername).setValue(userData);
 
-                    long date = System.currentTimeMillis();
-
-                    SimpleDateFormat sdf = new SimpleDateFormat("MMM MM dd, yyyy h:mm a");
-                    String dateString = sdf.format(date);
-
-                    UserData userData = new UserData("Enter address", mUsername, "imageValue", dateString, mEmail);
-
-                    mDatabase.child(mUsername).setValue(userData);
 
 
                 } else {

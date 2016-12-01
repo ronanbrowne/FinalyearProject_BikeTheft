@@ -4,7 +4,9 @@ android {
     compileSdkVersion 24
     buildToolsVersion "24.0.1"
 
-
+    defaultConfig {
+        multiDexEnabled true
+    }
 
     defaultConfig {
         applicationId "com.example.ronan.practicenavigationdrawer"

@@ -157,7 +157,7 @@
             <!-- size field -->
             <EditText
                 android:id="@+id/address"
-                android:hint="Address"
+                android:hint="Enter Address"
                 android:inputType="textCapWords"
                 style="@style/EditorFieldStyle" />
 
