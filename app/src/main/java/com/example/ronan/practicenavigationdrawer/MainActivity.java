@@ -91,16 +91,14 @@ public class MainActivity extends AppCompatActivity
                     mUsername = mEmail.split("@")[0];
                     Log.d("look_here***", "onAuthStateChanged:signed_in:" + mEmail);
 
-                    mDatabase = FirebaseDatabase.getInstance().getReference().child("User Profile Data");
-
-                    long date = System.currentTimeMillis();
-
-                    SimpleDateFormat sdf = new SimpleDateFormat("MMM MM dd, yyyy h:mm a");
-                    String dateString = sdf.format(date);
-
-                    UserData userDaat = new UserData("Enter City", mUsername, "imageValue", dateString, mEmail, "Enter Country");
-
-                    mDatabase.child(mUsername).setValue(userDaat);
+                    //                 mDatabase = FirebaseDatabase.getInstance().getReference().child("User Profile Data");
+//
+//                    long date = System.currentTimeMillis();
+//                    SimpleDateFormat sdf = new SimpleDateFormat("MMM MM dd, yyyy h:mm a");
+//                    String dateString = sdf.format(date);
+//                    UserData userData = new UserData("Enter address", mUsername, "imageValue", dateString, mEmail);
+//
+//                    mDatabase.child(mUsername).setValue(userData);
 
 
                 } else {
@@ -229,24 +227,23 @@ public class MainActivity extends AppCompatActivity
         android.app.FragmentManager fm = getFragmentManager();
 
 
-
         if (id == R.id.nav_welcome) {
             //setFragment
-             WelcomeFragment welcomeFragment = new WelcomeFragment();
+            WelcomeFragment welcomeFragment = new WelcomeFragment();
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.fragment_container, welcomeFragment);
             fragmentTransaction.commit();
 
-            mapOpen=false;
+            mapOpen = false;
 
-        } else if  (id == R.id.nav_register) {
+        } else if (id == R.id.nav_register) {
             //setFragment
             MainFragment mainFragment = new MainFragment();
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.fragment_container, mainFragment);
             fragmentTransaction.commit();
 
-            mapOpen=false;
+            mapOpen = false;
 
         } else if (id == R.id.nav_edit) {
 
@@ -257,7 +254,7 @@ public class MainActivity extends AppCompatActivity
             fragmentTransaction.replace(R.id.fragment_container, editFragment);
             fragmentTransaction.commit();
 
-            mapOpen=false;
+            mapOpen = false;
 
         } else if (id == R.id.nav_db) {
 //
@@ -271,20 +268,22 @@ public class MainActivity extends AppCompatActivity
             fts.replace(R.id.fragment_container, databaseFragment);
             fts.commit();
 
-            mapOpen=false;
+            mapOpen = false;
 
-        } else if (id == R.id.nav_profile) {
-            //setFragment
-            Profile_Fragment profileFragment = new Profile_Fragment();
-            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.fragment_container, profileFragment);
-            fragmentTransaction.commit();
+        }
+// else if (id == R.id.nav_profile) {
+//            //setFragment
+//            Profile_Fragment profileFragment = new Profile_Fragment();
+//            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+//            fragmentTransaction.replace(R.id.fragment_container, profileFragment);
+//            fragmentTransaction.commit();
+//
+//            mapOpen=false;
+//
+//        }
+        else if (id == R.id.map_data) {
 
-            mapOpen=false;
-
-        } else if (id == R.id.map_data) {
-
-            mapOpen=true;
+            mapOpen = true;
 
 
             Profile_Fragment profileFragment = new Profile_Fragment();
