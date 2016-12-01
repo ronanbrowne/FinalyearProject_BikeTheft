@@ -4,16 +4,21 @@ package com.example.ronan.practicenavigationdrawer;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.ronan.practicenavigationdrawer.R;
@@ -25,8 +30,15 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
+import static android.R.attr.bitmap;
+import static android.app.Activity.RESULT_CANCELED;
+import static android.app.Activity.RESULT_OK;
 import static com.example.ronan.practicenavigationdrawer.MainFragment.REQUEST_IMAGE_CAPTURE;
 import static com.example.ronan.practicenavigationdrawer.R.drawable.user;
+import static com.example.ronan.practicenavigationdrawer.R.id.upload_image;
 import static com.example.ronan.practicenavigationdrawer.R.id.userProfile;
 
 /**
@@ -46,10 +58,18 @@ public class Profile_Fragment extends Fragment {
     EditText usernameET;
     EditText emailET;
     EditText addressET;
+    private ImageView upload_image;
+
 
     TextView profileHeading;
     FloatingActionButton update;
     FloatingActionButton picUpdate;
+
+    Bitmap bitmap;
+    String base64 = "No image";
+
+    String imageValue="";
+
 
 
 
@@ -63,8 +83,19 @@ public class Profile_Fragment extends Fragment {
             }
 
             user = dataSnapshot.getValue(UserData.class);
-            Log.v("Profile_fragment", user.getUsername());
-            Log.v("Profile_fragment", user.getUsername());
+            usernameET.setText(user.getUsername());
+            emailET.setText(user.getEmail());
+            addressET.setText(user.getAddress());
+
+            imageValue = user.getUser_image_In_Base64();
+
+
+            if(imageValue.equals("imageValue")){
+                //do noghting
+            }
+            else{
+                getBitMapFromString(imageValue);
+            }
         }
         UserData user = new UserData();
 
@@ -105,6 +136,7 @@ public class Profile_Fragment extends Fragment {
         profileHeading = (TextView) rootView.findViewById(R.id.userProfile);
         update = (FloatingActionButton) rootView.findViewById(R.id.floatingConfirmEditProfile);
         picUpdate = (FloatingActionButton) rootView.findViewById(R.id.updatePic);
+        upload_image = (ImageView) rootView.findViewById(R.id.profile_image);
 
         emailET.setText(email);
         profileHeading.setText(usernameGlobal);
@@ -128,6 +160,7 @@ public class Profile_Fragment extends Fragment {
                 String username =  usernameET.getText().toString();
                 String email =  emailET.getText().toString();
                 String address =  addressET.getText().toString();
+
 
 
                 UserData userData = new UserData(address,username,"imageValue","dateString",email);
@@ -175,6 +208,65 @@ public class Profile_Fragment extends Fragment {
         galleryIntent.setType("image/*");
         galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(galleryIntent, "Select Picture"), SELECT_PICTURE);
+    }
+
+    //Do this on result of activity , after we get the pic.
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 0) {
+            if (resultCode == RESULT_OK) {
+                Uri imageUri = data.getData();
+                bitmap = null;
+                try {
+                    bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), imageUri);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Log.v("Exception", " : " + e.toString());
+                }
+                upload_image.setImageBitmap(bitmap);
+                base64 = imageConvertBase64(bitmap);
+            } else if (resultCode == RESULT_CANCELED) {
+                Log.i("message", "the user cancelled the request");
+            }
+        }
+        if (requestCode == 1) {
+            if (resultCode == RESULT_OK) {
+                Bundle extras = data.getExtras();
+                Bitmap imageBitmap = (Bitmap) extras.get("data");
+                upload_image.setImageBitmap(imageBitmap);
+                base64 = imageConvertBase64(imageBitmap);
+            } else if (resultCode == RESULT_CANCELED) {
+                Log.i("message", "the user cancelled the request");
+            }
+        }
+    }
+
+    //helper method to covert bitmap image into base64 for storage in Firebase DB
+    private String imageConvertBase64(Bitmap pic) {
+        Bitmap image = pic;//your image
+        ByteArrayOutputStream bYtE = new ByteArrayOutputStream();
+        image.compress(Bitmap.CompressFormat.PNG, 100, bYtE);
+        // image.recycle();
+        byte[] byteArray = bYtE.toByteArray();
+        String imageFile = Base64.encodeToString(byteArray, Base64.DEFAULT);
+        return imageFile;
+    }
+
+    //extract bitmap helper, this sets image view
+    public void getBitMapFromString(String imageAsString) {
+        if (imageAsString != null) {
+            if (imageAsString.equals("No image") || imageAsString == null) {
+                // bike_image.setImageResource(R.drawable.not_uploaded);
+                Log.v("***", "No image Found");
+            } else {
+                byte[] decodedString = Base64.decode(imageAsString, Base64.DEFAULT);
+                Bitmap bitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                upload_image.setImageBitmap(bitmap);
+            }
+        } else {
+            Log.v("***", "Null paramater passed into getBitMapFromString");
+        }
     }
 
 }
