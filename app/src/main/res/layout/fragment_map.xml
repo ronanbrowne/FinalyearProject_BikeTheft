@@ -2,10 +2,38 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent">
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+       >
+
+
     <fragment android:id="@+id/mapf"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        class="com.google.android.gms.maps.MapFragment"></fragment>
+        class="com.google.android.gms.maps.MapFragment">
+    </fragment>
+
+        <Button
+            android:id="@+id/heatMap"
+            android:layout_marginTop="50dp"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="Heat Map" />
+
+        <Button
+            android:id="@+id/normalMap"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/heatMap"
+            android:layout_alignParentRight="true"
+            android:text="Default" />
+
+
+    </RelativeLayout>
+
+
 
 </FrameLayout>
 
