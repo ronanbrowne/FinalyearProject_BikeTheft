@@ -1,5 +1,7 @@
 package com.example.ronan.practicenavigationdrawer;
 
+import android.app.Activity;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -19,11 +21,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -58,6 +62,7 @@ import java.util.Locale;
 import static com.example.ronan.practicenavigationdrawer.R.id.make;
 import static com.example.ronan.practicenavigationdrawer.R.id.mapwhere;
 import static com.example.ronan.practicenavigationdrawer.R.id.model;
+import static com.example.ronan.practicenavigationdrawer.R.id.textView;
 import static com.google.android.gms.wearable.DataMap.TAG;
 
 
@@ -77,6 +82,9 @@ public class DatabaseFragment extends Fragment {
     EditText radius;
     Button query;
     Button closeMap;
+    private SeekBar seekBar;
+    private TextView radiousTV;
+
 
     LatLng userInput1 = new LatLng(53.3498, 6.2603);
     LatLng userInput = new LatLng(53.3498, -6.2603);
@@ -103,7 +111,7 @@ public class DatabaseFragment extends Fragment {
      ListView myListView = null;
 
 
-
+    int progress =0;
 
 
     //===================================================================================
@@ -159,7 +167,7 @@ public class DatabaseFragment extends Fragment {
         mDatabaseStolen.addValueEventListener(bikeListener);
 
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_database, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_database, container, false);
 
 
         //handel the sliding map fragment
@@ -187,7 +195,7 @@ public class DatabaseFragment extends Fragment {
                         googleMap.getUiSettings().setAllGesturesEnabled(true);
 
                         //change location of camra based on user input
-                        CameraPosition cameraPosition = new CameraPosition.Builder().target(userInput1).zoom(9f).build();
+                        CameraPosition cameraPosition = new CameraPosition.Builder().target(userInput1).zoom(7f).build();
                         CameraUpdate cameraUpdate = CameraUpdateFactory.newCameraPosition(cameraPosition);
                         googleMap.moveCamera(cameraUpdate);
                     }
@@ -197,10 +205,36 @@ public class DatabaseFragment extends Fragment {
 
 
         street = (EditText) rootView.findViewById(R.id.streetgeo);
-        radius = (EditText) rootView.findViewById(R.id.radius);
+      //  radius = (EditText) rootView.findViewById(R.id.radius);
         query = (Button) rootView.findViewById(R.id.runQuery);
         closeMap = (Button) rootView.findViewById(R.id.closeMap);
         final View loadingIndicator = rootView.findViewById(R.id.loading_indicator);
+        seekBar = (SeekBar) rootView.findViewById(R.id.seekBar);
+        radiousTV = (TextView) rootView.findViewById(R.id.radiusTV);
+
+        radiousTV.setText("Radius: " + seekBar.getProgress() + "km");
+
+
+
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progresValue, boolean fromUser) {
+                progress=0;
+                progress = progresValue;
+                radiousTV.setText("Radius: " + progress + "km");
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+        });
+
+
 
         //get and initally hide slide up map fragment
         frameLayout = (FrameLayout) rootView.findViewById(R.id.mapwhere);
@@ -272,7 +306,7 @@ public class DatabaseFragment extends Fragment {
                 frameLayout.setVisibility(View.GONE);
                 isMapFragmentVisavle =false;
                 myListView.setAdapter(bikeAdapter);
-                radius.setText("");
+                seekBar.setProgress(0);
                 street.setText("");
             }
         });
@@ -289,38 +323,34 @@ public class DatabaseFragment extends Fragment {
                             R.anim.slide);
                     frameLayout.startAnimation(bottomUp);
                 }
-                String tempRadius = radius.getText().toString();
+
                 userInputAddress = street.getText().toString();
 
                 //user validation make sure inputs not null
-                if ((userInputAddress != null && !userInputAddress.isEmpty()) || (tempRadius != null && !tempRadius.isEmpty())) {
-                    r = Integer.parseInt(radius.getText().toString());
+                if ((userInputAddress != null && !userInputAddress.isEmpty()) && (progress>0)) {
                     //getting co-ordinates
                     GeocodeAsyncTaskForQuery asyncTaskForQuery = new GeocodeAsyncTaskForQuery();
                     frameLayout.setVisibility(View.VISIBLE);
                     asyncTaskForQuery.execute();
 
-//                    if(asyncTaskForQuery.getStatus() == AsyncTask.Status.FINISHED){
-//                        drawOnMap(userInput, r);
-//                    }
+                    //hide keyboard
+                    hideKeyboardFrom(getActivity().getApplicationContext(),rootView);
 
                 } else {
-                    Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Query fields can not be left blank", Toast.LENGTH_SHORT);
-                    toast.show();
-                }
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    Toast.makeText(getActivity().getApplicationContext(), "Query fields can not be left blank", Toast.LENGTH_SHORT).show();
                 }
 
-                //method to draw circle / display markers / change listview
-             //   drawOnMap(userInput, r);
             }
         });
 
 
         return rootView;
+    }
+
+    //method to hide the keyboard just makes UI a bit cleaner after we run query
+    public static void hideKeyboardFrom(Context context, View view) {
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
 
@@ -381,7 +411,10 @@ public class DatabaseFragment extends Fragment {
                 latitude = address.getLatitude();
                 Longitude = address.getLongitude();
                 userInput = new LatLng(latitude, Longitude);
-               drawOnMap(userInput, r);
+
+                if(progress!=0) {
+                    drawOnMap(userInput, (progress * 1000));
+                }
 
                 Log.v("Co-ordinates***", "Latitude: " + address.getLatitude() + "\n" +
                         "Longitude: " + address.getLongitude() + "\n" +
@@ -452,7 +485,7 @@ public class DatabaseFragment extends Fragment {
         handelQuery();
 
         //display markers
-        CameraPosition cameraPosition = new CameraPosition.Builder().target(latLng).zoom(11f).build();
+        CameraPosition cameraPosition = new CameraPosition.Builder().target(latLng).zoom(8f).build();
         CameraUpdate cameraUpdate = CameraUpdateFactory.newCameraPosition(cameraPosition);
         googleMap.moveCamera(cameraUpdate);
 

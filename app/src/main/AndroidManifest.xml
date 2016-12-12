@@ -52,7 +52,7 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
-        <activity android:name=".WelcomeActivity"></activity>
+        <!--<activity android:name=".WelcomeActivity"></activity>-->
     </application>
 
 </manifest>

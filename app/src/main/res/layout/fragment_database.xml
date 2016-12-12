@@ -33,19 +33,40 @@
 
             <EditText
                 android:id="@+id/streetgeo"
-                android:maxLines="1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:hint="search area" />
+                android:hint="search area"
+                android:maxLines="1" />
 
-            <EditText
-                android:id="@+id/radius"
+            <RelativeLayout
                 android:layout_width="0dp"
-                android:inputType="number"
-                android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:hint="radius" />
+                android:layout_height="match_parent"
+                tools:context="com.javacodegeeks.android.seekbar.MainActivity" >
+
+                <SeekBar
+                    android:id="@+id/seekBar"
+                    android:layout_width="300dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginTop="25dp"
+                    android:layout_below="@+id/radiusTV"
+
+                    android:max="50"/>
+
+                <TextView
+                    android:id="@+id/radiusTV"
+                    tools:text="radious"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginLeft="29dp"
+                  />
+
+            </RelativeLayout>
+
 
             <Button
                 android:id="@+id/runQuery"
