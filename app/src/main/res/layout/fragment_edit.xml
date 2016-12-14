@@ -40,7 +40,6 @@
 
     <!-- Image upload layout -->
     <LinearLayout
-        android:id="@+id/container_gender"
         android:paddingTop="20dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -76,158 +75,384 @@
 
     </LinearLayout>
 
-    <!--<View-->
-        <!--android:layout_marginTop="16dp"-->
-        <!--android:layout_width="fill_parent"-->
-        <!--android:layout_height="1dp"-->
-        <!--android:background="@color/colorPrimary" />-->
-
-    <!-- Overview category -->
-    <LinearLayout
-        android:paddingTop="32dp"
+    <!-- Label -->
+    <TextView
+        android:text="Bike Details"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:textColor="@color/colorAccent"
+        android:textStyle="bold"
+
+         />
+
+
+        <LinearLayout
+            android:paddingTop="12dp"
+            android:layout_marginLeft="12dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:textStyle="bold"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="Make: " />
+
+                <!-- Make field -->
+                <EditText
+                    android:id="@+id/edit_bike_make"
+                    android:hint="Bike Make"
+                    android:layout_width="0dp"
+                    android:layout_weight="2"
+                    android:inputType="textCapWords"
+                    style="@style/EditorFieldStyle" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:textStyle="bold"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="Model: "
+                    android:id="@+id/textView2" />
+
+                <!-- Make field -->
+                <EditText
+                    android:id="@+id/edit_bike_model"
+                    android:hint="Bike Model"
+                    android:layout_width="0dp"
+                    android:layout_weight="2"
+                    android:inputType="textCapWords"
+                    style="@style/EditorFieldStyle" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:textStyle="bold"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="Colour: " />
+
+                <!-- Make field -->
+                <EditText
+                    android:id="@+id/edit_bike_colour"
+                    android:hint="Bike Colour"
+                    android:layout_width="0dp"
+                    android:layout_weight="2"
+                    android:inputType="textCapWords"
+                    style="@style/EditorFieldStyle" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:textStyle="bold"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="Frame Size: " />
+
+                <!-- Make field -->
+                <EditText
+                    android:id="@+id/edit_bike_size"
+                    android:hint="Frame Size"
+                    android:layout_width="0dp"
+                    android:layout_weight="2"
+                    android:inputType="textCapWords"
+                    style="@style/EditorFieldStyle" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:textStyle="bold"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="Other: " />
+
+                <!-- Make field -->
+                <EditText
+                    android:id="@+id/edit_othe_features"
+                    android:hint="Other"
+                    android:layout_width="0dp"
+                    android:layout_weight="2"
+                    android:inputType="textCapWords"
+                    style="@style/EditorFieldStyle" />
+
+            </LinearLayout>
+
+
+
+            </LinearLayout>
+
 
 
 
         <!-- Label -->
-        <TextView
-            android:text="Bike Details"
-            style="@style/CategoryStyle"
-            />
+        <!--<LinearLayout-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_weight="2"-->
+            <!--android:paddingLeft="4dp"-->
+            <!--android:orientation="vertical">-->
+
+            <!--<EditText-->
+                <!--android:id="@+id/edit_bike_maeke"-->
+                <!--android:hint="Bike Make"-->
+                <!--android:inputType="textCapWords"-->
+                <!--style="@style/EditorFieldStyle" />-->
+
+
+            <!--<TextView-->
+                <!--style="@style/EditorFieldStyle"-->
+                <!--android:text="Model: " />-->
+
+
+            <!--<TextView-->
+                <!--android:textStyle="bold"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="Colour: " />-->
+
+            <!--<TextView-->
+                <!--android:paddingTop="16dp"-->
+                <!--android:textStyle="bold"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="Frame Size:: " />-->
+
+
+            <!--</LinearLayout>-->
 
         <!-- Input fields -->
-        <LinearLayout
+        <!--<LinearLayout-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_weight="2"-->
+            <!--android:paddingLeft="4dp"-->
+            <!--android:orientation="vertical">-->
+
+            <!--&lt;!&ndash; Make field &ndash;&gt;-->
+            <!--<EditText-->
+                <!--android:id="@+id/edit_bike_make"-->
+                <!--android:hint="Bike Make"-->
+                <!--android:inputType="textCapWords"-->
+                <!--style="@style/EditorFieldStyle" />-->
+
+            <!--&lt;!&ndash; Model field &ndash;&gt;-->
+            <!--<EditText-->
+                <!--android:id="@+id/edit_bike_model"-->
+                <!--style="@style/EditorFieldStyle"-->
+                <!--android:hint="Bike Model"-->
+                <!--/>-->
+
+            <!--&lt;!&ndash; color field &ndash;&gt;-->
+            <!--<EditText-->
+                <!--android:id="@+id/edit_bike_colour"-->
+                <!--android:hint="Bike Colour"-->
+                <!--style="@style/EditorFieldStyle"-->
+               <!--/>-->
+
+            <!--&lt;!&ndash; size field &ndash;&gt;-->
+            <!--<EditText-->
+                <!--android:id="@+id/edit_bike_size"-->
+                <!--android:hint="Bike Frame Size"-->
+                <!--android:inputType="number"-->
+                <!--style="@style/EditorFieldStyle" />-->
+
+
+            <!--&lt;!&ndash; other field &ndash;&gt;-->
+            <!--<EditText-->
+                <!--android:id="@+id/edit_othe_features"-->
+                <!--android:hint="Other Features"-->
+                <!--style="@style/EditorFieldStyle" />-->
+
+
+
+        <!--</LinearLayout>-->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/colorAccent"
+        android:textStyle="bold"
+        android:text="Bike has been Stolen"
+        style="@style/CategoryStyle"
+        android:id="@+id/textView5" />
+
+
+    <LinearLayout
+        android:paddingTop="12dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <View
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
+             />
+
+        <CheckBox
             android:layout_width="0dp"
             android:layout_weight="2"
-            android:paddingLeft="4dp"
-            android:orientation="vertical">
+            android:layout_height="wrap_content"
+            android:text="Stolen"
+            android:id="@+id/bike_stolen"
+            style="@style/EditorFieldStyle"
+            android:checked="false" />
 
-            <!-- Make field -->
-            <EditText
-                android:id="@+id/edit_bike_make"
-                android:hint="Bike Make"
-                android:inputType="textCapWords"
-                style="@style/EditorFieldStyle" />
-
-            <!-- Model field -->
-            <EditText
-                android:id="@+id/edit_bike_model"
-                style="@style/EditorFieldStyle"
-                android:hint="Bike Model"
-                />
-
-            <!-- color field -->
-            <EditText
-                android:id="@+id/edit_bike_colour"
-                android:hint="Bike Colour"
-                style="@style/EditorFieldStyle"
-               />
-
-            <!-- size field -->
-            <EditText
-                android:id="@+id/edit_bike_size"
-                android:hint="Bike Frame Size"
-                android:inputType="number"
-                style="@style/EditorFieldStyle" />
-
-
-            <!-- other field -->
-            <EditText
-                android:id="@+id/edit_othe_features"
-                android:hint="Other Features"
-                style="@style/EditorFieldStyle" />
-
-
-
-        </LinearLayout>
     </LinearLayout>
 
 
     <LinearLayout
-        android:paddingTop="32dp"
+        android:id="@+id/geoLocationLayout"
+        android:layout_marginLeft="20dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-
-    <!-- Stolen Bike  -->
+        android:visibility="gone"
+        android:orientation="horizontal" >
 
         <TextView
-            android:layout_marginTop="-9dp"
-            android:text="Bike has been Stolen"
-            style="@style/CategoryStyle"
+            android:id="@+id/lastSeen"
+            android:textStyle="bold"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Last Seen: " />
+
+        <EditText
+            android:id="@+id/edit_last_seen"
+            android:layout_marginRight="60dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
             />
 
 
-        <LinearLayout
+
+        <!-- geo loaction seen field -->
+        <android.support.design.widget.FloatingActionButton
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_width="0dp"
-            android:layout_weight="2"
-            android:paddingLeft="4dp"
-            android:orientation="vertical">
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="16dp"
+            android:clickable="true"
+            app:fabSize="mini"
+            app:srcCompat="@drawable/ic_add_location_black_24dp"
+            android:id="@+id/floatingGeoCode"
+            android:layout_gravity="right"/>
 
-            <CheckBox
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Stolen"
 
-                android:id="@+id/bike_stolen"
-                style="@style/EditorFieldStyle"
-                android:checked="false" />
-
-            <!-- geo code layout -->
-            <LinearLayout
-                android:paddingTop="20dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-            <!-- last seen field -->
-            <EditText
-                android:id="@+id/edit_last_seen"
-                android:hint="Last known Location"
-                android:visibility="invisible"
-                android:paddingTop="16dp"
-                android:layout_width="wrap_content"
-
-                android:layout_height="wrap_content"
-                />
-
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    />
-
-                <!-- geo loaction seen field -->
-                <android.support.design.widget.FloatingActionButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="16dp"
-                    android:layout_marginTop="16dp"
-                    android:clickable="true"
-                    android:visibility="invisible"
-                    app:fabSize="mini"
-                    app:srcCompat="@drawable/ic_add_location_black_24dp"
-                    android:id="@+id/floatingGeoCode"
-                    android:layout_gravity="right"/>
-
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/infoText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                tools:text="output"
-                android:paddingTop="16dp"
-                style="@style/CategoryStyle"
-                />
-
-        </LinearLayout>
     </LinearLayout>
+v
+
+
+    <!--<LinearLayout-->
+        <!--android:paddingTop="32dp"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:orientation="horizontal">-->
+
+
+    <!--&lt;!&ndash; Stolen Bike  &ndash;&gt;-->
+
+
+
+
+   <!--&lt;!&ndash;//     <LinearLayout&ndash;&gt;-->
+            <!--&lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:layout_width="0dp"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:layout_weight="2"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:paddingLeft="4dp"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:orientation="vertical">&ndash;&gt;-->
+
+            <!--&lt;!&ndash;<CheckBox&ndash;&gt;-->
+                <!--&lt;!&ndash;android:layout_width="wrap_content"&ndash;&gt;-->
+                <!--&lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
+                <!--&lt;!&ndash;android:text="Stolen"&ndash;&gt;-->
+
+                <!--&lt;!&ndash;android:id="@+id/bike_stolen"&ndash;&gt;-->
+                <!--&lt;!&ndash;style="@style/EditorFieldStyle"&ndash;&gt;-->
+                <!--&lt;!&ndash;android:checked="false" />&ndash;&gt;-->
+
+            <!--&lt;!&ndash;&lt;!&ndash; geo code layout &ndash;&gt;&ndash;&gt;-->
+            <!--&lt;!&ndash;<LinearLayout&ndash;&gt;-->
+                <!--&lt;!&ndash;android:paddingTop="20dp"&ndash;&gt;-->
+                <!--&lt;!&ndash;android:layout_width="match_parent"&ndash;&gt;-->
+                <!--&lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
+                <!--&lt;!&ndash;android:orientation="horizontal">&ndash;&gt;-->
+
+            <!--&lt;!&ndash;&lt;!&ndash; last seen field &ndash;&gt;&ndash;&gt;-->
+            <!--&lt;!&ndash;<EditText&ndash;&gt;-->
+                <!--&lt;!&ndash;android:id="@+id/edit_last_seen"&ndash;&gt;-->
+                <!--&lt;!&ndash;android:hint="Last known Location"&ndash;&gt;-->
+                <!--&lt;!&ndash;android:visibility="invisible"&ndash;&gt;-->
+                <!--&lt;!&ndash;android:paddingTop="16dp"&ndash;&gt;-->
+                <!--&lt;!&ndash;android:layout_width="wrap_content"&ndash;&gt;-->
+
+                <!--&lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
+                <!--&lt;!&ndash;/>&ndash;&gt;-->
+
+                <!--&lt;!&ndash;<View&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:layout_width="0dp"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:layout_height="0dp"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:layout_weight="1"&ndash;&gt;-->
+                    <!--&lt;!&ndash;/>&ndash;&gt;-->
+
+                <!--&lt;!&ndash;&lt;!&ndash; geo loaction seen field &ndash;&gt;&ndash;&gt;-->
+                <!--&lt;!&ndash;<android.support.design.widget.FloatingActionButton&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:layout_width="wrap_content"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:layout_marginRight="16dp"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:layout_marginTop="16dp"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:clickable="true"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:visibility="invisible"&ndash;&gt;-->
+                    <!--&lt;!&ndash;app:fabSize="mini"&ndash;&gt;-->
+                    <!--&lt;!&ndash;app:srcCompat="@drawable/ic_add_location_black_24dp"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:id="@+id/floatingGeoCode"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:layout_gravity="right"/>&ndash;&gt;-->
+
+            <!--&lt;!&ndash;</LinearLayout>&ndash;&gt;-->
+
+            <!--<TextView-->
+                <!--android:id="@+id/infoText"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--tools:text="output"-->
+                <!--android:paddingTop="16dp"-->
+                <!--style="@style/CategoryStyle"-->
+                <!--/>-->
+
+        <!--&lt;!&ndash;</LinearLayout>&ndash;&gt;-->
+    <!--</LinearLayout>-->
 
     <LinearLayout
         android:paddingTop="20dp"

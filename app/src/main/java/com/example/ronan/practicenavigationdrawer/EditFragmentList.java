@@ -16,6 +16,7 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.google.firebase.auth.FirebaseAuth;
@@ -132,8 +133,8 @@ public class EditFragmentList extends Fragment {
                 DataHolderClass.getInstance().setDistributor_id(itemRef.getKey());
 
                     //*testing
-              //  Toast toast = Toast.makeText(getActivity().getApplicationContext(), itemRef.getKey(), Toast.LENGTH_SHORT);
-              //  toast.show();
+                Toast toast = Toast.makeText(getActivity().getApplicationContext(), itemRef.getKey(), Toast.LENGTH_SHORT);
+                toast.show();
 
                 EditFragment editFragment = new EditFragment();
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();

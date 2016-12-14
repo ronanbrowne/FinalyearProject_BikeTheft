@@ -24,6 +24,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -63,11 +64,13 @@ public class EditFragment extends Fragment {
     private EditText bikeSize;
     private EditText bikeLastSeen;
     private EditText bikeOther;
+    private TextView lastSeen;
     private CheckBox bikeStolen;
     private FloatingActionButton imageUpload;
     private FloatingActionButton comfirmEdit;
     private FloatingActionButton geoCode;
     private FloatingActionButton floatingDelete;
+    private LinearLayout geoCodeArea;
     private ImageView upload_image;
     private boolean geoCodeClicked;
 
@@ -150,6 +153,17 @@ public class EditFragment extends Fragment {
             for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                 stolenKeysList.add(snapshot.getKey());
             }
+
+            //looping through arraylist of DB keys for all stolen bikes
+            for (String temp : stolenKeysList) {
+                //if the currect keq is also in stolen db mark as true
+                if (key_passed_fromList.equals(temp)) {
+                    inStolenDB = true;
+                } else {
+                    inStolenDB = false;
+                }
+            }//end for
+            Log.v("**stole",""+inStolenDB);
         }
 
         @Override
@@ -184,7 +198,9 @@ public class EditFragment extends Fragment {
             base64 = mybike.getImageBase64();
             getBitMapFromString(base64);
 
-            //handel chackbox
+
+
+            //handel checkbox
             if (mybike.isStolen()) {
                 bikeStolen.setChecked(true);
                 Log.v(TAG, "if**" + bikeStolen.toString());
@@ -214,13 +230,21 @@ public class EditFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+
+        key_passed_fromList = DataHolderClass.getInstance().getDistributor_id();
+
+
+
+        stolenBikesDatabse = FirebaseDatabase.getInstance().getReference().child("Stolen Bikes");
+        stolenBikesDatabse.addValueEventListener(ifStolen);
+
+
         geoCodeClicked = false;
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_edit, container, false);
 
         //now get anywhere(Fragment, activity, class)
         //http://stackoverflow.com/questions/27484245/pass-data-between-two-fragments-without-using-activity
-        key_passed_fromList = DataHolderClass.getInstance().getDistributor_id();
 
         mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         if (mFirebaseUser != null) {
@@ -229,8 +253,11 @@ public class EditFragment extends Fragment {
         }
 
 
+
+
         //get UI id's
-        infoText = (TextView) rootView.findViewById(R.id.infoText);
+      //  infoText = (TextView) rootView.findViewById(R.id.infoText);
+        lastSeen = (TextView) rootView.findViewById(R.id.lastSeen);
         bikeMake = (EditText) rootView.findViewById(R.id.edit_bike_make);
         bikeLastSeen = (EditText) rootView.findViewById(R.id.edit_last_seen);
         bikeModel = (EditText) rootView.findViewById(R.id.edit_bike_model);
@@ -243,7 +270,8 @@ public class EditFragment extends Fragment {
         comfirmEdit = (FloatingActionButton) rootView.findViewById(R.id.floatingConfirmEdit);
         geoCode = (FloatingActionButton) rootView.findViewById(R.id.floatingGeoCode);
         floatingDelete = (FloatingActionButton) rootView.findViewById(R.id.floatingDelete);
-        // update = (Button) rootView.findViewById(R.id.button);
+        geoCodeArea = (LinearLayout) rootView.findViewById(R.id.geoLocationLayout);
+           // update = (Button) rootView.findViewById(R.id.button);
         // Inflate the layout for this fragment
 
         //listener for checkbox, reveal extra stolen options if stolen
@@ -251,12 +279,9 @@ public class EditFragment extends Fragment {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (bikeStolen.isChecked()) {
-                    bikeLastSeen.setVisibility(View.VISIBLE);
-                    geoCode.setVisibility(View.VISIBLE);
+                    geoCodeArea.setVisibility(View.VISIBLE);
                 } else {
-                    bikeLastSeen.setVisibility(View.INVISIBLE);
-                    geoCode.setVisibility(View.INVISIBLE);
-
+                    geoCodeArea.setVisibility(View.GONE);
                 }
             }
         });
@@ -275,10 +300,8 @@ public class EditFragment extends Fragment {
 
         //seting up firebase DB refrences
         mDatabase = FirebaseDatabase.getInstance().getReference().child("Bikes Registered By User").child(email).child(key_passed_fromList);
-        stolenBikesDatabse = FirebaseDatabase.getInstance().getReference().child("Stolen Bikes");
-
         mDatabase.addValueEventListener(bikeListener);
-        stolenBikesDatabse.addValueEventListener(ifStolen);
+
         //update buton
         comfirmEdit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -300,15 +323,7 @@ public class EditFragment extends Fragment {
                 mDatabase.setValue(newBike);
 
 
-                //looping through arraylist of DB keys for all stolen bikes
-                for (String temp : stolenKeysList) {
-                    //if the currect keq is also in stolen db mark as true
-                    if (key_passed_fromList.equals(temp)) {
-                        inStolenDB = true;
-                    } else {
-                        inStolenDB = false;
-                    }
-                }//end for
+
 
                 if (stolen) {
 
@@ -389,7 +404,7 @@ public class EditFragment extends Fragment {
 
         @Override
         protected void onPreExecute() {
-            infoText.setVisibility(View.INVISIBLE);
+           // infoText.setVisibility(View.INVISIBLE);
             name = bikeLastSeen.getText().toString();
             // latitudeArray = Double.parseDouble(latitudeEdit.getText().toString());
             // longitude = Double.parseDouble(longitudeEdit.getText().toString());
@@ -412,8 +427,8 @@ public class EditFragment extends Fragment {
 
         protected void onPostExecute(Address address) {
             if (address == null) {
-                infoText.setVisibility(View.VISIBLE);
-                infoText.setText("No addrress");
+//                infoText.setVisibility(View.VISIBLE);
+//                infoText.setText("No addrress");
             } else {
                 String addressName = "";
                 for (int i = 0; i < address.getMaxAddressLineIndex(); i++) {
@@ -423,10 +438,10 @@ public class EditFragment extends Fragment {
                 latitude = address.getLatitude();
                 longitud = address.getLongitude();
 
-                infoText.setVisibility(View.VISIBLE);
-                infoText.setText("Latitude: " + address.getLatitude() + "\n" +
-                        "Longitude: " + address.getLongitude() + "\n" +
-                        "Address: " + addressName);
+//                infoText.setVisibility(View.VISIBLE);
+//                infoText.setText("Latitude: " + address.getLatitude() + "\n" +
+//                        "Longitude: " + address.getLongitude() + "\n" +
+//                        "Address: " + addressName);
 
 
                 Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Co-ordinates added to theft hotspot map", Toast.LENGTH_SHORT);
