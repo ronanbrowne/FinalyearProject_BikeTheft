@@ -76,7 +76,8 @@ public class EditFragment extends Fragment {
 
     String base64 = "No image";
     String email = "";
-    String emailFull = "";
+    private String emailFull ="";
+
 
     String key_passed_fromList;
     double latitude = 0;
@@ -213,7 +214,7 @@ public class EditFragment extends Fragment {
         }
 
 
-        BikeData mybike = new BikeData("test make", 22, "red", "other", true, "dfsffdss", "Model", "last seen", latitude, longitud,emailFull);
+        BikeData mybike = new BikeData("test make", 22, "red", "other", true, "dfsffdss", "Model", "last seen", latitude, longitud,email);
 
         @Override
         public void onCancelled(DatabaseError databaseError) {
@@ -250,7 +251,7 @@ public class EditFragment extends Fragment {
         mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         if (mFirebaseUser != null) {
             emailFull = mFirebaseUser.getEmail();
-            email = email.split("@")[0];
+            email = emailFull.split("@")[0];
         }
 
 

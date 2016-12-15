@@ -151,7 +151,7 @@ public class DatabaseFragment extends Fragment {
 
 
                             String[] email  ={stolenBike.getRegisteredBy()};
-                            String subject ="Suspected sighting of your bike "+stolenBike.getMake();
+                            String subject ="Suspected sighting of your bike: "+stolenBike.getMake();
                             String body ="Hello, \n\n I have potentially spotted the bike you registered as stolen ("+(stolenBike.getColor()+" "+stolenBike.getMake())+"). "+
                                     "\n\n This sighting was at the following location "+input_from_reported_Location+"\n\n" +
                                     "Please reply to this email for further details." +
@@ -161,7 +161,7 @@ public class DatabaseFragment extends Fragment {
 
 
                             //feedback
-                            Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Notifiacion sent to origional owner", Toast.LENGTH_SHORT);
+                            Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Tell origional owner where you may have seen their bike", Toast.LENGTH_SHORT);
                             toast.show();
 
 
@@ -626,6 +626,22 @@ public class DatabaseFragment extends Fragment {
 
 
         myListView.setAdapter(bikeAdapterQuery);
+
+        myListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                stolenBike = bikeAdapterQuery.getItem(i);
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+                builder.setMessage("Are you sure you wish to report a sighting of this bike?" +
+                        "\nthis will notify the origional owner")
+                        .setPositiveButton("Report Sighting", dialogClickListener)
+                        .setNegativeButton("Cancel", dialogClickListener).show();
+
+            }
+        });//end onClick for listView
+
 
 
 

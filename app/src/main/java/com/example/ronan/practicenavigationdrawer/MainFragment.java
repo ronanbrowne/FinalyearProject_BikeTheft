@@ -104,9 +104,6 @@ public class MainFragment extends Fragment {
             email = mFirebaseUser.getEmail();
         }
 
-        //for dev purposes output whos logged in , may remove
-        Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Logged in as: " + email, Toast.LENGTH_SHORT);
-        toast.show();
 
 
         // Inflate the layout for this fragment
@@ -173,6 +170,17 @@ public class MainFragment extends Fragment {
 
                     //single entry
                     mDatabase.child(email).push().setValue(newBike);
+
+                    bikeMake.setText("");
+                    bikeModel.setText("");
+                    bikeColor.setText("");
+                    bikeFrameSize.setText("");
+                    bikeOther.setText("");
+                    mThumbnailPreview.setImageResource(R.drawable.uploadimage);
+
+                    //setFragment
+                    FragmentManager fm = getFragmentManager();
+                    fm.beginTransaction().replace(R.id.fragment_container, new WelcomeFragment()).commit();
 
                     //push is for multiple objects gives unique ID
                     // mDatabase.push().setValue(newBike);
