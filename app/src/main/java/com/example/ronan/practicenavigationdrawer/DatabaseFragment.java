@@ -1,12 +1,16 @@
 package com.example.ronan.practicenavigationdrawer;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -22,6 +26,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -101,6 +106,7 @@ public class DatabaseFragment extends Fragment {
     private GoogleMap googleMap;
 
     BikeData mybike = new BikeData();
+    BikeData stolenBike;
 
     ArrayList<Double> latitudeArray = new ArrayList<>();
     ArrayList<Double> longditudeArray = new ArrayList<>();
@@ -112,6 +118,77 @@ public class DatabaseFragment extends Fragment {
 
 
     int progress =0;
+
+    private String input_from_reported_Location = "";
+
+    //dialog listener for pop up to confirm report sightings
+    DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            switch (which) {
+                case DialogInterface.BUTTON_POSITIVE:
+
+
+                    //custom alert box
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                    builder.setTitle("Sighting Location");
+                    //grab custom layout
+                    View viewInflated = LayoutInflater.from(getContext()).inflate(R.layout.report_stolen_dialog, (ViewGroup) getView(), false);
+                    // Set up the input
+                    final EditText input = (EditText) viewInflated.findViewById(R.id.input);
+                    // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+                    builder.setView(viewInflated);
+
+                    // Set up the buttons
+                    builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+
+                            input_from_reported_Location = input.getText().toString();
+
+
+
+
+                            String[] email  ={stolenBike.getRegisteredBy()};
+                            String subject ="Suspected sighting of your bike "+stolenBike.getMake();
+                            String body ="Hello, \n\n I have potentially spotted the bike you registered as stolen ("+(stolenBike.getColor()+" "+stolenBike.getMake())+"). "+
+                                    "\n\n This sighting was at the following location "+input_from_reported_Location+"\n\n" +
+                                    "Please reply to this email for further details." +
+                                    "\n\n Regards.";
+
+                            composeEmail(email,subject, body );
+
+
+                            //feedback
+                            Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Notifiacion sent to origional owner", Toast.LENGTH_SHORT);
+                            toast.show();
+
+
+                        }
+                    });
+                    builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+
+                    builder.show();
+
+
+
+                    break;
+
+                case DialogInterface.BUTTON_NEGATIVE:
+
+                    //feedback
+                    Toast toastCanceled = Toast.makeText(getActivity().getApplicationContext(), "Canceled", Toast.LENGTH_SHORT);
+                    toastCanceled.show();
+                    break;
+            }
+        }
+    };
 
 
     //===================================================================================
@@ -295,6 +372,25 @@ public class DatabaseFragment extends Fragment {
         };
         //set adapter on our listView
         myListView.setAdapter(bikeAdapter);
+
+
+
+        myListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                stolenBike = bikeAdapter.getItem(i);
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+                builder.setMessage("Are you sure you wish to report a sighting of this bike?" +
+                        "\nthis will notify the origional owner")
+                        .setPositiveButton("Report Sighting", dialogClickListener)
+                        .setNegativeButton("Cancel", dialogClickListener).show();
+
+            }
+        });//end onClick for listView
+
+
 
         //click to close map and re-set the listview returning default query of all
         closeMap.setOnClickListener(new View.OnClickListener() {
@@ -532,8 +628,21 @@ public class DatabaseFragment extends Fragment {
         myListView.setAdapter(bikeAdapterQuery);
 
 
+
+
     }//end query
 
+
+    public void composeEmail(String[] addresses, String subject, String body) {
+        Intent intent = new Intent(Intent.ACTION_SENDTO);
+        intent.setData(Uri.parse("mailto:")); // only email apps should handle this
+        intent.putExtra(Intent.EXTRA_EMAIL, addresses);
+        intent.putExtra(Intent.EXTRA_SUBJECT, subject);
+        intent.putExtra(Intent.EXTRA_TEXT, body);
+        if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+            startActivity(intent);
+        }
+    }
 
 
 }//end class
