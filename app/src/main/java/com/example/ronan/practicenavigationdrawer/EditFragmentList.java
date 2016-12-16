@@ -40,11 +40,31 @@ public class EditFragmentList extends Fragment {
     private DatabaseReference usersBikesDatabase;
     private String email;
     ImageView bike_image;
-
+    private TextView noData;
+    private View loadingIndicator;
 
     public EditFragmentList() {
         // Required empty public constructor
     }
+
+    ValueEventListener checkList = new ValueEventListener() {
+        @Override
+        public void onDataChange(DataSnapshot dataSnapshot) {
+            if(dataSnapshot.getValue()!=null) {
+                noData.setVisibility(View.GONE);
+            }
+            else{
+                noData.setVisibility(View.VISIBLE);
+                loadingIndicator.setVisibility(View.GONE);
+
+            }
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+
+        }
+    };
 
 
     @Override
@@ -61,8 +81,8 @@ public class EditFragmentList extends Fragment {
 
         final ListView myListView = (ListView) rootView.findViewById(R.id.list);
         //  get ID of loading bar
-        final View loadingIndicator = rootView.findViewById(R.id.loading_indicator_edit);
-
+        loadingIndicator = rootView.findViewById(R.id.loading_indicator_edit);
+        noData = (TextView) rootView.findViewById(R.id.empty_view_Notification);
 
         //set the divider
         myListView.setDivider(ContextCompat.getDrawable(getActivity(), R.drawable.divider));
@@ -70,6 +90,7 @@ public class EditFragmentList extends Fragment {
 
         //Firebase DB setup
         usersBikesDatabase = FirebaseDatabase.getInstance().getReference().child("Bikes Registered By User").child(email);
+        usersBikesDatabase.addValueEventListener(checkList);
 
         // here we set content of list items
         final FirebaseListAdapter<BikeData> bikeAdapter = new FirebaseListAdapter<BikeData>

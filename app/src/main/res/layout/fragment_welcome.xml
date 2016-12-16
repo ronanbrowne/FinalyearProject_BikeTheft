@@ -126,7 +126,7 @@
             android:layout_marginRight="8dp"
             app:layout_anchor="@id/floatingConfirmEdit"
             app:layout_anchorGravity="top|center|"
-            android:text="Edit Profile"/>
+            android:text="Edit                "/>
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/floatingConfirmEdit"

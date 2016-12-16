@@ -4,10 +4,8 @@ import android.annotation.TargetApi;
 import android.app.Fragment;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -19,10 +17,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,9 +26,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.Circle;
-import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -43,17 +36,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.heatmaps.HeatmapTileProvider;
 
-import org.json.JSONException;
-
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-
-import static com.example.ronan.practicenavigationdrawer.R.drawable.user;
-import static com.google.android.gms.internal.zzsr.My;
 
 
 public class GmapFragment extends Fragment implements OnMapReadyCallback {
@@ -76,14 +62,18 @@ public class GmapFragment extends Fragment implements OnMapReadyCallback {
     private DatabaseReference stolenBikesDatabse;
     BikeData mybike = new BikeData();
 
-    List<LatLng> coOr = new ArrayList<>();
+    List<LatLng> mapLocations = new ArrayList<>();
 
 
     //declaring ValueEvent Listener
     ValueEventListener bikeListener = new ValueEventListener() {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
-            coOr.clear();
+            mapLocations.clear();
+
+            if (dataSnapshot.getValue(BikeData.class) == null) {
+                Toast.makeText(getActivity().getApplicationContext(), "No bikes have been listed as stolen", Toast.LENGTH_SHORT).show();
+            }
 
             for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
 
@@ -92,10 +82,10 @@ public class GmapFragment extends Fragment implements OnMapReadyCallback {
 
 
                 mybike = snapshot.getValue(BikeData.class);
-
+                LatLng dub = new LatLng(53.3498 ,-6.2603);
                 //create LatLong obj to store co-ordinates returned from bike date.
                 LatLng coOrdinates = new LatLng(mybike.getLatitude(), mybike.getLongditude());
-                coOr.add(coOrdinates);
+                mapLocations.add(coOrdinates);
 
                 //  **CODE RELATED TO CLUSTERS . COMPLEX TO IMPLEMEND TITLE SNIPPET, RETURN TO AT LATER STAGE **
 
@@ -107,7 +97,7 @@ public class GmapFragment extends Fragment implements OnMapReadyCallback {
 
 
                 //move Camera and add marker to coOrdinates position
-                gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coOrdinates, 6));
+                gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(dub, 6));
 
 
 
@@ -294,17 +284,24 @@ public class GmapFragment extends Fragment implements OnMapReadyCallback {
 
     private void addHeatMap() {
         gMap.clear();
-        // Get the data: latitude/longitude positions of police stations.
-        HeatmapTileProvider mProvider = new HeatmapTileProvider.Builder()
-                .data(coOr).radius(35)
-                .build();
-        // Add a tile overlay to the map, using the heat map tile provider.
-        mOverlay = gMap.addTileOverlay(new TileOverlayOptions().tileProvider(mProvider));
-        mOverlay.setVisible(true);
+
+        if(!mapLocations.isEmpty()) {
+            // Get the data: latitude/longitude positions of police stations.
+            HeatmapTileProvider mProvider = new HeatmapTileProvider.Builder()
+                    .data(mapLocations).radius(35)
+                    .build();
+            // Add a tile overlay to the map, using the heat map tile provider.
+            mOverlay = gMap.addTileOverlay(new TileOverlayOptions().tileProvider(mProvider));
+            mOverlay.setVisible(true);
+        }else{
+            Toast.makeText(getActivity().getApplicationContext(), "No map data available", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void removeHeatMap() {
-        mOverlay.remove();
+        if(mOverlay!=null) {
+            mOverlay.remove();
+        }
     }
 
 

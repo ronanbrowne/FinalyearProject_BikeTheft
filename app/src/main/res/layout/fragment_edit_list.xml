@@ -34,15 +34,19 @@ android:paddingTop="60dp"
     android:orientation="vertical" />
 
 
-<!-- Empty view is only visible when the list has no items. ***************************************to be implemented-->
-<TextView
-    android:id="@+id/empty_view"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_centerInParent="true"
-    android:textAppearance="?android:textAppearanceMedium" />
+<!-- Empty view is only visible when the list has no items-->
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/empty_view_Notification"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="50dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerInParent="true"
+        android:text="No bikes associated with this user"
+        android:textAppearance="?android:textAppearanceMedium" />
 
-<!-- Loading indicator is only shown before the first load -->
+<!--Loading indicator is only shown before the first load -->
 <ProgressBar
     android:id="@+id/loading_indicator_edit"
     style="@style/Widget.AppCompat.ProgressBar"

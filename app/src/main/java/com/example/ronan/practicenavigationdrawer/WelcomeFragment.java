@@ -43,6 +43,7 @@ public class WelcomeFragment extends Fragment {
     FloatingActionButton floatingEditProfile;
     String key_passed_fromList;
     String email = "";
+    String emailFull = "";
 
 
     long countStolen;
@@ -125,8 +126,8 @@ public class WelcomeFragment extends Fragment {
 
         mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         if (mFirebaseUser != null) {
-            email = mFirebaseUser.getEmail();
-            email = email.split("@")[0];
+            emailFull = mFirebaseUser.getEmail();
+            email = emailFull.split("@")[0];
         }
 
 
@@ -142,7 +143,7 @@ public class WelcomeFragment extends Fragment {
         registered = (TextView) rootView.findViewById(R.id.bikesRegistered);
         stolen = (TextView) rootView.findViewById(R.id.personalStolen);
         systemStolen = (TextView) rootView.findViewById(R.id.totalStolen);
-        user = (TextView) rootView.findViewById(R.id.userProfile);
+       user = (TextView) rootView.findViewById(R.id.userProfile);
         floatingEditProfile = (FloatingActionButton) rootView.findViewById(R.id.floatingConfirmEdit);
         profielPic = (CircleImageView) rootView.findViewById(R.id.profile_image);
 
@@ -190,7 +191,7 @@ public class WelcomeFragment extends Fragment {
                     if (bike.getRegisteredBy() != null) {
 
 
-                        if (bike.getRegisteredBy().equals(email)) {
+                        if (bike.getRegisteredBy().equals(emailFull)) {
                             thisStolen++;
                             Log.v("**reg", bike.getRegisteredBy());
 

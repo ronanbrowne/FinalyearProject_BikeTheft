@@ -17,7 +17,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -54,7 +53,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.maps.android.SphericalUtil;
 
@@ -64,10 +62,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
-import static com.example.ronan.practicenavigationdrawer.R.id.make;
 import static com.example.ronan.practicenavigationdrawer.R.id.mapwhere;
-import static com.example.ronan.practicenavigationdrawer.R.id.model;
-import static com.example.ronan.practicenavigationdrawer.R.id.textView;
 import static com.google.android.gms.wearable.DataMap.TAG;
 
 
@@ -89,6 +84,8 @@ public class DatabaseFragment extends Fragment {
     Button closeMap;
     private SeekBar seekBar;
     private TextView radiousTV;
+    private TextView noDataMessage;
+    private View loadingIndicator;
 
 
     LatLng userInput1 = new LatLng(53.3498, 6.2603);
@@ -114,10 +111,10 @@ public class DatabaseFragment extends Fragment {
     ArrayList<String> bikekey = new ArrayList<>();
 
 
-     ListView myListView = null;
+    ListView myListView = null;
 
 
-    int progress =0;
+    int progress = 0;
 
     private String input_from_reported_Location = "";
 
@@ -148,16 +145,14 @@ public class DatabaseFragment extends Fragment {
                             input_from_reported_Location = input.getText().toString();
 
 
-
-
-                            String[] email  ={stolenBike.getRegisteredBy()};
-                            String subject ="Suspected sighting of your bike: "+stolenBike.getMake();
-                            String body ="Hello, \n\n I have potentially spotted the bike you registered as stolen ("+(stolenBike.getColor()+" "+stolenBike.getMake())+"). "+
-                                    "\n\n This sighting was at the following location "+input_from_reported_Location+"\n\n" +
+                            String[] email = {stolenBike.getRegisteredBy()};
+                            String subject = "Suspected sighting of your bike: " + stolenBike.getMake();
+                            String body = "Hello, \n\n I have potentially spotted the bike you registered as stolen (" + (stolenBike.getColor() + " " + stolenBike.getMake()) + "). " +
+                                    "\n\n This sighting was at the following location " + input_from_reported_Location + "\n\n" +
                                     "Please reply to this email for further details." +
                                     "\n\n Regards.";
 
-                            composeEmail(email,subject, body );
+                            composeEmail(email, subject, body);
 
 
                             //feedback
@@ -175,7 +170,6 @@ public class DatabaseFragment extends Fragment {
                     });
 
                     builder.show();
-
 
 
                     break;
@@ -199,16 +193,26 @@ public class DatabaseFragment extends Fragment {
     ValueEventListener bikeListener = new ValueEventListener() {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
-            latitudeArray.clear();
-            longditudeArray.clear();
-            bikeReturned.clear();
-            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                mybike = snapshot.getValue(BikeData.class);
-                latitudeArray.add(mybike.getLatitude());
-                longditudeArray.add(mybike.getLongditude());
-                Log.v("nci", Arrays.toString(latitudeArray.toArray()));
-                Log.v("nci", Arrays.toString(longditudeArray.toArray()));
-                bikeReturned.add(mybike);
+
+            if (dataSnapshot.getValue() != null) {
+                noDataMessage.setVisibility(View.GONE);
+                latitudeArray.clear();
+                longditudeArray.clear();
+                bikeReturned.clear();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    mybike = snapshot.getValue(BikeData.class);
+                    latitudeArray.add(mybike.getLatitude());
+                    longditudeArray.add(mybike.getLongditude());
+                    Log.v("nci", Arrays.toString(latitudeArray.toArray()));
+                    Log.v("nci", Arrays.toString(longditudeArray.toArray()));
+                    bikeReturned.add(mybike);
+                }//end loop
+            }//end if
+            else {
+                noDataMessage.setVisibility(View.VISIBLE);
+                loadingIndicator.setVisibility(View.GONE);
+
+
             }
         }
 
@@ -282,22 +286,22 @@ public class DatabaseFragment extends Fragment {
 
 
         street = (EditText) rootView.findViewById(R.id.streetgeo);
-      //  radius = (EditText) rootView.findViewById(R.id.radius);
+        //  radius = (EditText) rootView.findViewById(R.id.radius);
         query = (Button) rootView.findViewById(R.id.runQuery);
         closeMap = (Button) rootView.findViewById(R.id.closeMap);
-        final View loadingIndicator = rootView.findViewById(R.id.loading_indicator);
+        loadingIndicator = rootView.findViewById(R.id.loading_indicator);
         seekBar = (SeekBar) rootView.findViewById(R.id.seekBar);
         radiousTV = (TextView) rootView.findViewById(R.id.radiusTV);
+        noDataMessage = (TextView) rootView.findViewById(R.id.empty_view_Notification);
 
         radiousTV.setText("Radius: " + seekBar.getProgress() + "km");
-
 
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int progresValue, boolean fromUser) {
-                progress=0;
+                progress = 0;
                 progress = progresValue;
                 radiousTV.setText("Radius: " + progress + "km");
             }
@@ -312,20 +316,14 @@ public class DatabaseFragment extends Fragment {
         });
 
 
-
         //get and initally hide slide up map fragment
         frameLayout = (FrameLayout) rootView.findViewById(R.id.mapwhere);
         frameLayout.setVisibility(View.GONE);
 
-      //  ListView
+        //  ListView
         myListView = (ListView) rootView.findViewById(R.id.list);
         myListView.setDivider(ContextCompat.getDrawable(getActivity(), R.drawable.divider));
         myListView.setDividerHeight(1);
-
-
-
-
-
 
 
         //===================================================================================
@@ -340,9 +338,10 @@ public class DatabaseFragment extends Fragment {
                 mDatabaseStolen.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        //
+
                         loadingIndicator.setVisibility(View.GONE);
                     }
+
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
 
@@ -374,7 +373,6 @@ public class DatabaseFragment extends Fragment {
         myListView.setAdapter(bikeAdapter);
 
 
-
         myListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -391,7 +389,6 @@ public class DatabaseFragment extends Fragment {
         });//end onClick for listView
 
 
-
         //click to close map and re-set the listview returning default query of all
         closeMap.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -400,8 +397,22 @@ public class DatabaseFragment extends Fragment {
                         R.anim.slidedown);
                 frameLayout.startAnimation(backDoww);
                 frameLayout.setVisibility(View.GONE);
-                isMapFragmentVisavle =false;
+                isMapFragmentVisavle = false;
                 myListView.setAdapter(bikeAdapter);
+                myListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                        stolenBike = bikeAdapter.getItem(i);
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+                        builder.setMessage("Are you sure you wish to report a sighting of this bike?" +
+                                "\nthis will notify the origional owner")
+                                .setPositiveButton("Report Sighting", dialogClickListener)
+                                .setNegativeButton("Cancel", dialogClickListener).show();
+
+                    }
+                });//end onClick for listView
                 seekBar.setProgress(0);
                 street.setText("");
             }
@@ -413,7 +424,7 @@ public class DatabaseFragment extends Fragment {
             public void onClick(View view) {
 
                 //only do slide up animation if map was previously hidden
-                if(!isMapFragmentVisavle) {
+                if (!isMapFragmentVisavle) {
                     isMapFragmentVisavle = true;
                     Animation bottomUp = AnimationUtils.loadAnimation(getContext(),
                             R.anim.slide);
@@ -423,14 +434,14 @@ public class DatabaseFragment extends Fragment {
                 userInputAddress = street.getText().toString();
 
                 //user validation make sure inputs not null
-                if ((userInputAddress != null && !userInputAddress.isEmpty()) && (progress>0)) {
+                if ((userInputAddress != null && !userInputAddress.isEmpty()) && (progress > 0)) {
                     //getting co-ordinates
                     GeocodeAsyncTaskForQuery asyncTaskForQuery = new GeocodeAsyncTaskForQuery();
                     frameLayout.setVisibility(View.VISIBLE);
                     asyncTaskForQuery.execute();
 
                     //hide keyboard
-                    hideKeyboardFrom(getActivity().getApplicationContext(),rootView);
+                    hideKeyboardFrom(getActivity().getApplicationContext(), rootView);
 
                 } else {
                     Toast.makeText(getActivity().getApplicationContext(), "Query fields can not be left blank", Toast.LENGTH_SHORT).show();
@@ -489,7 +500,7 @@ public class DatabaseFragment extends Fragment {
             }
             if (addresses != null && addresses.size() > 0)
                 return addresses.get(0);
-            Log.v("ground***:",addresses.get(0).toString());
+            Log.v("ground***:", addresses.get(0).toString());
             return null;
         }
 
@@ -508,14 +519,14 @@ public class DatabaseFragment extends Fragment {
                 Longitude = address.getLongitude();
                 userInput = new LatLng(latitude, Longitude);
 
-                if(progress!=0) {
+                if (progress != 0) {
                     drawOnMap(userInput, (progress * 1000));
                 }
 
                 Log.v("Co-ordinates***", "Latitude: " + address.getLatitude() + "\n" +
                         "Longitude: " + address.getLongitude() + "\n" +
-                        "Address L: "+address.getLocality()+ "\n" +
-                        "Address L: "+address.getPostalCode());
+                        "Address L: " + address.getLocality() + "\n" +
+                        "Address L: " + address.getPostalCode());
             }
         }
     }//end async
@@ -526,7 +537,7 @@ public class DatabaseFragment extends Fragment {
     //=================================================================================
     public void drawOnMap(LatLng latLng, int radius) {
 
-        Log.v("LAt***","Latitude: "+latLng.latitude+"Longitude: "+latLng.longitude );
+        Log.v("LAt***", "Latitude: " + latLng.latitude + "Longitude: " + latLng.longitude);
 
         googleMap.clear();
 
@@ -548,7 +559,7 @@ public class DatabaseFragment extends Fragment {
         List<Marker> markers = new ArrayList<>();
         List<BikeData> queryBike = new ArrayList<>();
 
-        //loop through all co ordinates
+        //loop through all co ordinates add markers but make them invisbile
         for (int i = 0; i < latitudeArray.size(); i++) {
             //create new marker with co-ordinates
             coordinatesList.add(new LatLng(latitudeArray.get(i), longditudeArray.get(i)));
@@ -564,6 +575,7 @@ public class DatabaseFragment extends Fragment {
 
         mDatabaseQuery.removeValue();
 
+        //reveal markers we want
         for (Marker marker : markers) {
             if (SphericalUtil.computeDistanceBetween(latLng, marker.getPosition()) < radius) {
                 marker.setVisible(true);
@@ -574,8 +586,13 @@ public class DatabaseFragment extends Fragment {
         }
 
 
+        if (queryBike.isEmpty()) {
+            Toast.makeText(getActivity().getApplicationContext(), "No bikes in that area", Toast.LENGTH_LONG).show();
+        }
+
+
         for (BikeData bike : queryBike) {
-             mDatabaseQuery.push().setValue(bike);
+            mDatabaseQuery.push().setValue(bike);
         }
 
         handelQuery();
@@ -591,7 +608,7 @@ public class DatabaseFragment extends Fragment {
     //=         query specif logic
     //=================================================================================
 
-    public void handelQuery(){
+    public void handelQuery() {
 
         final FirebaseListAdapter<BikeData> bikeAdapterQuery = new FirebaseListAdapter<BikeData>
                 (getActivity(), BikeData.class, R.layout.list_item, mDatabaseQuery) {
@@ -643,9 +660,6 @@ public class DatabaseFragment extends Fragment {
         });//end onClick for listView
 
 
-
-
-
     }//end query
 
 
@@ -659,6 +673,8 @@ public class DatabaseFragment extends Fragment {
             startActivity(intent);
         }
     }
+
+
 
 
 }//end class
