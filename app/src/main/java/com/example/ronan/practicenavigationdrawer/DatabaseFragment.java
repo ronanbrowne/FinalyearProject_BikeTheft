@@ -399,6 +399,7 @@ public class DatabaseFragment extends Fragment {
                 frameLayout.setVisibility(View.GONE);
                 isMapFragmentVisavle = false;
                 myListView.setAdapter(bikeAdapter);
+                //re set adapter pull into method later **********
                 myListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
