@@ -1,6 +1,8 @@
 package com.example.ronan.practicenavigationdrawer;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -21,6 +23,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -33,6 +36,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import static android.R.attr.id;
 import static com.example.ronan.practicenavigationdrawer.R.id.edit_last_seen;
@@ -49,6 +54,8 @@ public class MainActivity extends AppCompatActivity
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
     private DatabaseReference userDataBase;
+    private DatabaseReference stolenBikesDatabse;
+    private DatabaseReference usersBikesDatabase;
 
 
     private String mUsername;
@@ -59,21 +66,94 @@ public class MainActivity extends AppCompatActivity
     View rootView;
     View cv;
     GmapFragment fragment;
+    ArrayList<BikeData> usersStolenBikes = new ArrayList<>();
+    ArrayList<String> keysForStolenBikes = new ArrayList<>();
 
     private boolean mapOpen = false;
+
+
+    //dialog listener for pop up to confirm delete all bike data registered to a user
+    DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            switch (which) {
+                case DialogInterface.BUTTON_POSITIVE:
+
+                    usersBikesDatabase.removeValue();
+
+                    for (String temp : keysForStolenBikes) {
+                        stolenBikesDatabse.child(temp).removeValue();
+                    }
+
+                    //Jump back to welcome fragment after clear data to allow user see there system summary
+                    WelcomeFragment welcomeFragment = new WelcomeFragment();
+                    FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                    fragmentTransaction.replace(R.id.fragment_container, welcomeFragment);
+                    fragmentTransaction.commit();
+                    //feedback
+
+                    Toast.makeText(MainActivity.this, "All associated bike data deleted", Toast.LENGTH_SHORT).show();
+
+
+                    break;
+
+                case DialogInterface.BUTTON_NEGATIVE:
+
+                    //feedback
+                    Toast.makeText(MainActivity.this, "Delete canceled", Toast.LENGTH_SHORT).show();
+
+                    break;
+            }
+        }
+    };
+
+    //Listener called to delete all users bike data associated with a AC
+    //used when a user clicks clear data from toolbar menu
+    ValueEventListener deleteBikeData = new ValueEventListener() {
+        @Override
+        public void onDataChange(DataSnapshot dataSnapshot) {
+            usersStolenBikes.clear();
+            if (dataSnapshot.getValue() != null) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    BikeData bike = snapshot.getValue(BikeData.class);
+                    //check registered by field is not null
+                    if (bike.getRegisteredBy() != null) {
+                        if (bike.getRegisteredBy().equals(mEmail)) {
+                            Log.v("**current user:  ", "" + mEmail);
+                            usersStolenBikes.add(bike);
+                            keysForStolenBikes.add(snapshot.getKey());
+                            Log.v("Stolen bikes ", (Arrays.toString(usersStolenBikes.toArray())));
+                            Log.v("Stolen keys* ", (Arrays.toString(keysForStolenBikes.toArray())));
+
+                            Log.v("**registered by: ", bike.getRegisteredBy());
+                        } else {
+                            Log.v("**reg", "no user");
+                        }
+                    }
+                }
+
+            } else {
+                Log.v("MainActivity", "data snapshot is null");
+            }
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+
+        }
+    };
 
     //get Username from DB we use this in navagtion bar
     ValueEventListener fetchUserData = new ValueEventListener() {
         UserData user = new UserData();
+
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
             if (dataSnapshot.getValue() != null) {
                 user = dataSnapshot.getValue(UserData.class);
-                if(user.getUsername()!=null) {
+                if (user.getUsername() != null) {
                     userNameNavBar.setText(user.getUsername());
-                }
-                else
-                {
+                } else {
                     userNameNavBar.setText("Set user name ");
                 }
             } else {
@@ -145,7 +225,7 @@ public class MainActivity extends AppCompatActivity
         mFirebaseAuth.addAuthStateListener(mAuthListener);
 
 
-        String email ="";
+        String email = "";
         //get current user
         mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         //if its not null grab email address then remove the @ bit , firebase cant take special symbols in node names
@@ -153,7 +233,10 @@ public class MainActivity extends AppCompatActivity
             email = mFirebaseUser.getEmail();
             email = email.split("@")[0];
         }
+        usersBikesDatabase = FirebaseDatabase.getInstance().getReference().child("Bikes Registered By User").child(email);
 
+        stolenBikesDatabse = FirebaseDatabase.getInstance().getReference().child("Stolen Bikes");
+        stolenBikesDatabse.addValueEventListener(deleteBikeData);
 
         userDataBase = FirebaseDatabase.getInstance().getReference().child("User Profile Data").child(email);
         userDataBase.addValueEventListener(fetchUserData);
@@ -179,14 +262,6 @@ public class MainActivity extends AppCompatActivity
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -200,7 +275,8 @@ public class MainActivity extends AppCompatActivity
 
             /** Called when a drawer has settled in a completely open state. */
             public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
+                super.onDrawerOpened(drawerView)
+                ;
             }
         };
 // Set the drawer toggle as the DrawerListener
@@ -253,8 +329,15 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        if (id == R.id.clearData) {
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setTitle("Remove all registered bikes");
+            builder.setMessage("Are you sure you wish to clear all bike data associated with this account?\n\n" +
+                    "This action is permanent and can not be undone.").setPositiveButton("Yes", dialogClickListener)
+                    .setNegativeButton("No", dialogClickListener).show();
+
+
         } else if (id == R.id.action_sign_out) {
             mFirebaseAuth.signOut();
         }
