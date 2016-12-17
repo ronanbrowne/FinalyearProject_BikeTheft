@@ -87,6 +87,8 @@ public class EditFragment extends Fragment {
 
     Bitmap bitmap;
 
+    private boolean successfullEdit = false;
+
 
     private static final int SELECT_PICTURE = 0;
 
@@ -312,63 +314,82 @@ public class EditFragment extends Fragment {
                 stolenBikesDatabse.addValueEventListener(ifStolen);
 
                 //grab data from fields
+                int frameSize = 0;
                 boolean stolen = bikeStolen.isChecked();
                 String make = bikeMake.getText().toString();
                 String model = bikeModel.getText().toString();
-                int frameSize = Integer.parseInt(bikeSize.getText().toString());
+                String frameSizeString = bikeSize.getText().toString();
                 String color = bikeColor.getText().toString();
                 String other = bikeOther.getText().toString();
                 String lastSeen = bikeLastSeen.getText().toString();
 
+                //if frame size has data turn into int and catch exception
+                if (frameSizeString != null || !frameSizeString.isEmpty()) {
+                    try {
+                        frameSize = Integer.parseInt(frameSizeString);
+                        ;
+                    } catch (NumberFormatException e) {
+                        Toast.makeText(getActivity().getApplicationContext(), "All fields are required except \"other\"", Toast.LENGTH_SHORT).show();
+                    }
+                }
 
-                BikeData newBike = new BikeData(make, frameSize, color, other, stolen, base64, model, lastSeen, latitude, longitud,emailFull);
-                mDatabase.setValue(newBike);
+                //validation of edittext fields
+                if ((bikeMake.getText().toString().trim().length() == 0) || (bikeModel.getText().toString().trim().length() == 0) ||  (bikeColor.getText().toString().trim().length() == 0)||  (bikeSize.getText().toString().trim().length() == 0)) {
+                    Toast.makeText(getActivity().getApplicationContext(), "\"All fields are required except \"other\"", Toast.LENGTH_SHORT).show();
+                }
+                else{
 
+                    BikeData newBike = new BikeData(make, frameSize, color, other, stolen, base64, model, lastSeen, latitude, longitud, emailFull);
+                    mDatabase.setValue(newBike);
 
+                    if (stolen) {
 
+                        if ((lastSeen != null && !lastSeen.isEmpty() && !lastSeen.equals("N/A"))) {
 
-                if (stolen) {
-
-                    if ((lastSeen != null && !lastSeen.isEmpty() && !lastSeen.equals("N/A"))) {
-
-                        if (geoCodeClicked) {
-                            //add current bike to stolen DB use same key value.
-                            stolenBikesDatabse.child(key_passed_fromList).setValue(newBike);
-                            //user feedback
-                            Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Added to stolen DB", Toast.LENGTH_SHORT);
-                            toast.show();
+                            if (geoCodeClicked) {
+                                //add current bike to stolen DB use same key value.
+                                stolenBikesDatabse.child(key_passed_fromList).setValue(newBike);
+                                //user feedback
+                                Toast.makeText(getActivity().getApplicationContext(), "Added to stolen DB", Toast.LENGTH_SHORT).show();
+                                successfullEdit = true;
+                            } else {
+                                Toast.makeText(getActivity().getApplicationContext(), "retrieve geo code first", Toast.LENGTH_SHORT).show();
+                                successfullEdit = false;
+                            }
                         } else {
-                            Toast toast = Toast.makeText(getActivity().getApplicationContext(), "retrieve geo code first", Toast.LENGTH_SHORT);
-                            toast.show();
+                            Toast.makeText(getActivity().getApplicationContext(), "Last seen can not be blank if stolen", Toast.LENGTH_SHORT).show();
+                            successfullEdit = false;
+
                         }
-                    } else {
-                        Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Last seen can not be blank if stolen", Toast.LENGTH_SHORT);
-                        toast.show();
+
                     }
 
+                    //bike stolen checkbox is false
+                    if (!stolen) {
+                        //make sure its in stolen DB to Display collect message
+                        if (inStolenDB) {
+                            // remove from DB
+                            stolenBikesDatabse.child(key_passed_fromList).removeValue();
+                            //user output
+                            Toast.makeText(getActivity().getApplicationContext(), "Removed from stolen DB", Toast.LENGTH_SHORT).show();
+                            //reset check
+                            inStolenDB = false;
+                        }
+                        //other wise different output to user
+                        else {
+                            Toast.makeText(getActivity().getApplicationContext(), "Bike updated", Toast.LENGTH_SHORT).show();
+                            successfullEdit = true;
+
+                        }
+                    }
+
+                    Log.v("*date: ", getDate());
+                    if (successfullEdit) {
+                        //back to main screen
+                        FragmentManager fm = getFragmentManager();
+                        fm.beginTransaction().replace(R.id.fragment_container, new WelcomeFragment()).commit();
+                    }
                 }
-
-                //bike stolen checkbox is false
-                if (!stolen) {
-                    //make sure its in stolen DB to Display collect message
-                    if (inStolenDB) {
-                        // remove from DB
-                        stolenBikesDatabse.child(key_passed_fromList).removeValue();
-
-                        //user output
-                        Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Removed from stolen DB", Toast.LENGTH_SHORT);
-                        toast.show();
-                        //reset check
-                        inStolenDB = false;
-                    }
-                    //other wise diffrent output to user
-                    else {
-                        Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Bike updated", Toast.LENGTH_SHORT);
-                        toast.show();
-                    }
-                }
-
-                Log.v("*date: ",getDate());
             }//on click
         });
 

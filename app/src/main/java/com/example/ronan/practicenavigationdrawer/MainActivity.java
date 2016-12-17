@@ -26,8 +26,11 @@ import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 
@@ -45,19 +48,44 @@ public class MainActivity extends AppCompatActivity
     // Firebase instance variables
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
-    private DatabaseReference mDatabase;
+    private DatabaseReference userDataBase;
 
 
     private String mUsername;
     private String mPhotoUrl;
     private String mEmail;
     private TextView emailNavBar;
+    private TextView userNameNavBar;
     View rootView;
     View cv;
     GmapFragment fragment;
 
     private boolean mapOpen = false;
 
+    //get Username from DB we use this in navagtion bar
+    ValueEventListener fetchUserData = new ValueEventListener() {
+        UserData user = new UserData();
+        @Override
+        public void onDataChange(DataSnapshot dataSnapshot) {
+            if (dataSnapshot.getValue() != null) {
+                user = dataSnapshot.getValue(UserData.class);
+                if(user.getUsername()!=null) {
+                    userNameNavBar.setText(user.getUsername());
+                }
+                else
+                {
+                    userNameNavBar.setText("Set user name ");
+                }
+            } else {
+                Log.v("MainActivity", "data snapshot is null");
+            }
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +99,7 @@ public class MainActivity extends AppCompatActivity
         fragmentTransaction.replace(R.id.fragment_container, mainFragment);
         fragmentTransaction.commit();
 
-        mUsername = "ANONYMOUS1";
+        mUsername = "";
 
 
         // Initialize Firebase Auth
@@ -115,6 +143,20 @@ public class MainActivity extends AppCompatActivity
         };
 
         mFirebaseAuth.addAuthStateListener(mAuthListener);
+
+
+        String email ="";
+        //get current user
+        mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        //if its not null grab email address then remove the @ bit , firebase cant take special symbols in node names
+        if (mFirebaseUser != null) {
+            email = mFirebaseUser.getEmail();
+            email = email.split("@")[0];
+        }
+
+
+        userDataBase = FirebaseDatabase.getInstance().getReference().child("User Profile Data").child(email);
+        userDataBase.addValueEventListener(fetchUserData);
 
 
 //        if (mFirebaseUser == null) {
@@ -174,6 +216,7 @@ public class MainActivity extends AppCompatActivity
         //set text in Navagation bar
         View header = navigationView.getHeaderView(0);
         emailNavBar = (TextView) header.findViewById(R.id.email);
+        userNameNavBar = (TextView) header.findViewById(R.id.username);
 
         if (mFirebaseUser == null) {
             emailNavBar.setText("no login");

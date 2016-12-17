@@ -25,7 +25,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.io.ByteArrayOutputStream;
@@ -47,7 +46,7 @@ public class MainFragment extends Fragment {
     private EditText bikeOther;
     private EditText bikeModel;
     private FloatingActionButton upload;
-    private FloatingActionButton addFloat;
+    private FloatingActionButton addBikeFloatingActionButton;
 
 
     private Button add;
@@ -119,7 +118,7 @@ public class MainFragment extends Fragment {
         bikeOther = (EditText) rootView.findViewById(R.id.edit_othe_features);
         mThumbnailPreview = (ImageView) rootView.findViewById(R.id.upload_image);
         upload = (FloatingActionButton) rootView.findViewById(R.id.floatingUpload);
-        addFloat = (FloatingActionButton) rootView.findViewById(R.id.floatingAdd);
+        addBikeFloatingActionButton = (FloatingActionButton) rootView.findViewById(R.id.floatingAdd);
         //imageUpload = (Button) rootView.findViewById(R.id.imageupload_button);
         add = (Button) rootView.findViewById(R.id.add_button);
 
@@ -138,31 +137,38 @@ public class MainFragment extends Fragment {
         });
 
 
-        addFloat.setOnClickListener(new View.OnClickListener() {
+        addBikeFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                int frameSize;
+                //set up
+                int frameSize =0;
                 boolean stolen = false;
                 String make = bikeMake.getText().toString();
                 String model = bikeModel.getText().toString();
-
-
-                String framSizeString = bikeFrameSize.getText().toString();
-
-                if (framSizeString != null || !framSizeString.isEmpty()) {
-                    frameSize = Integer.parseInt(framSizeString);
-                } else {
-                    frameSize = 0;
-                }
                 String color = bikeColor.getText().toString();
                 String other = bikeOther.getText().toString();
+                String frameSizeString = bikeFrameSize.getText().toString();
+
+                //if framesize has data turn into int and catch exception
+                if (frameSizeString != null || !frameSizeString.isEmpty()) {
+                    try
+                    {
+                        frameSize = Integer.parseInt(frameSizeString);;
+                    }
+                    catch (NumberFormatException e)
+                    {
+                        Toast.makeText(getActivity().getApplicationContext(), "All fields are required except \"other\"", Toast.LENGTH_SHORT).show();
+                    }
+              }
 
 
 
+            //valadate editText fields that they are not empty
+                if ((bikeMake.getText().toString().trim().length() == 0) || (bikeModel.getText().toString().trim().length() == 0) ||  (bikeColor.getText().toString().trim().length() == 0)||  (bikeFrameSize.getText().toString().trim().length() == 0)) {
+                    Toast.makeText(getActivity().getApplicationContext(), "All fields are required except \"other\"", Toast.LENGTH_SHORT).show();
+                } else {
 
-                //error handeling
-                if ((make != null && !make.isEmpty()) || (model != null && !model.isEmpty()) || (color != null && !color.isEmpty()) || (framSizeString != null && !framSizeString.isEmpty())) {
                     BikeData newBike = new BikeData(make, frameSize, color, other, stolen, base64, model, "N/A", 0, 0,email);
 
                     //get id part of email
@@ -185,10 +191,6 @@ public class MainFragment extends Fragment {
                     //push is for multiple objects gives unique ID
                     // mDatabase.push().setValue(newBike);
                     Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Bike Data Registered", Toast.LENGTH_SHORT);
-                    toast.show();
-
-                } else {
-                    Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Please fill all required fields", Toast.LENGTH_SHORT);
                     toast.show();
                 }
             }

@@ -153,9 +153,6 @@ public class EditFragmentList extends Fragment {
                 //http://stackoverflow.com/questions/27484245/pass-data-between-two-fragments-without-using-activity
                 DataHolderClass.getInstance().setDistributor_id(itemRef.getKey());
 
-                    //*testing
-                Toast toast = Toast.makeText(getActivity().getApplicationContext(), itemRef.getKey(), Toast.LENGTH_SHORT);
-                toast.show();
 
                 EditFragment editFragment = new EditFragment();
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();

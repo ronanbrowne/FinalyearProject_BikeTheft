@@ -88,7 +88,7 @@
 
         <LinearLayout
             android:paddingTop="12dp"
-            android:layout_marginLeft="12dp"
+            android:layout_marginLeft="20dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" >
@@ -103,7 +103,8 @@
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:text="Make: " />
+                    android:text="Make: "
+                    android:id="@+id/textView6" />
 
                 <!-- Make field -->
                 <EditText
