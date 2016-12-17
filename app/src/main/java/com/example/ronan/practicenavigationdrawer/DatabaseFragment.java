@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.location.Address;
 import android.location.Geocoder;
 import android.net.Uri;
@@ -19,6 +20,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.util.Base64;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +32,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -72,53 +75,54 @@ public class DatabaseFragment extends Fragment {
         // Required empty public constructor
     }
 
+    //global variables
+
     private FirebaseUser mFirebaseUser;
     private DatabaseReference mDatabaseStolen;
     private DatabaseReference mDatabaseQuery;
-    SupportMapFragment mSupportMapFragment;
+    private SupportMapFragment mSupportMapFragment;
 
-    ImageView bike_image;
-    EditText street;
-    EditText radius;
-    Button query;
-    Button closeMap;
+    private ImageView bike_image;
+    private EditText street;
+    private Button query;
+    private Button closeMap;
     private SeekBar seekBar;
     private TextView radiousTV;
     private TextView noDataMessage;
     private View loadingIndicator;
 
 
-    LatLng userInput1 = new LatLng(53.3498, 6.2603);
-    LatLng userInput = new LatLng(53.3498, -6.2603);
-    double latitude = 0;
-    double Longitude = 0;
+    private LatLng userInput1 = new LatLng(53.3498, 6.2603);
+    private LatLng userInput = new LatLng(53.3498, -6.2603);
+    private double latitude = 0;
+    private double Longitude = 0;
     private boolean isMapFragmentVisavle = false;
 
-    FrameLayout frameLayout;
-    String userInputAddress;
-    String email = "";
-    int r;
+    private FrameLayout frameLayout;
+    private String userInputAddress;
+    private String email = "";
 
-    Circle circle;
+
+    private Circle circle;
     private GoogleMap googleMap;
 
-    BikeData mybike = new BikeData();
-    BikeData stolenBike;
+    private BikeData mybike = new BikeData();
+    private BikeData stolenBike;
 
-    ArrayList<Double> latitudeArray = new ArrayList<>();
-    ArrayList<Double> longditudeArray = new ArrayList<>();
-    ArrayList<BikeData> bikeReturned = new ArrayList<>();
-    ArrayList<String> bikekey = new ArrayList<>();
-
-
-    ListView myListView = null;
+    private ArrayList<Double> latitudeArray = new ArrayList<>();
+    private ArrayList<Double> longditudeArray = new ArrayList<>();
+    private ArrayList<BikeData> bikeReturned = new ArrayList<>();
+    private ArrayList<String> bikekey = new ArrayList<>();
 
 
-    int progress = 0;
+    private ListView myListView = null;
+    private int progress = 0;
 
     private String input_from_reported_Location = "";
 
-    //dialog listener for pop up to confirm report sightings
+    //==============================================================================================
+    //=          dialog listener for pop up to confirm report sightings
+    //==============================================================================================
     DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
         @Override
         public void onClick(DialogInterface dialog, int which) {
@@ -142,24 +146,28 @@ public class DatabaseFragment extends Fragment {
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
 
-                            input_from_reported_Location = input.getText().toString();
+                            //validate input
+                            if(input.getText().toString().trim().length() == 0){
+                                Toast.makeText(getActivity().getApplicationContext(), "You must specify where you saw this bike", Toast.LENGTH_SHORT).show();
+                            }else{
 
+                                //build up the email to send to user
+                                input_from_reported_Location = input.getText().toString();
 
-                            String[] email = {stolenBike.getRegisteredBy()};
-                            String subject = "Suspected sighting of your bike: " + stolenBike.getMake();
-                            String body = "Hello, \n\n I have potentially spotted the bike you registered as stolen (" + (stolenBike.getColor() + " " + stolenBike.getMake()) + "). " +
-                                    "\n\n This sighting was at the following location " + input_from_reported_Location + "\n\n" +
-                                    "Please reply to this email for further details." +
-                                    "\n\n Regards.";
+                                String[] email = {stolenBike.getRegisteredBy()};
+                                String subject = "Suspected sighting of your bike: " + stolenBike.getMake();
+                                String body = "Hello, \n\n I have potentially spotted the bike you registered as stolen (" + (stolenBike.getColor() + " " + stolenBike.getMake()) + "). " +
+                                        "\n\n This sighting was at the following location " + input_from_reported_Location + "\n\n" +
+                                        "Please reply to this email for further details." +
+                                        "\n\n Regards.";
 
-                            composeEmail(email, subject, body);
+                                //ethod to send emial
+                                composeEmail(email, subject, body);
 
-
-                            //feedback
-                            Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Tell origional owner where you may have seen their bike", Toast.LENGTH_SHORT);
-                            toast.show();
-
-
+                                //feedback
+                                Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Tell origional owner where you may have seen their bike", Toast.LENGTH_SHORT);
+                                toast.show();
+                            }
                         }
                     });
                     builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
@@ -296,7 +304,7 @@ public class DatabaseFragment extends Fragment {
 
         radiousTV.setText("Radius: " + seekBar.getProgress() + "km");
 
-
+        //handel seekbar used for radius input
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
             @Override
@@ -479,11 +487,12 @@ public class DatabaseFragment extends Fragment {
 
 
     //==============================================================================================
-    //=         handeling getting the Geocoding from user input - this is the lat / long co-ordinates
+    //=          getting the Geocoding from user input - this is the lat / long co-ordinates
     //==============================================================================================
     class GeocodeAsyncTaskForQuery extends AsyncTask<Void, Void, Address> {
         String errorMessage = "";
 
+        //nothing to do pre
         @Override
         protected void onPreExecute() {
         }
@@ -501,29 +510,27 @@ public class DatabaseFragment extends Fragment {
             }
             if (addresses != null && addresses.size() > 0)
                 return addresses.get(0);
-            Log.v("ground***:", addresses.get(0).toString());
             return null;
         }
 
-
+        //update various variables that need lat long
         protected void onPostExecute(Address address) {
             if (address == null) {
                 Toast toast = Toast.makeText(getActivity().getApplicationContext(), "address null", Toast.LENGTH_SHORT);
                 toast.show();
             } else {
-                String addressName = "";
-                for (int i = 0; i < address.getMaxAddressLineIndex(); i++) {
-                    addressName += " --- " + address.getAddressLine(i);
-                }
+
                 //assigning class variables
                 latitude = address.getLatitude();
                 Longitude = address.getLongitude();
                 userInput = new LatLng(latitude, Longitude);
 
+                //make sure seekbar is not zero
                 if (progress != 0) {
                     drawOnMap(userInput, (progress * 1000));
                 }
 
+                //debugging
                 Log.v("Co-ordinates***", "Latitude: " + address.getLatitude() + "\n" +
                         "Longitude: " + address.getLongitude() + "\n" +
                         "Address L: " + address.getLocality() + "\n" +
@@ -560,45 +567,85 @@ public class DatabaseFragment extends Fragment {
         List<Marker> markers = new ArrayList<>();
         List<BikeData> queryBike = new ArrayList<>();
 
-        //loop through all co ordinates add markers but make them invisbile
+        //loop through all co ordinates add markers but make them invisbile first, query will reveal them as needed.
         for (int i = 0; i < latitudeArray.size(); i++) {
             //create new marker with co-ordinates
             coordinatesList.add(new LatLng(latitudeArray.get(i), longditudeArray.get(i)));
             //  googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.get(0), 3));
-            Marker marker = googleMap.addMarker(new MarkerOptions().title("**Specific details to be put here **!")
+            Marker marker = googleMap.addMarker(new MarkerOptions().title("Bike found")
                     .position(coordinatesList.get(i)).visible(false));
             markers.add(marker);
+
+            //override defaukt marker layout properties if i dit do this marker info window does not display correct
+            googleMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+                @Override
+                public View getInfoWindow(Marker marker) {
+                    return null;
+                }
+
+                //set the layout and properties of the contents of the marker details.
+                @Override
+                public View getInfoContents(Marker marker) {
+                    LinearLayout info = new LinearLayout(getActivity().getApplicationContext());
+                    info.setOrientation(LinearLayout.VERTICAL);
+
+                    TextView title = new TextView(getActivity().getApplicationContext());
+                    title.setTextColor(Color.BLACK);
+                    title.setGravity(Gravity.CENTER);
+                    title.setTypeface(null, Typeface.BOLD);
+                    title.setText(marker.getTitle());
+
+                    TextView snippet = new TextView(getActivity().getApplicationContext());
+                    snippet.setTextColor(Color.GRAY);
+                    snippet.setText(marker.getSnippet());
+
+
+                    info.addView(title);
+                    info.addView(snippet);
+                    return info;
+                }
+            });
+
+
         }//end for
 
 
         int i = 0;
+        //clear array list that we use to populate query
         queryBike.clear();
-
+        //clear previous query in DB we use this to generate listview with firebase
         mDatabaseQuery.removeValue();
 
-        //reveal markers we want
+        //reveal markers we want based on query. and set data to be in marker on click
         for (Marker marker : markers) {
             if (SphericalUtil.computeDistanceBetween(latLng, marker.getPosition()) < radius) {
                 marker.setVisible(true);
-                //queryBike.clear();
+                marker.setTitle("Make: " + bikeReturned.get(i).getMake());
+                marker.setSnippet ("Model:" + bikeReturned.get(i).getModel() + "\nColour " + bikeReturned.get(i).getColor());;
+
                 queryBike.add(bikeReturned.get(i));
             }
             i++;
-        }
+        }//end for
 
-
+        //show user feedback based on query
         if (queryBike.isEmpty()) {
-            Toast.makeText(getActivity().getApplicationContext(), "No bikes in that area", Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity().getApplicationContext(), "No bikes in that area", Toast.LENGTH_SHORT).show();
+        }
+       else{
+            Toast.makeText(getActivity().getApplicationContext(), queryBike.size()+" results returned", Toast.LENGTH_SHORT).show();
         }
 
-
+        //we store bike within the radus in  queryBike. we then push this to seprate DB node
+        //we use this to populate our updated list adapter then
         for (BikeData bike : queryBike) {
             mDatabaseQuery.push().setValue(bike);
         }
 
+        //method to populate list adapter
         handelQuery();
 
-        //display markers
+        //Moves camera to where ever user specified on input
         CameraPosition cameraPosition = new CameraPosition.Builder().target(latLng).zoom(8f).build();
         CameraUpdate cameraUpdate = CameraUpdateFactory.newCameraPosition(cameraPosition);
         googleMap.moveCamera(cameraUpdate);
@@ -606,7 +653,7 @@ public class DatabaseFragment extends Fragment {
     }
 
     //================================================================================
-    //=         query specif logic
+    //=         query specif logic - populates list view for query and handels on click
     //=================================================================================
 
     public void handelQuery() {
@@ -664,6 +711,9 @@ public class DatabaseFragment extends Fragment {
     }//end query
 
 
+
+    //Method to compose a email called when a user clicks on bike item in listView.
+    // email generated to send to origional user.
     public void composeEmail(String[] addresses, String subject, String body) {
         Intent intent = new Intent(Intent.ACTION_SENDTO);
         intent.setData(Uri.parse("mailto:")); // only email apps should handle this

@@ -77,22 +77,13 @@ public class GmapFragment extends Fragment implements OnMapReadyCallback {
 
             for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
 
-                // latitude.add(mybike.getLatitude());
-                //  longditude.add(mybike.getLongditude());
-
 
                 mybike = snapshot.getValue(BikeData.class);
                 LatLng dub = new LatLng(53.3498 ,-6.2603);
+
                 //create LatLong obj to store co-ordinates returned from bike date.
                 LatLng coOrdinates = new LatLng(mybike.getLatitude(), mybike.getLongditude());
                 mapLocations.add(coOrdinates);
-
-                //  **CODE RELATED TO CLUSTERS . COMPLEX TO IMPLEMEND TITLE SNIPPET, RETURN TO AT LATER STAGE **
-
-//                MyItemMapClusters offsetItem = new MyItemMapClusters(mybike.getLatitude(), mybike.getLongditude());
-//                mClusterManager.addItem(offsetItem);
-//                gMap.setOnCameraIdleListener(mClusterManager);
-//                gMap.setOnMarkerClickListener(mClusterManager);
 
 
 
@@ -101,25 +92,9 @@ public class GmapFragment extends Fragment implements OnMapReadyCallback {
 
 
 
-                  //  if (mybike.getImageBase64().equals("No image") || mybike.getImageBase64() == null){
-                        gMap.addMarker(new MarkerOptions().title("Make: " + mybike.getMake()).snippet("Model:" + mybike.getModel() + "\nLast seen: " + mybike.getColor()).position(coOrdinates));
-
-//                    }else{
-//                        int height = 100;
-//                        int width = 100;
-//                        Bitmap smallMarker = Bitmap.createScaledBitmap(getBitMapFromString(mybike.getImageBase64()), width, height, false);
-//
-//                        gMap.addMarker(new MarkerOptions().title("Make: " + mybike.getMake()).snippet("Model:" + mybike.getModel() + "\nLast seen: " + mybike.getColor()).position(coOrdinates).icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
-//
-//                    }
+                        gMap.addMarker(new MarkerOptions().title("Make: " + mybike.getMake()).snippet("Model:" + mybike.getModel() + "\nColour: " + mybike.getColor()+ "\nLast seen: " + mybike.getLastSeen()).position(coOrdinates));
 
 
-
-                //HEATMAP
-                // Create a heat map tile provider, passing it the latlngs of the police stations.
-                // gMap.addTileOverlay(mOverlay);
-
-                //http://stackoverflow.com/questions/13904651/android-google-maps-v2-how-to-add-marker-with-multiline-snippet
 
                 gMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
                     @Override
@@ -182,6 +157,8 @@ public class GmapFragment extends Fragment implements OnMapReadyCallback {
         defaultMap = (Button) rootView.findViewById(R.id.normalMap);
 
 
+        //following is a workaround that removes the map fragment before i switch to another screen
+        //bug that causes map view to superimpose its self on anyother fragment if i go straight to that screen
         DrawerLayout drawer = (DrawerLayout) getActivity().findViewById(R.id.drawer_layout);
         drawer.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
@@ -210,7 +187,6 @@ public class GmapFragment extends Fragment implements OnMapReadyCallback {
             }
         });
 
-
         heatMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -225,10 +201,8 @@ public class GmapFragment extends Fragment implements OnMapReadyCallback {
                 removeHeatMap();
                 stolenBikesDatabse.addValueEventListener(bikeListener);
 
-
             }
         });
-
 
         return rootView;
     }
@@ -247,41 +221,15 @@ public class GmapFragment extends Fragment implements OnMapReadyCallback {
     public void onMapReady(GoogleMap googleMap) {
 
         googleMap.clear();
-
         this.gMap = googleMap;
         LatLng dub = new LatLng(53.3498 ,-6.2603);
         gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(dub, 6));
-
-     //   mClusterManager = new ClusterManager<MyItemMapClusters>(getActivity().getApplicationContext(), gMap);
-
-        // Point the map's listeners at the listeners implemented by the cluster
-        // manager.
-      //  gMap.setOnCameraIdleListener(mClusterManager);
-       // gMap.setOnMarkerClickListener(mClusterManager);
-
-
         stolenBikesDatabse.addValueEventListener(bikeListener);
 
     }// end onMapReady
 
-    //extract bitmap helper, this sets image view
-    public Bitmap getBitMapFromString(String imageAsString) {
-        Bitmap bitmap = null;
 
-        if (imageAsString != null) {
-            if (imageAsString.equals("No image") || imageAsString == null) {
-                Log.v("***", "No image Found");
-            } else {
-                byte[] decodedString = Base64.decode(imageAsString, Base64.DEFAULT);
-                bitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-
-            }
-        } else {
-            Log.v("***", "Null paramater passed into getBitMapFromString");
-        }
-        return bitmap;
-    }
-
+    //change view to heat map
     private void addHeatMap() {
         gMap.clear();
 
@@ -298,6 +246,7 @@ public class GmapFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
+    //remove heat map method
     public void removeHeatMap() {
         if(mOverlay!=null) {
             mOverlay.remove();

@@ -163,11 +163,8 @@ public class EditFragment extends Fragment {
                 //if the currect keq is also in stolen db mark as true
                 if (key_passed_fromList.equals(temp)) {
                     inStolenDB = true;
-                } else {
-                    inStolenDB = false;
                 }
             }//end for
-            Log.v("**stole",""+inStolenDB);
         }
 
         @Override
@@ -177,20 +174,17 @@ public class EditFragment extends Fragment {
         }
     }; //end listener
 
-    //declaring ValueEvent Listener to poulate UI fields from DB
+    //declaring ValueEvent Listener to populate UI fields from DB
     ValueEventListener bikeListener = new ValueEventListener() {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
 
             if (dataSnapshot.getValue(BikeData.class) == null) {
-
                 Log.v(TAG, "doing nothing snapshot null");
                 return;
-
             }
-
             //grab snapshot and put in bike Object
-            mybike = dataSnapshot.getValue(BikeData.class);
+            BikeData mybike = dataSnapshot.getValue(BikeData.class);
 
             //set UI fields from data
             bikeMake.setText(mybike.getMake());
@@ -202,8 +196,6 @@ public class EditFragment extends Fragment {
             base64 = mybike.getImageBase64();
             getBitMapFromString(base64);
 
-
-
             //handel checkbox
             if (mybike.isStolen()) {
                 bikeStolen.setChecked(true);
@@ -214,9 +206,6 @@ public class EditFragment extends Fragment {
             }
 
         }
-
-
-        BikeData mybike = new BikeData("test make", 22, "red", "other", true, "dfsffdss", "Model", "last seen", latitude, longitud,email);
 
         @Override
         public void onCancelled(DatabaseError databaseError) {
@@ -373,7 +362,7 @@ public class EditFragment extends Fragment {
                             //user output
                             Toast.makeText(getActivity().getApplicationContext(), "Removed from stolen DB", Toast.LENGTH_SHORT).show();
                             //reset check
-                            inStolenDB = false;
+                            inStolenDB = true;
                         }
                         //other wise different output to user
                         else {
