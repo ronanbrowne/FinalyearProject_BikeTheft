@@ -16,7 +16,6 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.google.firebase.auth.FirebaseAuth;
@@ -27,9 +26,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-
 
 /**
  * A simple {@link Fragment} subclass.
@@ -38,8 +34,8 @@ public class EditFragmentList extends Fragment {
 
     private FirebaseUser mFirebaseUser;
     private DatabaseReference usersBikesDatabase;
-    private String email;
-    ImageView bike_image;
+    private String uniqueIdentifier;
+    private ImageView bike_image;
     private TextView noData;
     private View loadingIndicator;
 
@@ -47,13 +43,15 @@ public class EditFragmentList extends Fragment {
         // Required empty public constructor
     }
 
+    //===========================================================================================================
+    //  Firebase listeer to handel displaying either a loading bar or empty message depending in state of DB
+    //===========================================================================================================
     ValueEventListener checkList = new ValueEventListener() {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
-            if(dataSnapshot.getValue()!=null) {
+            if (dataSnapshot.getValue() != null) {
                 noData.setVisibility(View.GONE);
-            }
-            else{
+            } else {
                 noData.setVisibility(View.VISIBLE);
                 loadingIndicator.setVisibility(View.GONE);
 
@@ -66,21 +64,28 @@ public class EditFragmentList extends Fragment {
         }
     };
 
-
+    //===========================================================================================================
+    //  onCreateView
+    //===========================================================================================================
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        //get current user. im using users email to uniquely ID JSON nodes in DB.
+        // Firebase cant accept special characters in node reference
+        // i get around this by splitting the email address and dropping everything after @ symbol. whats remaining is used as a ID in DB
         mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        if (mFirebaseUser!=null) {
-            email = mFirebaseUser.getEmail();
-            email = email.split("@")[0];
+        if (mFirebaseUser != null) {
+            uniqueIdentifier = mFirebaseUser.getEmail();
+            uniqueIdentifier = uniqueIdentifier.split("@")[0];
         }
 
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_edit_list, container, false);
 
+
+        //  get IDs
         final ListView myListView = (ListView) rootView.findViewById(R.id.list);
-        //  get ID of loading bar
         loadingIndicator = rootView.findViewById(R.id.loading_indicator_edit);
         noData = (TextView) rootView.findViewById(R.id.empty_view_Notification);
 
@@ -89,29 +94,26 @@ public class EditFragmentList extends Fragment {
         myListView.setDividerHeight(1);
 
         //Firebase DB setup
-        usersBikesDatabase = FirebaseDatabase.getInstance().getReference().child("Bikes Registered By User").child(email);
+        usersBikesDatabase = FirebaseDatabase.getInstance().getReference().child("Bikes Registered By User").child(uniqueIdentifier);
         usersBikesDatabase.addValueEventListener(checkList);
 
-        // here we set content of list items
+
+        //=====================================================================================================================
+        //  FireBase ListAdapter custom class provided by FireBase to allow implementation of custom list adapter on DB data
+        //===================================================================================================================
         final FirebaseListAdapter<BikeData> bikeAdapter = new FirebaseListAdapter<BikeData>
                 (getActivity(), BikeData.class, R.layout.list_item, usersBikesDatabase) {
             @Override
             protected void populateView(View v, BikeData model, int position) {
-
-
-
-                //handeling diplaying of loading bar
+                //handling displaying of loading bar once data is recieved hide it.
                 usersBikesDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-
                         loadingIndicator.setVisibility(View.GONE);
-
                     }
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
-
                     }
                 });
 
@@ -140,42 +142,44 @@ public class EditFragmentList extends Fragment {
         //set adapter on our listView
         myListView.setAdapter(bikeAdapter);
 
-
+        //what happens when user clicks on am item
         myListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
-
-
+                //get the RD refrence to the Item clicked and store this in data holder class
                 DatabaseReference itemRef = bikeAdapter.getRef(i);
 
-                //now set from anywhere(Fragment, activity, class) at any event before you move to new screen
-                //http://stackoverflow.com/questions/27484245/pass-data-between-two-fragments-without-using-activity
-                DataHolderClass.getInstance().setDistributor_id(itemRef.getKey());
+                //use bundle to pass itemRef to next fragment
+                //pass with setArguments(bundle)
+                Bundle bundle = new Bundle();
+                bundle.putString("dB_Ref", itemRef.getKey());
 
-
+                //open the edit bike fragment. where the bike a user clicked on here will be edited.
+                //we will use the above itemRef value stored in the bundle  to load the chosen bike info on editFragment
                 EditFragment editFragment = new EditFragment();
+                editFragment.setArguments(bundle);
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
                 fragmentTransaction.replace(R.id.fragment_container, editFragment);
                 fragmentTransaction.commit();
-
-
             }
         });
 
         return rootView;
-    }
 
-    //extract bitmap helper, this sets image view
+    }//end onCreate View
+
+    //===============================================
+    // extract bitmap helper, this sets image view
+    //===============================================
     public void getBitMapFromString(String imageAsString) {
         if (imageAsString == "No image" || imageAsString == null) {
-            // bike_image.setImageResource(R.drawable.not_uploaded);
-            Log.v("***","No image Found");
+            Log.v("***", "No image Found");
         } else {
             byte[] decodedString = Base64.decode(imageAsString, Base64.DEFAULT);
             Bitmap bitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
             bike_image.setImageBitmap(bitmap);
         }
-    }
+    }// end getBitMapFromString
 
-}
+}//end class

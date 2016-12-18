@@ -16,7 +16,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -37,9 +36,9 @@ import static android.app.Activity.RESULT_OK;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MainFragment extends Fragment {
+public class RegisterFragment extends Fragment {
 
-    //initilize variables
+    // variables
     private EditText bikeMake;
     private EditText bikeColor;
     private EditText bikeFrameSize;
@@ -47,32 +46,28 @@ public class MainFragment extends Fragment {
     private EditText bikeModel;
     private FloatingActionButton upload;
     private FloatingActionButton addBikeFloatingActionButton;
-
-
-    private Button add;
-    // private Button imageUpload;
     private ImageView mThumbnailPreview;
-
     Bitmap bitmap;
-
     String base64 = "No image";
-    private static final int SELECT_PICTURE = 0;
-    static final int REQUEST_IMAGE_CAPTURE = 1;
 
-    //DB refrence
+    private static final int SELECT_PICTURE = 0;
+    private static final int REQUEST_IMAGE_CAPTURE = 1;
+
+    //Fier base Vars
     private DatabaseReference mDatabase;
     private StorageReference storageRef;
-
     private FirebaseUser mFirebaseUser;
 
-    String email = "User email";
+    private String uniqueIdentifier = "";
 
 
-    public MainFragment() {
+    public RegisterFragment() {
         // Required empty public constructor
     }
 
-    //dialog listener for pop up to decide to launch camera or gallery
+    //======================================================================================
+    // dialog listener for pop up to decide to launch camera or gallery
+    //======================================================================================
     DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
         @Override
         public void onClick(DialogInterface dialog, int which) {
@@ -91,6 +86,9 @@ public class MainFragment extends Fragment {
     };
 
 
+    //======================================================================================
+    // onCreateView
+    //======================================================================================
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -98,17 +96,14 @@ public class MainFragment extends Fragment {
         //get current user
         mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
-        //if its not null grab email address
+        //if its not null grab email address use ths as uniqe id for parent node on DB for all this users bikes
         if (mFirebaseUser != null) {
-            email = mFirebaseUser.getEmail();
+            uniqueIdentifier = mFirebaseUser.getEmail();
         }
-
 
 
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-
-        //get map
 
         //get IDs
         bikeMake = (EditText) rootView.findViewById(R.id.edit_bike_make);
@@ -119,10 +114,8 @@ public class MainFragment extends Fragment {
         mThumbnailPreview = (ImageView) rootView.findViewById(R.id.upload_image);
         upload = (FloatingActionButton) rootView.findViewById(R.id.floatingUpload);
         addBikeFloatingActionButton = (FloatingActionButton) rootView.findViewById(R.id.floatingAdd);
-        //imageUpload = (Button) rootView.findViewById(R.id.imageupload_button);
-        add = (Button) rootView.findViewById(R.id.add_button);
 
-        //seting up firebase DB
+        //setting up FireBase DB
         mDatabase = FirebaseDatabase.getInstance().getReference().child("Bikes Registered By User");
 
 
@@ -136,14 +129,16 @@ public class MainFragment extends Fragment {
             }
         });
 
-
+        //when a user click add bike
         addBikeFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 //set up
-                int frameSize =0;
+                int frameSize = 0;
                 boolean stolen = false;
+
+                //grab Text from UI
                 String make = bikeMake.getText().toString();
                 String model = bikeModel.getText().toString();
                 String color = bikeColor.getText().toString();
@@ -152,31 +147,32 @@ public class MainFragment extends Fragment {
 
                 //if framesize has data turn into int and catch exception
                 if (frameSizeString != null || !frameSizeString.isEmpty()) {
-                    try
-                    {
-                        frameSize = Integer.parseInt(frameSizeString);;
-                    }
-                    catch (NumberFormatException e)
-                    {
+                    try {
+                        frameSize = Integer.parseInt(frameSizeString);
+                        ;
+                    } catch (NumberFormatException e) {
                         Toast.makeText(getActivity().getApplicationContext(), "All fields are required except \"other\"", Toast.LENGTH_SHORT).show();
                     }
-              }
+                }
 
 
-
-            //valadate editText fields that they are not empty
-                if ((bikeMake.getText().toString().trim().length() == 0) || (bikeModel.getText().toString().trim().length() == 0) ||  (bikeColor.getText().toString().trim().length() == 0)||  (bikeFrameSize.getText().toString().trim().length() == 0)) {
+                //Validate editText fields that they are not empty
+                if ((bikeMake.getText().toString().trim().length() == 0) || (bikeModel.getText().toString().trim().length() == 0) || (bikeColor.getText().toString().trim().length() == 0) || (bikeFrameSize.getText().toString().trim().length() == 0)) {
                     Toast.makeText(getActivity().getApplicationContext(), "All fields are required except \"other\"", Toast.LENGTH_SHORT).show();
-                } else {
+                }
+                //if all fields are vilid
+                else {
+                    //newBike object using constructor to populate attributes
+                    BikeData newBike = new BikeData(make, frameSize, color, other, stolen, base64, model, "N/A", 0, 0, uniqueIdentifier);
 
-                    BikeData newBike = new BikeData(make, frameSize, color, other, stolen, base64, model, "N/A", 0, 0,email);
+                    //get id part of email use this for where to place in DB. Firebase cant have a @ in DB refrence
+                    uniqueIdentifier = uniqueIdentifier.split("@")[0];
 
-                    //get id part of email
-                    email = email.split("@")[0];
+                    //push this newBike object to the DB under the child node of a users uniqueIdentifier
+                    //in this case uniqueIdentifier would be ronan if email address was ronan@gmail.com
+                    mDatabase.child(uniqueIdentifier).push().setValue(newBike);
 
-                    //single entry
-                    mDatabase.child(email).push().setValue(newBike);
-
+                    //re set fields after
                     bikeMake.setText("");
                     bikeModel.setText("");
                     bikeColor.setText("");
@@ -184,12 +180,11 @@ public class MainFragment extends Fragment {
                     bikeOther.setText("");
                     mThumbnailPreview.setImageResource(R.drawable.uploadimage);
 
-                    //setFragment
+                    //return user to welcome screen
                     FragmentManager fm = getFragmentManager();
                     fm.beginTransaction().replace(R.id.fragment_container, new WelcomeFragment()).commit();
 
-                    //push is for multiple objects gives unique ID
-                    // mDatabase.push().setValue(newBike);
+                    //user feedback
                     Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Bike Data Registered", Toast.LENGTH_SHORT);
                     toast.show();
                 }
@@ -198,11 +193,11 @@ public class MainFragment extends Fragment {
 
         // Inflate the layout for this fragment
         return rootView;
-
-
     }
 
-    //method to launch cam
+    //======================================================================================
+    // method to launch cam
+    //======================================================================================
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         //check a app can handel this
@@ -211,8 +206,10 @@ public class MainFragment extends Fragment {
         }
     }
 
-    //method to launch cGalery
 
+    //======================================================================================
+    // method to launch gallery
+    //======================================================================================
     public void dispatchGrabImageFromGalleryItent() {
         Intent galleryIntent = new Intent();
         galleryIntent.setType("image/*");
@@ -221,10 +218,13 @@ public class MainFragment extends Fragment {
     }
 
 
-    //Do this on result of activity , choose depending on result code
+    //======================================================================================
+    // Do this on result of activity , choose depending on result code carry out diff action
+    //======================================================================================
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        //from gallery
         if (requestCode == 0) {
             if (resultCode == RESULT_OK) {
                 Uri imageUri = data.getData();
@@ -241,6 +241,7 @@ public class MainFragment extends Fragment {
                 Log.i("message", "the user cancelled the request");
             }
         }
+        //from cam
         if (requestCode == 1) {
             if (resultCode == RESULT_OK) {
                 Bundle extras = data.getExtras();
@@ -253,16 +254,18 @@ public class MainFragment extends Fragment {
         }
     }
 
-    //helper method to covert bitmap image into base64 for storage in Firebase Database
+
+    //======================================================================================
+    // helper method to covert bitmap image into base64 for storage in Firebase Database
+    //======================================================================================
     private String imageConvertBase64(Bitmap pic) {
-        Bitmap image = pic;//your image
+        Bitmap image = pic;
         ByteArrayOutputStream bYtE = new ByteArrayOutputStream();
         image.compress(Bitmap.CompressFormat.PNG, 100, bYtE);
         byte[] byteArray = bYtE.toByteArray();
         String imageFile = Base64.encodeToString(byteArray, Base64.DEFAULT);
         return imageFile;
-
     }
 
 
-}
+}//end class

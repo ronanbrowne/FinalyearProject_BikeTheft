@@ -1,10 +1,12 @@
 package com.example.ronan.practicenavigationdrawer;
 
-//this is the data model class for all bike attributes
-//upon registration of a bike a new bike object is created and pushed to the firebase DB (cloud based JSON db)
-//this is stored in a json node specifically related to the currently signed in user.
+
 
 public class BikeData {
+//======================================================================================
+// this is the data model class for all bike attributes
+//======================================================================================
+
 
     //variables
     private String make;

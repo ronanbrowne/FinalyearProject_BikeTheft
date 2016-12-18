@@ -10,12 +10,19 @@ import static com.example.ronan.practicenavigationdrawer.R.id.username;
 
 public class UserData {
 
+//======================================================================================
+// Data holder class for information on a user.  Objects of this class are sent to firebase DB
+//======================================================================================
+
+
+    //variables
     private String username;
     private String email;
     private String address;
     private String signUpdate;
     private String user_image_In_Base64;
 
+    //constrctor
     public UserData(String address, String username, String user_image_In_Base64, String signUpdate, String email) {
         this.address = address;
         this.username = username;
@@ -27,6 +34,7 @@ public class UserData {
     public UserData() {
     }
 
+    //getters
     public String getAddress() {
         return address;
     }

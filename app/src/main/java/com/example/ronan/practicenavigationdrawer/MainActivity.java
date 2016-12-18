@@ -1,17 +1,13 @@
 package com.example.ronan.practicenavigationdrawer;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.AttributeSet;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -21,11 +17,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -35,13 +29,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-
-import static android.R.attr.id;
-import static com.example.ronan.practicenavigationdrawer.R.id.edit_last_seen;
-import static com.example.ronan.practicenavigationdrawer.R.id.mapwhere;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -242,23 +231,6 @@ public class MainActivity extends AppCompatActivity
         userDataBase.addValueEventListener(fetchUserData);
 
 
-//        if (mFirebaseUser == null) {
-//            // Not signed in, launch the Sign In activity
-//            startActivity(new Intent(this, SignIn.class));
-//            finish();
-//            return;
-//        } else {
-//            mUsername = mFirebaseUser.getDisplayName();
-//
-//            //if log in doesnt include pic set string so app does not crash
-//            if (mFirebaseUser.getPhotoUrl().toString() == null) {
-//                mPhotoUrl = "No photo associated with this account";
-//                Log.v("MainActivity.class", "No photo associated with user userInputAddress");
-//            } else {
-//                mPhotoUrl = mFirebaseUser.getPhotoUrl().toString();
-//            }
-//        }
-
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -364,7 +336,7 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_register) {
             //setFragment
-            MainFragment mainFragment = new MainFragment();
+            RegisterFragment mainFragment = new RegisterFragment();
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.fragment_container, mainFragment);
             fragmentTransaction.commit();
@@ -418,14 +390,6 @@ public class MainActivity extends AppCompatActivity
             fragmentTransaction.commit();
             fm.beginTransaction().replace(R.id.fragment_container, new GmapFragment(), "mapp").commit();
 
-
-        } else if (id == R.id.nav_contact) {
-
-            //setFragment
-            ContactUsFragment contactUsFragment = new ContactUsFragment();
-            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.fragment_container, contactUsFragment);
-            fragmentTransaction.commit();
 
         }
 

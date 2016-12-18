@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -17,13 +16,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.ronan.practicenavigationdrawer.R;
+import com.firebase.client.Firebase;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -36,31 +34,27 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 
-import static android.R.attr.bitmap;
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
-import static com.example.ronan.practicenavigationdrawer.MainFragment.REQUEST_IMAGE_CAPTURE;
-import static com.example.ronan.practicenavigationdrawer.R.drawable.user;
-import static com.example.ronan.practicenavigationdrawer.R.id.upload_image;
-import static com.example.ronan.practicenavigationdrawer.R.id.userProfile;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class Profile_Fragment extends Fragment {
 
+    //variables
+
     private static final int SELECT_PICTURE = 0;
-    private String usernameGlobal;
+    private static final int REQUEST_IMAGE_CAPTURE = 1;
+    private String uniqueIdentifier;
     private String email;
-    private String address;
 
     private FirebaseUser mFirebaseUser;
-    //DB refrence
     private DatabaseReference mDatabase;
 
-    EditText usernameET;
-    EditText emailET;
-    EditText addressET;
+    private EditText usernameET;
+    private EditText emailET;
+    private EditText addressET;
     private ImageView upload_image;
 
 
@@ -70,15 +64,16 @@ public class Profile_Fragment extends Fragment {
 
     Bitmap bitmap;
     String base64 = "imageValue";
-
     String imageValue = "";
 
 
+    //================================================================================
+    //=      Grab current users data from DB
+    //=================================================================================
     ValueEventListener userDataListener = new ValueEventListener() {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
             if (dataSnapshot.getValue(UserData.class) == null) {
-
                 Log.v("Profile_fragment", "datasnap shot returned null in userDataListener");
                 return;
             }
@@ -87,11 +82,19 @@ public class Profile_Fragment extends Fragment {
             usernameET.setText(user.getUsername());
             emailET.setText(user.getEmail());
             addressET.setText(user.getAddress());
-
             imageValue = user.getUser_image_In_Base64();
 
-            if(!imageValue.equals("imageValue")){
-            getBitMapFromString(imageValue);}
+            //if no username is set use uniqueIdentifier from users email
+            if (user.getUsername() != null) {
+                profileHeading.setText(user.getUsername());
+            }else{
+                profileHeading.setText(uniqueIdentifier);
+            }
+
+            //if there was a image set grab it and set pic
+            if (!imageValue.equals("imageValue")) {
+                getBitMapFromString(imageValue);
+            }
 
         }
 
@@ -104,11 +107,15 @@ public class Profile_Fragment extends Fragment {
     };
 
 
+    //constructor
     public Profile_Fragment() {
         // Required empty public constructor
     }
 
 
+    //================================================================================
+    //=      onCreateView
+    //=================================================================================
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -122,10 +129,9 @@ public class Profile_Fragment extends Fragment {
         mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         if (mFirebaseUser != null) {
             email = mFirebaseUser.getEmail();
-            usernameGlobal = email.split("@")[0];
+            uniqueIdentifier = email.split("@")[0];
         }
 
-        mDatabase.child(usernameGlobal).addValueEventListener(userDataListener);
 
 
         usernameET = (EditText) rootView.findViewById(R.id.username);
@@ -137,13 +143,14 @@ public class Profile_Fragment extends Fragment {
         upload_image = (ImageView) rootView.findViewById(R.id.profile_image);
 
         //get default
-     //   Bitmap bitmap = ((BitmapDrawable)upload_image.getDrawable()).getBitmap();
-     //  base64= imageConvertBase64(bitmap);
+        //   Bitmap bitmap = ((BitmapDrawable)upload_image.getDrawable()).getBitmap();
+        //  base64= imageConvertBase64(bitmap);
+        mDatabase.child(uniqueIdentifier).addValueEventListener(userDataListener);
 
         picUpdate.setVisibility(View.VISIBLE);
 
         emailET.setText(email);
-        profileHeading.setText(usernameGlobal);
+        profileHeading.setText(uniqueIdentifier);
 
         //upload image
         picUpdate.setOnClickListener(new View.OnClickListener() {
@@ -156,11 +163,12 @@ public class Profile_Fragment extends Fragment {
             }
         });
 
-
+        //listener for putton to update profile
         update.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
+                //grab UI field data
                 String username = usernameET.getText().toString();
                 String email = emailET.getText().toString();
                 String address = addressET.getText().toString();
@@ -171,23 +179,31 @@ public class Profile_Fragment extends Fragment {
                 long date = System.currentTimeMillis();
                 SimpleDateFormat sdf = new SimpleDateFormat("MMM MM dd, yyyy h:mm a");
                 String dateString = sdf.format(date);
+
+
                 UserData userData = new UserData(address, username, base64, dateString, email);
 
 
-                mDatabase.child(usernameGlobal).setValue(userData);
+                mDatabase.child(uniqueIdentifier).setValue(userData);
 
-                Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Profile Updated", Toast.LENGTH_SHORT);
-                toast.show();
+                Toast.makeText(getActivity().getApplicationContext(), "Profile Updated", Toast.LENGTH_SHORT).show();
+
+                mDatabase.child(uniqueIdentifier).addValueEventListener(userDataListener);
 
 
             }
         });
 
         return rootView;
-    }
+    } //end onCreateView
 
 
-    //dialog listener for pop up to decide to launch camera or gallery
+
+
+
+    //================================================================================
+    //=   Dialog listener for pop up to decide to launch camera or gallery
+    //=================================================================================
     DialogInterface.OnClickListener getDialogClickListenerImage = new DialogInterface.OnClickListener() {
         @Override
         public void onClick(DialogInterface dialog, int which) {
@@ -205,7 +221,9 @@ public class Profile_Fragment extends Fragment {
         }
     };
 
-    //method to launch camera
+    //================================================================================
+    //=   method to launch camera
+    //=================================================================================
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         //check a app can handel this
@@ -214,7 +232,9 @@ public class Profile_Fragment extends Fragment {
         }
     }
 
-    //method to launch gallery
+    //================================================================================
+    //=   Dialog listener for pop up to decide to launch camera or gallery
+    //=================================================================================
     public void dispatchGrabImageFromGalleryItent() {
         Intent galleryIntent = new Intent();
         galleryIntent.setType("image/*");
@@ -222,10 +242,13 @@ public class Profile_Fragment extends Fragment {
         startActivityForResult(Intent.createChooser(galleryIntent, "Select Picture"), SELECT_PICTURE);
     }
 
-    //Do this on result of activity , after we get the pic.
+    //================================================================================
+    //=   Do this on result of activity , after we get the pic.
+    //=================================================================================
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        //if it was cam
         if (requestCode == 0) {
             if (resultCode == RESULT_OK) {
                 Uri imageUri = data.getData();
@@ -242,6 +265,7 @@ public class Profile_Fragment extends Fragment {
                 Log.i("message", "the user cancelled the request");
             }
         }
+        //if gallery
         if (requestCode == 1) {
             if (resultCode == RESULT_OK) {
                 Bundle extras = data.getExtras();
@@ -254,7 +278,9 @@ public class Profile_Fragment extends Fragment {
         }
     }
 
-    //helper method to covert bitmap image into base64 for storage in Firebase DB
+    //================================================================================
+    //=  helper method to covert bitmap image into base64 for storage in Firebase DB
+    //=================================================================================
     private String imageConvertBase64(Bitmap pic) {
         Bitmap image = pic;//your image
         ByteArrayOutputStream bYtE = new ByteArrayOutputStream();
@@ -265,7 +291,9 @@ public class Profile_Fragment extends Fragment {
         return imageFile;
     }
 
+    //=================================================================================
     //extract bitmap helper, this sets image view
+    //=================================================================================
     public void getBitMapFromString(String imageAsString) {
         if (imageAsString != null) {
             if (imageAsString.equals("No image") || imageAsString == null) {
@@ -279,6 +307,6 @@ public class Profile_Fragment extends Fragment {
         } else {
             Log.v("***", "Null paramater passed into getBitMapFromString");
         }
-    }
+    }//end method
 
-}
+}// end class

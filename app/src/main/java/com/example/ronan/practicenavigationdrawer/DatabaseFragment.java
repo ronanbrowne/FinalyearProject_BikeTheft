@@ -2,6 +2,7 @@ package com.example.ronan.practicenavigationdrawer;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -165,8 +166,7 @@ public class DatabaseFragment extends Fragment {
                                 composeEmail(email, subject, body);
 
                                 //feedback
-                                Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Tell origional owner where you may have seen their bike", Toast.LENGTH_SHORT);
-                                toast.show();
+                           Toast.makeText(getActivity().getApplicationContext(), "Tell origional owner where you may have seen their bike", Toast.LENGTH_LONG).show();
                             }
                         }
                     });
@@ -711,9 +711,10 @@ public class DatabaseFragment extends Fragment {
     }//end query
 
 
-
-    //Method to compose a email called when a user clicks on bike item in listView.
-    // email generated to send to origional user.
+    //================================================================================
+    //   Method to compose a email called when a user clicks on bike item in listView.
+    //   Email generated to send to origional user.
+    //=================================================================================
     public void composeEmail(String[] addresses, String subject, String body) {
         Intent intent = new Intent(Intent.ACTION_SENDTO);
         intent.setData(Uri.parse("mailto:")); // only email apps should handle this
@@ -723,10 +724,12 @@ public class DatabaseFragment extends Fragment {
         if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
             startActivity(intent);
         }
-    }
+    }//end method
 
 
 
 
 }//end class
+
+
 

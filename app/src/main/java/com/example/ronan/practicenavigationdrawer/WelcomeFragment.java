@@ -1,20 +1,16 @@
 package com.example.ronan.practicenavigationdrawer;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -25,25 +21,21 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
-
 import de.hdodenhof.circleimageview.CircleImageView;
 
-import static com.example.ronan.practicenavigationdrawer.R.id.upload_image;
-import static com.google.android.gms.fitness.data.zzs.Re;
+import static com.example.ronan.practicenavigationdrawer.R.drawable.user;
 
 
 public class WelcomeFragment extends Fragment {
 
-    TextView registered;
-    TextView stolen;
-    TextView systemStolen;
-    TextView user;
-    CircleImageView profielPic;
-    FloatingActionButton floatingEditProfile;
-    String key_passed_fromList;
-    String email = "";
-    String emailFull = "";
+    private TextView registered;
+    private TextView stolen;
+    private TextView systemStolen;
+    private TextView userHeading;
+    private CircleImageView profielPic;
+    private FloatingActionButton floatingEditProfile;
+    private String uniqueIdentifier = "";
+    private String emailFull = "";
 
 
     long countStolen;
@@ -60,33 +52,37 @@ public class WelcomeFragment extends Fragment {
         // Required empty public constructor
     }
 
-    String imageValue = "";
+    private String imageValue = "";
 
-
+    //======================================================================================
+    // FireBase listener to grab the specific user data
+    //======================================================================================
     ValueEventListener userDataListener = new ValueEventListener() {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
 
-
             if (dataSnapshot.getValue(UserData.class) == null) {
-
                 Log.v("Profile_fragment", "datasnap shot returned null in userDataListener");
                 return;
             }
 
-        user = dataSnapshot.getValue(UserData.class);
-//            usernameET.setText(user.getUsername());
-//            String email.setText(user.getEmail());
-//            addressET.setText(user.getAddress());
-
+            user = dataSnapshot.getValue(UserData.class);
             imageValue = user.getUser_image_In_Base64();
 
+            if (!imageValue.equals("imageValue")) {
+                getBitMapFromString(imageValue);
+            }
 
+            //if no username is set use uniqueIdentifier from users email
+            if (user.getUsername() != null) {
+                userHeading.setText(user.getUsername());
+            }else{
+                userHeading.setText(uniqueIdentifier);
+            }
 
-            if(!imageValue.equals("imageValue")){
-                getBitMapFromString(imageValue);}
+        }
 
-        }    UserData user = new UserData();
+        UserData user = new UserData();
 
         @Override
         public void onCancelled(DatabaseError databaseError) {
@@ -94,7 +90,10 @@ public class WelcomeFragment extends Fragment {
         }
     };
 
-    //extract bitmap helper, this sets image view
+
+    //======================================================================================
+    // extract bitmap helper, this sets image view
+    //======================================================================================
     public void getBitMapFromString(String imageAsString) {
         if (imageAsString != null) {
             if (imageAsString.equals("No image") || imageAsString == null) {
@@ -111,46 +110,46 @@ public class WelcomeFragment extends Fragment {
     }
 
 
-
+    //======================================================================================
+    // onCreateView
+    //======================================================================================
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_welcome, container, false);
         final View loadingIndicator = rootView.findViewById(R.id.loading_indicator_edit);
+//
+//        if(!imageValue.equals("")){
+//        }
 
-        if(!imageValue.equals("")){
-
-        }
-
-
+        //get user uniqueIdentifier
         mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         if (mFirebaseUser != null) {
             emailFull = mFirebaseUser.getEmail();
-            email = emailFull.split("@")[0];
+            uniqueIdentifier = emailFull.split("@")[0];
         }
 
 
-        Log.v("EMAIL", email);
         //seting up firebase DB refrences
-        mDatabase = FirebaseDatabase.getInstance().getReference().child("Bikes Registered By User").child(email);
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("Bikes Registered By User").child(uniqueIdentifier);
         stolenBikesDatabse = FirebaseDatabase.getInstance().getReference().child("Stolen Bikes");
-
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("User Profile Data");
-        mDatabaseUsers.child(email).addValueEventListener(userDataListener);
 
+        mDatabaseUsers.child(uniqueIdentifier).addValueEventListener(userDataListener);
 
+        //get IDs
         registered = (TextView) rootView.findViewById(R.id.bikesRegistered);
         stolen = (TextView) rootView.findViewById(R.id.personalStolen);
         systemStolen = (TextView) rootView.findViewById(R.id.totalStolen);
-       user = (TextView) rootView.findViewById(R.id.userProfile);
+        userHeading = (TextView) rootView.findViewById(R.id.userProfile);
         floatingEditProfile = (FloatingActionButton) rootView.findViewById(R.id.floatingConfirmEdit);
         profielPic = (CircleImageView) rootView.findViewById(R.id.profile_image);
 
+        //Button click to launch edit profile page
         floatingEditProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 //setFragment
                 FragmentManager fm = getFragmentManager();
                 fm.beginTransaction().replace(R.id.fragment_container, new Profile_Fragment()).commit();
@@ -159,53 +158,46 @@ public class WelcomeFragment extends Fragment {
         });
 
 
-        //event listener for checking if bike is on stolen DB used to give correct user feedback
+        //event listener for checking how many bikes registered to you
         ValueEventListener CountRegListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                //cout children nodes in this DB area.
                 countReg = dataSnapshot.getChildrenCount();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    // countReg++;
                 }
                 registered.setText("Bikes registered to you: " + countReg);
-
             }
-
             @Override
             public void onCancelled(DatabaseError databaseError) {
             }
         }; //end listener
 
 
-        //event listener for checking if bike is on stolen DB used to give correct user feedback
+        //event listener for checking if any of your bikes are in stolrn system and how many total in DB
         ValueEventListener CountStolenListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                //show loading bar while working
                 loadingIndicator.setVisibility(View.GONE);
                 countStolen = dataSnapshot.getChildrenCount();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-
                     BikeData bike = snapshot.getValue(BikeData.class);
-
-                        //check field is not null
+                    //check field is not null
                     if (bike.getRegisteredBy() != null) {
-
-
+                        //check bikes in stolen DB to see if ay were registered by curret user if so note it
                         if (bike.getRegisteredBy().equals(emailFull)) {
                             thisStolen++;
                             Log.v("**reg", bike.getRegisteredBy());
-
                         } else {
                             Log.v("**reg", "no user");
                         }
-
                     }
-                }
+                }//end for
 
+               //set UI
                 stolen.setText("Bikes you've listed as stolen: " + thisStolen);
-
                 systemStolen.setText("Total bikes stolen in system: " + countStolen);
-
             }
 
             @Override
@@ -213,16 +205,17 @@ public class WelcomeFragment extends Fragment {
             }
         }; //end listener
 
-        user.setText(email);
 
+
+        //call the listeners that set UI data
         mDatabase.addValueEventListener(CountRegListener);
         stolenBikesDatabse.addValueEventListener(CountStolenListener);
 
         return rootView;
 
-    }
+    }// end onCreateView
 
-}
+}//end class
 
 
 

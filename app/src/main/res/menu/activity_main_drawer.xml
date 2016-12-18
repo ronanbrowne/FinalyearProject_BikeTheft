@@ -38,34 +38,6 @@
 </menu>
     </item>
 
-    <!--<item android:title="Anti-Theft Beacons">-->
-    <!--<menu>-->
-    <!--<item-->
-    <!--android:id="@+id/nav_beacons"-->
-    <!--android:icon="@drawable/ic_menu_send"-->
-    <!--android:title="Manage Beacons" />-->
-    <!--</menu>-->
-    <!--</item>-->
 
-
-    <item android:title="Communicate">
-        <menu>
-            <item
-                android:id="@+id/nav_contact"
-                android:icon="@drawable/ic_menu_send"
-                android:title="About / Contact Us" />
-        </menu>
-    </item>
-
-    <!--<item android:title="User">-->
-    <!--<menu>-->
-
-    <!--<item-->
-    <!--android:id="@+id/nav_profile"-->
-    <!--android:icon="@drawable/ic_menu_manage"-->
-    <!--android:title="Edit user profile" />-->
-
-    <!--</menu>-->
-    <!--</item>-->
 
 </menu>

@@ -35,7 +35,6 @@
                 android:layout_height="50dp"
                 android:gravity="center_horizontal"
                 android:paddingTop="12dp"
-                android:text="User Profile"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large"
                 android:textColor="#ffffff" />
 

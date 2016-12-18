@@ -38,15 +38,12 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
-import static com.example.ronan.practicenavigationdrawer.MainFragment.REQUEST_IMAGE_CAPTURE;
 
 
 /**
@@ -74,23 +71,22 @@ public class EditFragment extends Fragment {
     private ImageView upload_image;
     private boolean geoCodeClicked;
 
-    String base64 = "No image";
-    String email = "";
+    private String base64 = "No image";
+    private String uniqueIdentifier = "";
     private String emailFull ="";
 
+    private String dB_KeyRefrence_fromBundle;
+    private double latitude = 0;
+    private double longitud = 0;
+    private String name;
 
-    String key_passed_fromList;
-    double latitude = 0;
-    double longitud = 0;
-    TextView infoText;
-    String name;
-
-    Bitmap bitmap;
+    private Bitmap bitmap;
 
     private boolean successfullEdit = false;
 
 
     private static final int SELECT_PICTURE = 0;
+    private static final int REQUEST_IMAGE_CAPTURE = 1;
 
 
     //Firebase variables
@@ -102,13 +98,15 @@ public class EditFragment extends Fragment {
     //holds all DB keys for bikes listed as stolen
     List<String> stolenKeysList;
 
-    //dialog listener for pop up to confirm delete
+    //===================================================================================
+    //=        dialog listener for pop up to confirm delete
+    //===================================================================================
     DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
         @Override
         public void onClick(DialogInterface dialog, int which) {
             switch (which) {
                 case DialogInterface.BUTTON_POSITIVE:
-                    stolenBikesDatabse.child(key_passed_fromList).removeValue();
+                    stolenBikesDatabse.child(dB_KeyRefrence_fromBundle).removeValue();
                     mDatabase.removeValue();
 
                     FragmentManager fm = getFragmentManager();
@@ -130,7 +128,10 @@ public class EditFragment extends Fragment {
         }
     };
 
-    //dialog listener for pop up to decide to launch camera or gallery
+
+    //===================================================================================
+    //=        dialog listener for pop up to decide to launch camera or gallery
+    //===================================================================================
     DialogInterface.OnClickListener getDialogClickListenerImage = new DialogInterface.OnClickListener() {
         @Override
         public void onClick(DialogInterface dialog, int which) {
@@ -148,7 +149,10 @@ public class EditFragment extends Fragment {
         }
     };
 
-    //event listener for checking if bike is on stolen DB used to give correct user feedback
+
+    //===================================================================================
+    // Firebase event listener for checking if bike is on stolen DB used to give correct user feedback
+    //===================================================================================
     ValueEventListener ifStolen = new ValueEventListener() {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
@@ -161,7 +165,7 @@ public class EditFragment extends Fragment {
             //looping through arraylist of DB keys for all stolen bikes
             for (String temp : stolenKeysList) {
                 //if the currect keq is also in stolen db mark as true
-                if (key_passed_fromList.equals(temp)) {
+                if (dB_KeyRefrence_fromBundle.equals(temp)) {
                     inStolenDB = true;
                 }
             }//end for
@@ -174,7 +178,10 @@ public class EditFragment extends Fragment {
         }
     }; //end listener
 
-    //declaring ValueEvent Listener to populate UI fields from DB
+
+    //===================================================================================
+    // Firebase event listener for populateing UI fields from DB
+    //===================================================================================
     ValueEventListener bikeListener = new ValueEventListener() {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
@@ -219,37 +226,41 @@ public class EditFragment extends Fragment {
     }
 
 
+    //===================================================================================
+    // onCreateView
+    //===================================================================================
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        //get the DB reference key for this particular bike.
+        //We set this in previous screen EditBikeList by passin git in arguments as a bundle to this fragment
+        Bundle bundle = this.getArguments();
+        if (bundle != null) {
+            dB_KeyRefrence_fromBundle = bundle.getString("dB_Ref");
+            Toast.makeText(getActivity().getApplicationContext(),dB_KeyRefrence_fromBundle , Toast.LENGTH_SHORT).show();
 
-        key_passed_fromList = DataHolderClass.getInstance().getDistributor_id();
+        }
 
-
-
+        //DB set up ad attach listeer
         stolenBikesDatabse = FirebaseDatabase.getInstance().getReference().child("Stolen Bikes");
         stolenBikesDatabse.addValueEventListener(ifStolen);
 
-
+        //boolean tracking to see if a user has retrieved geo-coOrdinates for bike, needed if listed stolen
         geoCodeClicked = false;
+
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_edit, container, false);
 
-        //now get anywhere(Fragment, activity, class)
-        //http://stackoverflow.com/questions/27484245/pass-data-between-two-fragments-without-using-activity
-
+        //get FireBase user. im using email to uniquely ID JSON nodes in DB. Firebase cant accept special characters in node reference
+        // i get around this by splitting the email address and dropping everything after @ symbol. whats remaining is used as a ID in DB
         mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         if (mFirebaseUser != null) {
             emailFull = mFirebaseUser.getEmail();
-            email = emailFull.split("@")[0];
+            uniqueIdentifier = emailFull.split("@")[0];
         }
 
-
-
-
         //get UI id's
-      //  infoText = (TextView) rootView.findViewById(R.id.infoText);
         lastSeen = (TextView) rootView.findViewById(R.id.lastSeen);
         bikeMake = (EditText) rootView.findViewById(R.id.edit_bike_make);
         bikeLastSeen = (EditText) rootView.findViewById(R.id.edit_last_seen);
@@ -264,8 +275,7 @@ public class EditFragment extends Fragment {
         geoCode = (FloatingActionButton) rootView.findViewById(R.id.floatingGeoCode);
         floatingDelete = (FloatingActionButton) rootView.findViewById(R.id.floatingDelete);
         geoCodeArea = (LinearLayout) rootView.findViewById(R.id.geoLocationLayout);
-           // update = (Button) rootView.findViewById(R.id.button);
-        // Inflate the layout for this fragment
+
 
         //listener for checkbox, reveal extra stolen options if stolen
         bikeStolen.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -279,7 +289,7 @@ public class EditFragment extends Fragment {
             }
         });
 
-        //upload image
+        //upload image listeer
         imageUpload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -291,11 +301,11 @@ public class EditFragment extends Fragment {
         });
 
 
-        //seting up firebase DB refrences
-        mDatabase = FirebaseDatabase.getInstance().getReference().child("Bikes Registered By User").child(email).child(key_passed_fromList);
+        //seting up firebase DB refrences, where we will be storing the object we push
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("Bikes Registered By User").child(uniqueIdentifier).child(dB_KeyRefrence_fromBundle);
         mDatabase.addValueEventListener(bikeListener);
 
-        //update buton
+        //update button listeer
         comfirmEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -337,7 +347,7 @@ public class EditFragment extends Fragment {
 
                             if (geoCodeClicked) {
                                 //add current bike to stolen DB use same key value.
-                                stolenBikesDatabse.child(key_passed_fromList).setValue(newBike);
+                                stolenBikesDatabse.child(dB_KeyRefrence_fromBundle).setValue(newBike);
                                 //user feedback
                                 Toast.makeText(getActivity().getApplicationContext(), "Added to stolen DB", Toast.LENGTH_SHORT).show();
                                 successfullEdit = true;
@@ -351,14 +361,14 @@ public class EditFragment extends Fragment {
 
                         }
 
-                    }
+                    }// end if(stolen)
 
                     //bike stolen checkbox is false
                     if (!stolen) {
                         //make sure its in stolen DB to Display collect message
                         if (inStolenDB) {
                             // remove from DB
-                            stolenBikesDatabse.child(key_passed_fromList).removeValue();
+                            stolenBikesDatabse.child(dB_KeyRefrence_fromBundle).removeValue();
                             //user output
                             Toast.makeText(getActivity().getApplicationContext(), "Removed from stolen DB", Toast.LENGTH_SHORT).show();
                             //reset check
@@ -368,13 +378,11 @@ public class EditFragment extends Fragment {
                         else {
                             Toast.makeText(getActivity().getApplicationContext(), "Bike updated", Toast.LENGTH_SHORT).show();
                             successfullEdit = true;
-
                         }
                     }
 
-                    Log.v("*date: ", getDate());
+                    //if the edit has bee successfull return user to main screen
                     if (successfullEdit) {
-                        //back to main screen
                         FragmentManager fm = getFragmentManager();
                         fm.beginTransaction().replace(R.id.fragment_container, new WelcomeFragment()).commit();
                     }
@@ -382,7 +390,7 @@ public class EditFragment extends Fragment {
             }//on click
         });
 
-        //floating action button for the geocoding - gets lat and long co-ordinates
+        //floating action button listener for the geocoding - gets lat and long co-ordinates
         geoCode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -391,6 +399,7 @@ public class EditFragment extends Fragment {
             }
         });
 
+        //button to delete bike listeer
         floatingDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -409,17 +418,17 @@ public class EditFragment extends Fragment {
     }// end oncreate
 
 
-    //AsyncTask for getting geocoiding from user input
+
+    //===================================================================================
+    //     AsyncTask for getting geocoiding from user input
+    //===================================================================================
     class GeocodeAsyncTask extends AsyncTask<Void, Void, Address> {
 
         String errorMessage = "";
 
         @Override
         protected void onPreExecute() {
-           // infoText.setVisibility(View.INVISIBLE);
             name = bikeLastSeen.getText().toString();
-            // latitudeArray = Double.parseDouble(latitudeEdit.getText().toString());
-            // longitude = Double.parseDouble(longitudeEdit.getText().toString());
         }
 
         @Override
@@ -439,32 +448,24 @@ public class EditFragment extends Fragment {
 
         protected void onPostExecute(Address address) {
             if (address == null) {
-//                infoText.setVisibility(View.VISIBLE);
-//                infoText.setText("No addrress");
+                Log.v("EditFragment", "No address Found");
             } else {
-                String addressName = "";
-                for (int i = 0; i < address.getMaxAddressLineIndex(); i++) {
-                    addressName += " --- " + address.getAddressLine(i);
-                }
                 //assigning class variables
                 latitude = address.getLatitude();
                 longitud = address.getLongitude();
 
-//                infoText.setVisibility(View.VISIBLE);
-//                infoText.setText("Latitude: " + address.getLatitude() + "\n" +
-//                        "Longitude: " + address.getLongitude() + "\n" +
-//                        "Address: " + addressName);
+                Toast.makeText(getActivity().getApplicationContext(), "Co-ordinates added to theft hotspot map", Toast.LENGTH_SHORT).show();
 
-
-                Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Co-ordinates added to theft hotspot map", Toast.LENGTH_SHORT);
-                toast.show();
+                //note taht button has been clicked to get co-ordonates
                 geoCodeClicked = true;
             }
         }
     }//end async
 
 
-    //extract bitmap helper, this sets image view
+    //===================================================================================
+    //     extract bitmap helper, this sets image view
+    //===================================================================================
     public void getBitMapFromString(String imageAsString) {
         if (imageAsString != null) {
             if (imageAsString.equals("No image") || imageAsString == null) {
@@ -480,10 +481,14 @@ public class EditFragment extends Fragment {
         }
     }
 
-    //Do this on result of activity , after we get the pic.
+    //===================================================================================
+    //     Do this on result of activity , after we get the pic.
+    //===================================================================================
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
+        //depeing on request code result will carry out diffrent result as two methods i calss request a result
         if (requestCode == 0) {
             if (resultCode == RESULT_OK) {
                 Uri imageUri = data.getData();
@@ -500,6 +505,7 @@ public class EditFragment extends Fragment {
                 Log.i("message", "the user cancelled the request");
             }
         }
+
         if (requestCode == 1) {
             if (resultCode == RESULT_OK) {
                 Bundle extras = data.getExtras();
@@ -512,18 +518,23 @@ public class EditFragment extends Fragment {
         }
     }
 
-    //helper method to covert bitmap image into base64 for storage in Firebase DB
+    //===================================================================================
+    //    helper method to covert bitmap image into base64 for storage in Firebase DB
+    //===================================================================================
     private String imageConvertBase64(Bitmap pic) {
         Bitmap image = pic;//your image
         ByteArrayOutputStream bYtE = new ByteArrayOutputStream();
         image.compress(Bitmap.CompressFormat.PNG, 100, bYtE);
-        // image.recycle();
+
         byte[] byteArray = bYtE.toByteArray();
         String imageFile = Base64.encodeToString(byteArray, Base64.DEFAULT);
         return imageFile;
     }
 
-    //method to launch camera
+
+    //===================================================================================
+    //   method to launch camera
+    //===================================================================================
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         //check a app can handel this
@@ -532,7 +543,10 @@ public class EditFragment extends Fragment {
         }
     }
 
-    //method to launch gallery
+
+    //===================================================================================
+    //  method to launch gallery
+    //===================================================================================
     public void dispatchGrabImageFromGalleryItent() {
         Intent galleryIntent = new Intent();
         galleryIntent.setType("image/*");
@@ -541,10 +555,5 @@ public class EditFragment extends Fragment {
     }
 
 
-    public String getDate() {
-        Calendar cal = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        return sdf.format(cal.getTime());
-    }
 
 }//end class

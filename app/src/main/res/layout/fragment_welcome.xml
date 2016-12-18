@@ -51,7 +51,6 @@
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
                     android:paddingTop="16dp"
-                    android:text="User"
                     android:textAppearance="@style/TextAppearance.AppCompat.Large"
                     android:textColor="#ffffff"
                     android:textStyle="bold" />

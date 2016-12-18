@@ -47,25 +47,21 @@ public class GmapFragment extends Fragment implements OnMapReadyCallback {
 
 
     private GoogleMap gMap;
-    TileOverlay mOverlay;
+    private TileOverlay mOverlay;
 
-    // Declare a variable for the cluster manager.
-   // private ClusterManager<MyItemMapClusters> mClusterManager;
-
-    private View myView;
-    ImageView image;
-
-    Button heatMap;
-    Button defaultMap;
+    private Button heatMap;
+    private Button defaultMap;
 
 
     private DatabaseReference stolenBikesDatabse;
-    BikeData mybike = new BikeData();
+    private BikeData mybike = new BikeData();
 
-    List<LatLng> mapLocations = new ArrayList<>();
+    private List<LatLng> mapLocations = new ArrayList<>();
 
 
-    //declaring ValueEvent Listener
+    //======================================================================================
+    // FireBase listener to add markers to the Map
+    //======================================================================================
     ValueEventListener bikeListener = new ValueEventListener() {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
@@ -76,35 +72,28 @@ public class GmapFragment extends Fragment implements OnMapReadyCallback {
             }
 
             for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-
-
                 mybike = snapshot.getValue(BikeData.class);
+                //use this for default camera loaction
                 LatLng dub = new LatLng(53.3498 ,-6.2603);
 
                 //create LatLong obj to store co-ordinates returned from bike date.
                 LatLng coOrdinates = new LatLng(mybike.getLatitude(), mybike.getLongditude());
                 mapLocations.add(coOrdinates);
 
-
-
                 //move Camera and add marker to coOrdinates position
                 gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(dub, 6));
+                gMap.addMarker(new MarkerOptions().title("Make: " + mybike.getMake()).snippet("Model:" + mybike.getModel() + "\nColour: " + mybike.getColor()+ "\nLast seen: " + mybike.getLastSeen()).position(coOrdinates));
 
-
-
-                        gMap.addMarker(new MarkerOptions().title("Make: " + mybike.getMake()).snippet("Model:" + mybike.getModel() + "\nColour: " + mybike.getColor()+ "\nLast seen: " + mybike.getLastSeen()).position(coOrdinates));
-
-
-
+                //Override the default layout for marker info window. if dont do this window is not large enough to properly display snippet
                 gMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
                     @Override
                     public View getInfoWindow(Marker marker) {
                         return null;
                     }
-
                     //set the layout and properties of the contents of the marker details.
                     @Override
                     public View getInfoContents(Marker marker) {
+                        //set layout and textviews
                         LinearLayout info = new LinearLayout(getActivity().getApplicationContext());
                         info.setOrientation(LinearLayout.VERTICAL);
 
@@ -124,10 +113,7 @@ public class GmapFragment extends Fragment implements OnMapReadyCallback {
                         return info;
                     }
                 });
-
-            }
-
-
+            }//end for datasnapshot
         }
 
         @Override
@@ -136,39 +122,35 @@ public class GmapFragment extends Fragment implements OnMapReadyCallback {
         }
     };
 
-
     @Override
     public void onDestroyView() {
         super.onDestroyView();
     }
-
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         final View rootView = inflater.inflate(R.layout.fragment_map, container, false);
-        myView = rootView;
 
         //  firebase
         stolenBikesDatabse = FirebaseDatabase.getInstance().getReference().child("Stolen Bikes");
 
+        //IDs
         heatMap = (Button) rootView.findViewById(R.id.heatMap);
         defaultMap = (Button) rootView.findViewById(R.id.normalMap);
 
 
-        //following is a workaround that removes the map fragment before i switch to another screen
-        //bug that causes map view to superimpose its self on anyother fragment if i go straight to that screen
+        //following is a workaround that removes the map fragment before i switch to another screen via Nav bar
+        //bug that causes map view to superimpose its self on other fragments if i go straight to that screen. was not abel to resolve issue fully.
+        //whe user slides out shinking map fragment this prevent this overlay bug.
         DrawerLayout drawer = (DrawerLayout) getActivity().findViewById(R.id.drawer_layout);
         drawer.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
-
             }
-
             @Override
             public void onDrawerOpened(View drawerView) {
-
                 rootView.getLayoutParams().height = 1;
                 rootView.getLayoutParams().width = 1;
                 rootView.invalidate();
@@ -185,8 +167,9 @@ public class GmapFragment extends Fragment implements OnMapReadyCallback {
             public void onDrawerStateChanged(int newState) {
 
             }
-        });
+        }); //end drawer listener
 
+        //heatmap button listener
         heatMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -195,6 +178,7 @@ public class GmapFragment extends Fragment implements OnMapReadyCallback {
             }
         });
 
+        //default map buttn listener.
         defaultMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -205,9 +189,9 @@ public class GmapFragment extends Fragment implements OnMapReadyCallback {
         });
 
         return rootView;
-    }
+    }//end on create view
 
-
+    //set google maps fragment
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
@@ -217,19 +201,24 @@ public class GmapFragment extends Fragment implements OnMapReadyCallback {
         fragment.getMapAsync(this);
     }
 
+
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
+        //clear any old map data
         googleMap.clear();
         this.gMap = googleMap;
-        LatLng dub = new LatLng(53.3498 ,-6.2603);
-        gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(dub, 6));
+//        LatLng dub = new LatLng(53.3498 ,-6.2603);
+//        gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(dub, 6));
         stolenBikesDatabse.addValueEventListener(bikeListener);
 
     }// end onMapReady
 
 
-    //change view to heat map
+    //======================================================================================
+    // change map view to heat map
+    //======================================================================================
     private void addHeatMap() {
         gMap.clear();
 
@@ -246,7 +235,9 @@ public class GmapFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
+    //======================================================================================
     //remove heat map method
+    //======================================================================================
     public void removeHeatMap() {
         if(mOverlay!=null) {
             mOverlay.remove();
