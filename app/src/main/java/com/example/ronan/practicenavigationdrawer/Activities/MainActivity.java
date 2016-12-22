@@ -3,11 +3,16 @@ package com.example.ronan.practicenavigationdrawer.Activities;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.MenuInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -17,6 +22,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -295,11 +301,46 @@ public class MainActivity extends AppCompatActivity
     Fragment fragmentr;
     SupportMapFragment mapFragment1;
 
+
+    int counInt = 3;
+    static int mNotifCount = 0;
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
+         getMenuInflater().inflate(R.menu.main, menu);
+       // MenuInflater inflater = getSherlockActivity().getSupportMenuInflater();
+        MenuItem menuItem = menu.findItem(R.id.testAction);
+        menuItem.setIcon(buildCounterDrawable(counInt,  R.drawable.ic_mail_outline_white_24dp));
+
         return true;
+    }
+
+    private Drawable buildCounterDrawable(int count, int backgroundImageId) {
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View view = inflater.inflate(R.layout.badge_layout_messenger_icon, null);
+        //view.setBackgroundResource(backgroundImageId);
+
+        if (count == 0) {
+            View counterTextPanel = view.findViewById(R.id.counterValuePanel);
+            counterTextPanel.setVisibility(View.GONE);
+        } else {
+            TextView textView = (TextView) view.findViewById(R.id.count);
+            textView.setTextSize(40);
+            textView.setText("" + count);
+        }
+
+        view.measure(
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+        view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
+
+        view.setDrawingCacheEnabled(true);
+        view.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+        Bitmap bitmap = Bitmap.createBitmap(view.getDrawingCache());
+        view.setDrawingCacheEnabled(false);
+
+        return new BitmapDrawable(getResources(), bitmap);
     }
 
     @Override
@@ -317,10 +358,13 @@ public class MainActivity extends AppCompatActivity
             builder.setMessage("Are you sure you wish to clear all bike data associated with this account?\n\n" +
                     "This action is permanent and can not be undone.").setPositiveButton("Yes", dialogClickListener)
                     .setNegativeButton("No", dialogClickListener).show();
-
-
         } else if (id == R.id.action_sign_out) {
             mFirebaseAuth.signOut();
+        } else if (id == R.id.testAction) {
+            ViewReportedSightingsFragment reportSightingFragment = new ViewReportedSightingsFragment();
+            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.fragment_container, reportSightingFragment);
+            fragmentTransaction.commit();
         }
 
         return super.onOptionsItemSelected(item);

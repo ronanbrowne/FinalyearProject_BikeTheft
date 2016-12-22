@@ -66,6 +66,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Calendar;
+import java.text.SimpleDateFormat;
 
 import static com.example.ronan.practicenavigationdrawer.R.id.mapwhere;
 import static com.google.android.gms.wearable.DataMap.TAG;
@@ -83,6 +85,8 @@ public class DatabaseFragment extends Fragment {
     private DatabaseReference mDatabaseStolen;
     private DatabaseReference mDatabaseQuery;
     private SupportMapFragment mSupportMapFragment;
+    private DatabaseReference mDatabaseReported;
+    private DatabaseReference itemRef;
 
     private ImageView bike_image;
     private EditText street;
@@ -149,25 +153,43 @@ public class DatabaseFragment extends Fragment {
                             dialog.dismiss();
 
                             //validate input
-                            if(input.getText().toString().trim().length() == 0){
+                            if (input.getText().toString().trim().length() == 0) {
                                 Toast.makeText(getActivity().getApplicationContext(), "You must specify where you saw this bike", Toast.LENGTH_SHORT).show();
-                            }else{
+                            } else {
 
-                                //build up the email to send to user
-                                input_from_reported_Location = input.getText().toString();
+//                                //build up the email to send to user
+//                                input_from_reported_Location = input.getText().toString();
+//
+//                                String[] email = {stolenBike.getRegisteredBy()};
+//                                String subject = "Suspected sighting of your bike: " + stolenBike.getMake();
+//                                String body = "Hello, \n\n I have potentially spotted the bike you registered as stolen (" + (stolenBike.getColor() + " " + stolenBike.getMake()) + "). " +
+//                                        "\n\n This sighting was at the following location " + input_from_reported_Location + "\n\n" +
+//                                        "Please reply to this email for further details." +
+//                                        "\n\n Regards.";
+//
+//                                //ethod to send emial
+//                                composeEmail(email, subject, body);
 
-                                String[] email = {stolenBike.getRegisteredBy()};
-                                String subject = "Suspected sighting of your bike: " + stolenBike.getMake();
-                                String body = "Hello, \n\n I have potentially spotted the bike you registered as stolen (" + (stolenBike.getColor() + " " + stolenBike.getMake()) + "). " +
-                                        "\n\n This sighting was at the following location " + input_from_reported_Location + "\n\n" +
-                                        "Please reply to this email for further details." +
-                                        "\n\n Regards.";
+                                //set user who reported it
+                                stolenBike.setReportedBy(email);
+                                stolenBike.setReportedDate(getDate());
+                                stolenBike.setReportedLocation(input.getText().toString());
+                                stolenBike.setReportedSigting(true);
 
-                                //ethod to send emial
-                                composeEmail(email, subject, body);
+                                mDatabaseReported.child(itemRef.getKey()).setValue(stolenBike);
+
+                                Log.v("check repoting*", stolenBike.getRegisteredBy());
+                                Log.v("check repoting*", stolenBike.getReportedDate());
+                                Log.v("check repoting*", stolenBike.getReportedLocation());
+                                Log.v("check repoting*", "" + stolenBike.isReportedSigting());
+
 
                                 //feedback
-                           Toast.makeText(getActivity().getApplicationContext(), "Tell origional owner where you may have seen their bike", Toast.LENGTH_LONG).show();
+                                Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Notifiacion sent to origional owner", Toast.LENGTH_SHORT);
+                                toast.show();
+
+
+                                //feedback
                             }
                         }
                     });
@@ -243,6 +265,7 @@ public class DatabaseFragment extends Fragment {
         //set up firebase instances also get user email we use this for uniqe DB refrences
         mDatabaseQuery = FirebaseDatabase.getInstance().getReference().child("QueryResults").child(email);
         mDatabaseStolen = FirebaseDatabase.getInstance().getReference().child("Stolen Bikes");
+        mDatabaseReported = FirebaseDatabase.getInstance().getReference().child("Reported Bikes");
 
         mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -386,6 +409,8 @@ public class DatabaseFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
+                itemRef = bikeAdapter.getRef(i);
+
                 stolenBike = bikeAdapter.getItem(i);
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
@@ -412,6 +437,8 @@ public class DatabaseFragment extends Fragment {
                 myListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                        itemRef = bikeAdapter.getRef(i);
 
                         stolenBike = bikeAdapter.getItem(i);
 
@@ -622,7 +649,8 @@ public class DatabaseFragment extends Fragment {
             if (SphericalUtil.computeDistanceBetween(latLng, marker.getPosition()) < radius) {
                 marker.setVisible(true);
                 marker.setTitle("Make: " + bikeReturned.get(i).getMake());
-                marker.setSnippet ("Model:" + bikeReturned.get(i).getModel() + "\nColour " + bikeReturned.get(i).getColor());;
+                marker.setSnippet("Model:" + bikeReturned.get(i).getModel() + "\nColour " + bikeReturned.get(i).getColor());
+                ;
 
                 queryBike.add(bikeReturned.get(i));
             }
@@ -632,9 +660,8 @@ public class DatabaseFragment extends Fragment {
         //show user feedback based on query
         if (queryBike.isEmpty()) {
             Toast.makeText(getActivity().getApplicationContext(), "No bikes in that area", Toast.LENGTH_SHORT).show();
-        }
-       else{
-            Toast.makeText(getActivity().getApplicationContext(), queryBike.size()+" results returned", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(getActivity().getApplicationContext(), queryBike.size() + " results returned", Toast.LENGTH_SHORT).show();
         }
 
         //we store bike within the radus in  queryBike. we then push this to seprate DB node
@@ -697,6 +724,8 @@ public class DatabaseFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
+                itemRef = bikeAdapterQuery.getRef(i);
+
                 stolenBike = bikeAdapterQuery.getItem(i);
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
@@ -727,8 +756,12 @@ public class DatabaseFragment extends Fragment {
         }
     }//end method
 
-
-
+    //get current date instanc use this to log when bike sighting was reported
+       public String getDate() {
+                Calendar cal = Calendar.getInstance();
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+                return sdf.format(cal.getTime());
+           }
 
 }//end class
 

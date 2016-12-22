@@ -21,6 +21,12 @@ public class BikeData {
     private double latitude;
     private double longditude;
 
+    private String reportedBy;
+    private String reportedLocation;
+    private String reportedDate;
+    private boolean reportedSigting;
+
+
 
     //constructor
     public BikeData(String make, int frameSize, String color, String other, boolean stolen, String imageBase64, String model, String lastSeen, double latitude, double longditude, String registeredBy) {
@@ -37,6 +43,60 @@ public class BikeData {
         this.longditude = longditude;
 
     }
+
+
+    //constructor for reporting sighting
+    public BikeData(String make, int frameSize, String color, String other, boolean stolen, String imageBase64, String model, String lastSeen, double latitude, double longditude, String registeredBy, String reportedLocation, boolean reportedSigting, String reportedBy, String reportedDate) {
+        this.color = color;
+        this.frameSize = frameSize;
+        this.imageBase64 = imageBase64;
+        this.lastSeen = lastSeen;
+        this.latitude = latitude;
+        this.longditude = longditude;
+        this.make = make;
+        this.model = model;
+        this.otherFeatures = other;
+        this.registeredBy = registeredBy;
+        this.reportedBy = reportedBy;
+        this.reportedDate = reportedDate;
+        this.reportedLocation = reportedLocation;
+        this.reportedSigting = reportedSigting;
+        this.stolen = stolen;
+    }
+
+
+    public void setReportedBy(String reportedBy) {
+        this.reportedBy = reportedBy;
+    }
+
+    public void setReportedDate(String reportedDate) {
+        this.reportedDate = reportedDate;
+    }
+
+    public void setReportedLocation(String reportedLocation) {
+        this.reportedLocation = reportedLocation;
+    }
+
+    public void setReportedSigting(boolean reportedSigting) {
+        this.reportedSigting = reportedSigting;
+    }
+
+    public String getReportedBy() {
+        return reportedBy;
+    }
+
+    public String getReportedDate() {
+        return reportedDate;
+    }
+
+    public String getReportedLocation() {
+        return reportedLocation;
+    }
+
+    public boolean isReportedSigting() {
+        return reportedSigting;
+    }
+
 
     public BikeData() {
     }
