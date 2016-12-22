@@ -1,4 +1,4 @@
-package com.example.ronan.practicenavigationdrawer;
+package com.example.ronan.practicenavigationdrawer.Activities;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -20,6 +20,15 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.ronan.practicenavigationdrawer.DataModel.BikeData;
+import com.example.ronan.practicenavigationdrawer.DataModel.UserData;
+import com.example.ronan.practicenavigationdrawer.Fragments.DatabaseFragment;
+import com.example.ronan.practicenavigationdrawer.Fragments.EditFragmentList;
+import com.example.ronan.practicenavigationdrawer.Fragments.GmapFragment;
+import com.example.ronan.practicenavigationdrawer.Fragments.Profile_Fragment;
+import com.example.ronan.practicenavigationdrawer.Fragments.RegisterFragment;
+import com.example.ronan.practicenavigationdrawer.Fragments.WelcomeFragment;
+import com.example.ronan.practicenavigationdrawer.R;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;

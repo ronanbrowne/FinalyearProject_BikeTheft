@@ -1,4 +1,4 @@
-package com.example.ronan.practicenavigationdrawer;
+package com.example.ronan.practicenavigationdrawer.DataModel;
 
 import java.util.Date;
 

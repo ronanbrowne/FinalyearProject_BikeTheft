@@ -1,4 +1,4 @@
-package com.example.ronan.practicenavigationdrawer;
+package com.example.ronan.practicenavigationdrawer.Fragments;
 
 
 import android.app.AlertDialog;
@@ -20,6 +20,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.ronan.practicenavigationdrawer.DataModel.BikeData;
+import com.example.ronan.practicenavigationdrawer.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;

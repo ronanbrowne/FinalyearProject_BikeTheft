@@ -1,8 +1,7 @@
-package com.example.ronan.practicenavigationdrawer;
+package com.example.ronan.practicenavigationdrawer.Fragments;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -39,6 +38,8 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.ronan.practicenavigationdrawer.DataModel.BikeData;
+import com.example.ronan.practicenavigationdrawer.R;
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;

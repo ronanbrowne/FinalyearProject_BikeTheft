@@ -1,4 +1,4 @@
-package com.example.ronan.practicenavigationdrawer;
+package com.example.ronan.practicenavigationdrawer.Fragments;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -13,6 +13,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.ronan.practicenavigationdrawer.DataModel.BikeData;
+import com.example.ronan.practicenavigationdrawer.DataModel.UserData;
+import com.example.ronan.practicenavigationdrawer.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -22,8 +25,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-
-import static com.example.ronan.practicenavigationdrawer.R.drawable.user;
 
 
 public class WelcomeFragment extends Fragment {
