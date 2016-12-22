@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/counterPanel"
+    android:layout_width="32dp"
+    android:layout_height="32dp"
+    >
+
+
+    <LinearLayout
+        android:id="@+id/counterValuePanel"
+        android:layout_width="wrap_content"
+        android:orientation="horizontal"
+        android:layout_height="wrap_content" >
+
+        <ImageView
+            android:id="@+id/counterBackground"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:background="@drawable/ic_mail_outline_white_24dp" />
+
+        <TextView
+            android:id="@+id/count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="10"
+            android:paddingEnd="8dp"
+            android:paddingRight="8dp"
+            android:paddingLeft="8dp"
+            android:gravity="center"
+            android:textSize="11sp"
+            android:layout_alignTop="@id/counterBackground"
+            android:layout_alignRight="@id/counterBackground"
+            android:layout_alignEnd="@id/counterBackground"
+            android:background="@drawable/counter_circle"
+            android:textColor="#000000"
+
+           />
+
+    </LinearLayout>
+
+</FrameLayout>
+
+

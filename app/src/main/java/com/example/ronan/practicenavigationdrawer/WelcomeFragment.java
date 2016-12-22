@@ -21,6 +21,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.example.ronan.practicenavigationdrawer.R.drawable.user;
@@ -32,6 +36,7 @@ public class WelcomeFragment extends Fragment {
     private TextView stolen;
     private TextView systemStolen;
     private TextView userHeading;
+    TextView reportedSigntings;
     private CircleImageView profielPic;
     private FloatingActionButton floatingEditProfile;
     private String uniqueIdentifier = "";
@@ -47,6 +52,14 @@ public class WelcomeFragment extends Fragment {
     private DatabaseReference mDatabase;
     private DatabaseReference stolenBikesDatabse;
     private DatabaseReference mDatabaseUsers;
+    private DatabaseReference reportedStolen;
+    private DatabaseReference readReportOfStolenQuery;
+
+    ArrayList<String> registeredBikeKeys = new ArrayList<>();
+    ArrayList<String> sightingBikeKeys = new ArrayList<>();
+    ArrayList<BikeData> reportedSightingsList = new ArrayList<>();
+    ArrayList<BikeData> registeredBikesList = new ArrayList<>();
+
 
     public WelcomeFragment() {
         // Required empty public constructor
@@ -135,6 +148,8 @@ public class WelcomeFragment extends Fragment {
         mDatabase = FirebaseDatabase.getInstance().getReference().child("Bikes Registered By User").child(uniqueIdentifier);
         stolenBikesDatabse = FirebaseDatabase.getInstance().getReference().child("Stolen Bikes");
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("User Profile Data");
+        readReportOfStolenQuery = FirebaseDatabase.getInstance().getReference().child("Viewing bikes Reported Stolen").child(uniqueIdentifier);
+        reportedStolen = FirebaseDatabase.getInstance().getReference().child("Reported Bikes");
 
         mDatabaseUsers.child(uniqueIdentifier).addValueEventListener(userDataListener);
 
@@ -143,6 +158,7 @@ public class WelcomeFragment extends Fragment {
         stolen = (TextView) rootView.findViewById(R.id.personalStolen);
         systemStolen = (TextView) rootView.findViewById(R.id.totalStolen);
         userHeading = (TextView) rootView.findViewById(R.id.userProfile);
+        reportedSigntings = (TextView) rootView.findViewById(R.id.reportedSigntings);
         floatingEditProfile = (FloatingActionButton) rootView.findViewById(R.id.floatingConfirmEdit);
         profielPic = (CircleImageView) rootView.findViewById(R.id.profile_image);
 
@@ -165,6 +181,11 @@ public class WelcomeFragment extends Fragment {
                 //cout children nodes in this DB area.
                 countReg = dataSnapshot.getChildrenCount();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+
+                    //grab all ket data from bikes registered, and grab al lbikes registered
+                    registeredBikeKeys.add(snapshot.getKey().toString());
+                    BikeData bike = snapshot.getValue(BikeData.class);
+                    registeredBikesList.add(bike);
                 }
                 registered.setText("Bikes registered to you: " + countReg);
             }
@@ -183,6 +204,7 @@ public class WelcomeFragment extends Fragment {
                 countStolen = dataSnapshot.getChildrenCount();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     BikeData bike = snapshot.getValue(BikeData.class);
+ ;
                     //check field is not null
                     if (bike.getRegisteredBy() != null) {
                         //check bikes in stolen DB to see if ay were registered by curret user if so note it
@@ -207,9 +229,60 @@ public class WelcomeFragment extends Fragment {
 
 
 
+        //event listener for checking if bike is on stolen DB used to give correct user feedback
+        ValueEventListener reportedStolenListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                countReg = dataSnapshot.getChildrenCount();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        //keys for all sightings
+                    sightingBikeKeys.add(snapshot.getKey().toString());
+                    BikeData bike = snapshot.getValue(BikeData.class);
+
+                    //if a bike you have registered has been reported grab that
+                    if (registeredBikeKeys.contains(snapshot.getKey().toString())) {
+                        reportedSightingsList.add(bike);
+                        Log.v("**rprint", Arrays.toString(reportedSightingsList.toArray()));
+                        Log.v("**rprint make:", bike.getMake() + "Model: " + bike.getModel());
+
+                        readReportOfStolenQuery.child(snapshot.getKey().toString()).setValue(bike);
+                        reportedSigntings.setText("*Another User has reported a potental sighting your bikes, check mail");
+                    }
+
+
+                }
+
+
+                reportedSightingsList.size();
+                List<String> list3 = new ArrayList<>();
+
+                for (String matches : registeredBikeKeys) {
+                    if (sightingBikeKeys.contains(matches)) {
+                        list3.add(matches);
+                        Log.v("**size", "" + list3.size());
+                    }
+                }
+
+                if (!list3.isEmpty()) {
+                    // startAnim();
+                }
+
+
+                //   registered.setText("Bikes registered to you: " + countReg);
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        }; //end listener
+
+
+
         //call the listeners that set UI data
         mDatabase.addValueEventListener(CountRegListener);
         stolenBikesDatabse.addValueEventListener(CountStolenListener);
+        reportedStolen.addValueEventListener(reportedStolenListener);
 
         return rootView;
 

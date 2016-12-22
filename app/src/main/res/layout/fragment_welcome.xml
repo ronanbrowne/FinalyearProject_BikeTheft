@@ -111,6 +111,15 @@
                     style="@style/WelcomeCategoryStyle"
                     tools:text="Total bikes stolen in system: " />
 
+                <TextView
+                    android:id="@+id/reportedSigntings"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorAccent"
+                    android:padding="16dp"
+                    android:paddingLeft="8dp"
+                    tools:text="Number of sightings " />
+
             </LinearLayout>
 
 
