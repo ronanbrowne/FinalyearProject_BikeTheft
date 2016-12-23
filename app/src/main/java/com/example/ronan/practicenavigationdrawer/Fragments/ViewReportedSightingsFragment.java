@@ -1,4 +1,4 @@
-package com.example.ronan.practicenavigationdrawer;
+package com.example.ronan.practicenavigationdrawer.Fragments;
 
 
 import android.graphics.Bitmap;
@@ -15,6 +15,8 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.example.ronan.practicenavigationdrawer.DataModel.BikeData;
+import com.example.ronan.practicenavigationdrawer.R;
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;

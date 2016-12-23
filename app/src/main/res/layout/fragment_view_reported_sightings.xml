@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF"
-    tools:context="com.example.ronan.practicenavigationdrawer.ViewReportedSightingsFragment">
+    tools:context="com.example.ronan.practicenavigationdrawer.Fragments.ViewReportedSightingsFragment">
 
     <RelativeLayout
         android:layout_width="match_parent"
