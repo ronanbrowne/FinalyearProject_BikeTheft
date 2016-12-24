@@ -33,6 +33,7 @@ import com.example.ronan.practicenavigationdrawer.Fragments.EditFragmentList;
 import com.example.ronan.practicenavigationdrawer.Fragments.GmapFragment;
 import com.example.ronan.practicenavigationdrawer.Fragments.Profile_Fragment;
 import com.example.ronan.practicenavigationdrawer.Fragments.RegisterFragment;
+import com.example.ronan.practicenavigationdrawer.Fragments.ViewReportedSightingsFragment;
 import com.example.ronan.practicenavigationdrawer.Fragments.WelcomeFragment;
 import com.example.ronan.practicenavigationdrawer.R;
 import com.google.android.gms.maps.SupportMapFragment;
