@@ -61,6 +61,7 @@ public class MainActivity extends AppCompatActivity
     private DatabaseReference userDataBase;
     private DatabaseReference stolenBikesDatabse;
     private DatabaseReference usersBikesDatabase;
+    private DatabaseReference userSightings;
 
 
     private String mUsername;
@@ -75,6 +76,27 @@ public class MainActivity extends AppCompatActivity
     ArrayList<String> keysForStolenBikes = new ArrayList<>();
 
     private boolean mapOpen = false;
+private long sightingsCount;
+
+    //===================================================================================
+    // Firebase event listener for counting "Mail"
+    //===================================================================================
+    ValueEventListener countMail = new ValueEventListener() {
+        @Override
+        public void onDataChange(DataSnapshot dataSnapshot) {
+            sightingsCount = dataSnapshot.getChildrenCount();
+            Log.v("*", "sight: " + sightingsCount);
+            Toast.makeText(MainActivity.this, "(testing, delete later) mail Box:   "+sightingsCount, Toast.LENGTH_SHORT).show();
+
+            menuItem.setIcon(buildCounterDrawable((int) sightingsCount,  R.drawable.ic_mail_outline_white_24dp));
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+            Log.v("*", "Error on ifStolen ValueEventListener: " + databaseError.toString());
+
+        }
+    }; //end listener
 
 
     //dialog listener for pop up to confirm delete all bike data registered to a user
@@ -178,6 +200,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
 
+
         //setFragment
         WelcomeFragment mainFragment = new WelcomeFragment();
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
@@ -198,21 +221,10 @@ public class MainActivity extends AppCompatActivity
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
                     // User is signed in
-
                     Log.d("look_here***", "onAuthStateChanged:signed_in:" + user.getUid() + user.getEmail());
                     mEmail = user.getEmail();
                     mUsername = mEmail.split("@")[0];
                     Log.d("look_here***", "onAuthStateChanged:signed_in:" + mEmail);
-
-                    //                 mDatabase = FirebaseDatabase.getInstance().getReference().child("User Profile Data");
-//
-//                    long date = System.currentTimeMillis();
-//                    SimpleDateFormat sdf = new SimpleDateFormat("MMM MM dd, yyyy h:mm a");
-//                    String dateString = sdf.format(date);
-//                    UserData userData = new UserData("Enter address", mUsername, "imageValue", dateString, mEmail);
-//
-//                    mDatabase.child(mUsername).setValue(userData);
-
 
                 } else {
                     // User is signed out
@@ -245,6 +257,13 @@ public class MainActivity extends AppCompatActivity
 
         userDataBase = FirebaseDatabase.getInstance().getReference().child("User Profile Data").child(email);
         userDataBase.addValueEventListener(fetchUserData);
+
+
+
+        userSightings= FirebaseDatabase.getInstance().getReference().child("Viewing bikes Reported Stolen").child(email);
+        userSightings.addValueEventListener(countMail);
+        Log.v("4", String.valueOf(sightingsCount));
+
 
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -303,16 +322,22 @@ public class MainActivity extends AppCompatActivity
     SupportMapFragment mapFragment1;
 
 
-    int counInt = 3;
-    static int mNotifCount = 0;
+    int counInt = 5;
 
+    MenuItem menuItem ;
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
          getMenuInflater().inflate(R.menu.main, menu);
-       // MenuInflater inflater = getSherlockActivity().getSupportMenuInflater();
-        MenuItem menuItem = menu.findItem(R.id.testAction);
-        menuItem.setIcon(buildCounterDrawable(counInt,  R.drawable.ic_mail_outline_white_24dp));
+
+
+        Log.v("4", String.valueOf(sightingsCount));
+
+
+
+        // MenuInflater inflater = getSherlockActivity().getSupportMenuInflater();
+        menuItem = menu.findItem(R.id.testAction);
+      //  menuItem.setIcon(buildCounterDrawable( counInt,  R.drawable.ic_mail_outline_white_24dp));
 
         return true;
     }
