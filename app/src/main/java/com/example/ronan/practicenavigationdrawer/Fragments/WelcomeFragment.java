@@ -37,7 +37,6 @@ public class WelcomeFragment extends Fragment {
     private TextView stolen;
     private TextView systemStolen;
     private TextView userHeading;
-    TextView reportedSigntings;
     private CircleImageView profielPic;
     private FloatingActionButton floatingEditProfile;
     private String uniqueIdentifier = "";
@@ -159,7 +158,6 @@ public class WelcomeFragment extends Fragment {
         stolen = (TextView) rootView.findViewById(R.id.personalStolen);
         systemStolen = (TextView) rootView.findViewById(R.id.totalStolen);
         userHeading = (TextView) rootView.findViewById(R.id.userProfile);
-        reportedSigntings = (TextView) rootView.findViewById(R.id.reportedSigntings);
         floatingEditProfile = (FloatingActionButton) rootView.findViewById(R.id.floatingConfirmEdit);
         profielPic = (CircleImageView) rootView.findViewById(R.id.profile_image);
 
@@ -180,7 +178,13 @@ public class WelcomeFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 //cout children nodes in this DB area.
+                loadingIndicator.setVisibility(View.GONE);
                 countReg = dataSnapshot.getChildrenCount();
+                registered.setText("Bikes registered to you: " + countReg);
+                registered.setVisibility(View.VISIBLE);
+                stolen.setVisibility(View.VISIBLE);
+                systemStolen.setVisibility(View.VISIBLE);
+
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
 
                     //grab all ket data from bikes registered, and grab al lbikes registered
@@ -188,7 +192,7 @@ public class WelcomeFragment extends Fragment {
                     BikeData bike = snapshot.getValue(BikeData.class);
                     registeredBikesList.add(bike);
                 }
-                registered.setText("Bikes registered to you: " + countReg);
+
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -201,7 +205,7 @@ public class WelcomeFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 //show loading bar while working
-                loadingIndicator.setVisibility(View.GONE);
+
                 countStolen = dataSnapshot.getChildrenCount();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     BikeData bike = snapshot.getValue(BikeData.class);
@@ -217,10 +221,11 @@ public class WelcomeFragment extends Fragment {
                         }
                     }
                 }//end for
-
-               //set UI
                 stolen.setText("Bikes you've listed as stolen: " + thisStolen);
                 systemStolen.setText("Total bikes stolen in system: " + countStolen);
+
+               //set UI
+
             }
 
             @Override
@@ -247,7 +252,6 @@ public class WelcomeFragment extends Fragment {
                         Log.v("**rprint make:", bike.getMake() + "Model: " + bike.getModel());
 
                         readReportOfStolenQuery.child(snapshot.getKey().toString()).setValue(bike);
-                        reportedSigntings.setText("*Another User has reported a potental sighting your bikes, check mail");
                     }
 
 
@@ -284,6 +288,8 @@ public class WelcomeFragment extends Fragment {
         mDatabase.addValueEventListener(CountRegListener);
         stolenBikesDatabse.addValueEventListener(CountStolenListener);
         reportedStolen.addValueEventListener(reportedStolenListener);
+
+
 
         return rootView;
 

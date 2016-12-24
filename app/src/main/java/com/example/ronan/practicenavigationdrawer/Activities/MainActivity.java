@@ -86,7 +86,7 @@ private long sightingsCount;
         public void onDataChange(DataSnapshot dataSnapshot) {
             sightingsCount = dataSnapshot.getChildrenCount();
             Log.v("*", "sight: " + sightingsCount);
-            Toast.makeText(MainActivity.this, "All asso   "+sightingsCount, Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, "(testing, delete later) mail Box:   "+sightingsCount, Toast.LENGTH_SHORT).show();
 
             menuItem.setIcon(buildCounterDrawable((int) sightingsCount,  R.drawable.ic_mail_outline_white_24dp));
         }
@@ -213,12 +213,6 @@ private long sightingsCount;
         // Initialize Firebase Auth
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
-        mEmail =  mFirebaseAuth.getCurrentUser().getEmail();
-        String mUsername2 = mEmail.split("@")[0];
-
-        userSightings= FirebaseDatabase.getInstance().getReference().child("Viewing bikes Reported Stolen").child(mUsername2);
-        userSightings.addValueEventListener(countMail);
-        Log.v("4", String.valueOf(sightingsCount));
 
 
         FirebaseAuth.AuthStateListener mAuthListener = new FirebaseAuth.AuthStateListener() {
@@ -227,21 +221,10 @@ private long sightingsCount;
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
                     // User is signed in
-
                     Log.d("look_here***", "onAuthStateChanged:signed_in:" + user.getUid() + user.getEmail());
                     mEmail = user.getEmail();
                     mUsername = mEmail.split("@")[0];
                     Log.d("look_here***", "onAuthStateChanged:signed_in:" + mEmail);
-
-                    //                 mDatabase = FirebaseDatabase.getInstance().getReference().child("User Profile Data");
-//
-//                    long date = System.currentTimeMillis();
-//                    SimpleDateFormat sdf = new SimpleDateFormat("MMM MM dd, yyyy h:mm a");
-//                    String dateString = sdf.format(date);
-//                    UserData userData = new UserData("Enter address", mUsername, "imageValue", dateString, mEmail);
-//
-//                    mDatabase.child(mUsername).setValue(userData);
-
 
                 } else {
                     // User is signed out
@@ -274,6 +257,12 @@ private long sightingsCount;
 
         userDataBase = FirebaseDatabase.getInstance().getReference().child("User Profile Data").child(email);
         userDataBase.addValueEventListener(fetchUserData);
+
+
+
+        userSightings= FirebaseDatabase.getInstance().getReference().child("Viewing bikes Reported Stolen").child(email);
+        userSightings.addValueEventListener(countMail);
+        Log.v("4", String.valueOf(sightingsCount));
 
 
 
