@@ -1,5 +1,7 @@
 package com.example.ronan.practicenavigationdrawer.Fragments;
 
+import android.content.Context;
+import android.content.ContextWrapper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -24,6 +26,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -65,6 +70,7 @@ public class WelcomeFragment extends Fragment {
         // Required empty public constructor
     }
 
+    private Bitmap bitmap;;
     private String imageValue = "";
 
     //======================================================================================
@@ -82,8 +88,30 @@ public class WelcomeFragment extends Fragment {
             user = dataSnapshot.getValue(UserData.class);
             imageValue = user.getUser_image_In_Base64();
 
+            //if there was a image set grab it and set pic
             if (!imageValue.equals("imageValue")) {
                 getBitMapFromString(imageValue);
+                Log.v("*File path exist", "settign bitmap image");
+
+                //set up file location
+                ContextWrapper cw = new ContextWrapper(getActivity().getApplicationContext());
+                File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
+                File mypath=new File(directory,uniqueIdentifier); //file name
+
+                //sett if it has been previously created grab cached file it so
+                if(mypath.exists()){
+                    loadImageFromStorage(uniqueIdentifier);
+                    Log.v("*File path exist", "true: "+mypath.getAbsolutePath());
+                }
+                //other wise grab remote file
+                else{
+                   // saveToInternalStorage(bitmap);
+                    profielPic.setImageBitmap(bitmap);
+                    Log.v("*File path exist", "false");
+                }
+
+
+
             }
 
             //if no username is set use uniqueIdentifier from users email
@@ -294,6 +322,29 @@ public class WelcomeFragment extends Fragment {
         return rootView;
 
     }// end onCreateView
+
+
+    private void loadImageFromStorage(String path)
+    {
+        try {
+            Log.v("*File storage Load", "file exists retreving from storage");
+            ContextWrapper cw = new ContextWrapper(getActivity().getApplicationContext());
+            File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
+            // path for this user
+            File mypath=new File(directory,uniqueIdentifier); //file name
+
+            bitmap = BitmapFactory.decodeStream(new FileInputStream(mypath));
+          //  profielPic.setImageBitmap(b);
+
+            Log.v("*File storage Load", mypath.getAbsolutePath());
+            Log.v("*File storage Load", uniqueIdentifier);
+        }
+        catch (FileNotFoundException e)
+        {
+            e.printStackTrace();
+        }
+
+    }
 
 }//end class
 

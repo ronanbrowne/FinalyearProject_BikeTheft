@@ -478,27 +478,7 @@ private long sightingsCount;
     }
 
 
-    public void setnav(String email) {
-        emailNavBar.setText(mEmail);
-    }
 
-    private void resizeFragment(View v, int newWidth, int newHeight) {
-
-        Log.v("111", v.toString());
-
-        if (v != null) {
-            Log.v("111", v.toString());
-            View view = cv;
-            // RelativeLayout.LayoutParams p = new RelativeLayout.LayoutParams(newWidth, newHeight);
-            view.getLayoutParams().height = newWidth;
-            view.getLayoutParams().width = newHeight;
-            view.invalidate();
-
-            view.requestLayout();
-
-
-        }
-    }
 
 
 }
