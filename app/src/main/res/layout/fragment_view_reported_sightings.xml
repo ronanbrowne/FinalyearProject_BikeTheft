@@ -7,7 +7,8 @@
     android:background="#FFFFFF"
     tools:context="com.example.ronan.practicenavigationdrawer.Fragments.ViewReportedSightingsFragment">
 
-    <RelativeLayout
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingLeft="16dp"
@@ -15,18 +16,54 @@
         android:paddingTop="60dp"
         >
 
+    <LinearLayout
+        android:id="@+id/container_gender"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+       >
+
         <TextView
             android:paddingTop="20dp"
             android:textStyle="bold"
             android:id="@+id/heading"
             android:padding="12dp"
-            android:layout_width="wrap_content"
+            android:layout_weight="8"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="Other users have reported a possible sighting of the following bikes:" />
 
+        <ImageView
+            android:id="@+id/infoReport"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="16dp"
+            android:layout_gravity="right|center"
+            android:src="@drawable/ic_info_outline_black_24dp"/>
+
+        </LinearLayout>
+
+        <!-- Empty view is only visible when the list has no items. ***************************************to be implemented-->
+        <!--<TextView-->
+            <!--android:id="@+id/empty_view"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_centerInParent="true"-->
+            <!--android:textAppearance="?android:textAppearanceMedium" />-->
+
+        <!-- Loading indicator is only shown before the first load -->
+        <ProgressBar
+            android:id="@+id/loading_indicator_edit"
+            style="@style/Widget.AppCompat.ProgressBar"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_height="wrap_content"
+            />
+
         <ListView
             android:id="@+id/list_sightings"
-            android:paddingTop="50dp"
+            android:paddingTop="5dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:divider="@null"
@@ -34,22 +71,7 @@
             android:orientation="vertical" />
 
 
-        <!-- Empty view is only visible when the list has no items. ***************************************to be implemented-->
-        <TextView
-            android:id="@+id/empty_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:textAppearance="?android:textAppearanceMedium" />
 
-        <!-- Loading indicator is only shown before the first load -->
-        <ProgressBar
-            android:id="@+id/loading_indicator_edit"
-            style="@style/Widget.AppCompat.ProgressBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            />
 
-    </RelativeLayout>
+    </LinearLayout>
 </FrameLayout>

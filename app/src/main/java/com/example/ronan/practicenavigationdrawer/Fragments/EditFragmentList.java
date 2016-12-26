@@ -12,10 +12,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.ronan.practicenavigationdrawer.DataModel.BikeData;
 import com.example.ronan.practicenavigationdrawer.R;
@@ -27,6 +31,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import static com.example.ronan.practicenavigationdrawer.R.id.sighting;
 
 
 /**
@@ -40,6 +46,8 @@ public class EditFragmentList extends Fragment {
     private ImageView bike_image;
     private TextView noData;
     private View loadingIndicator;
+    private ImageView info;
+
 
     public EditFragmentList() {
         // Required empty public constructor
@@ -90,10 +98,35 @@ public class EditFragmentList extends Fragment {
         final ListView myListView = (ListView) rootView.findViewById(R.id.list);
         loadingIndicator = rootView.findViewById(R.id.loading_indicator_edit);
         noData = (TextView) rootView.findViewById(R.id.empty_view_Notification);
+        info = (ImageView) rootView.findViewById(R.id.infoReportEdit);
 
         //set the divider
         myListView.setDivider(ContextCompat.getDrawable(getActivity(), R.drawable.divider));
         myListView.setDividerHeight(1);
+
+
+
+        info.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                final Animation animation = new AlphaAnimation((float) 0.5, 0); // Change alpha from fully visible to invisible
+                animation.setDuration(500); // duration - half a second
+                animation.setInterpolator(new LinearInterpolator()); // do not alter
+                // animation
+                // rate
+                animation.setRepeatCount(1); // Repeat animation
+                // infinitely
+                animation.setRepeatMode(Animation.REVERSE); // Reverse animation at the
+                // end so the button will
+                // fade back in
+                info.startAnimation(animation);
+
+                Toast.makeText(getActivity().getApplication(), "Click a bike to edit, Long click to delete", Toast.LENGTH_SHORT).show();
+
+
+            }
+        });
 
         //Firebase DB setup
         usersBikesDatabase = FirebaseDatabase.getInstance().getReference().child("Bikes Registered By User").child(uniqueIdentifier);

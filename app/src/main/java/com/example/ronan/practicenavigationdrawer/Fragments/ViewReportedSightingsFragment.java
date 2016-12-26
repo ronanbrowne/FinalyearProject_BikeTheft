@@ -3,6 +3,7 @@ package com.example.ronan.practicenavigationdrawer.Fragments;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -11,13 +12,19 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.ronan.practicenavigationdrawer.Activities.MainActivity;
 import com.example.ronan.practicenavigationdrawer.DataModel.BikeData;
 import com.example.ronan.practicenavigationdrawer.R;
 import com.firebase.ui.database.FirebaseListAdapter;
+import com.google.android.gms.games.request.GameRequestEntity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -28,16 +35,16 @@ import com.google.firebase.database.ValueEventListener;
 
 import static com.example.ronan.practicenavigationdrawer.R.layout.fragment_view_reported_sightings;
 
-
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ViewReportedSightingsFragment extends Fragment {
+public class ViewReportedSightingsFragment extends Fragment  {
 
     private FirebaseUser mFirebaseUser;
     private DatabaseReference usersSightings;
     private String email;
-    ImageView bike_image;
+    private ImageView bike_image;
+    private ImageView info;
 
 
     public ViewReportedSightingsFragment() {
@@ -58,11 +65,36 @@ public class ViewReportedSightingsFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(fragment_view_reported_sightings, container, false);
 
+        info = (ImageView) rootView.findViewById(R.id.infoReport);
+
         final ListView myListView = (ListView) rootView.findViewById(R.id.list_sightings);
         //  get ID of loading bar
         final View loadingIndicator = rootView.findViewById(R.id.loading_indicator_edit);
 
 
+
+        info.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+
+                final Animation animation = new AlphaAnimation((float) 0.5, 0); // Change alpha from fully visible to invisible
+                animation.setDuration(500); // duration - half a second
+                animation.setInterpolator(new LinearInterpolator()); // do not alter
+                // animation
+                // rate
+                animation.setRepeatCount(1); // Repeat animation
+                // infinitely
+                animation.setRepeatMode(Animation.REVERSE); // Reverse animation at the
+                // end so the button will
+                // fade back in
+                info.startAnimation(animation);
+
+                Toast.makeText(getActivity().getApplication(), "long press a bike to interact with sighting", Toast.LENGTH_SHORT).show();
+
+
+            }
+        });
         //set the divider
         myListView.setDivider(ContextCompat.getDrawable(getActivity(), R.drawable.divider));
         myListView.setDividerHeight(2);
@@ -140,5 +172,8 @@ public class ViewReportedSightingsFragment extends Fragment {
             bike_image.setImageBitmap(bitmap);
         }
     }
+
+
+
 
 }
