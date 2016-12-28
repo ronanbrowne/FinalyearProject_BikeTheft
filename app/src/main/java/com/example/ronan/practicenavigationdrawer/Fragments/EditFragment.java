@@ -15,8 +15,10 @@ import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.util.Base64;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,6 +39,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.tooltip.Tooltip;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -71,6 +74,7 @@ public class EditFragment extends Fragment {
     private FloatingActionButton floatingDelete;
     private LinearLayout geoCodeArea;
     private ImageView upload_image;
+    private ImageView infoStolen;
     private boolean geoCodeClicked;
 
     private String base64 = "No image";
@@ -272,6 +276,7 @@ public class EditFragment extends Fragment {
         bikeOther = (EditText) rootView.findViewById(R.id.edit_othe_features);
         bikeStolen = (CheckBox) rootView.findViewById(R.id.bike_stolen);
         upload_image = (ImageView) rootView.findViewById(R.id.upload_image);
+        infoStolen = (ImageView) rootView.findViewById(R.id.infoStolen);
         imageUpload = (FloatingActionButton) rootView.findViewById(R.id.floatingUpload);
         comfirmEdit = (FloatingActionButton) rootView.findViewById(R.id.floatingConfirmEdit);
         geoCode = (FloatingActionButton) rootView.findViewById(R.id.floatingGeoCode);
@@ -288,6 +293,22 @@ public class EditFragment extends Fragment {
                 } else {
                     geoCodeArea.setVisibility(View.GONE);
                 }
+            }
+        });
+
+        infoStolen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Tooltip tooltip = new Tooltip.Builder(infoStolen)
+                        .setText("Here you may register your bike as stolen.\n\n" +
+                                "It will be added to our shared database of bikes listed as stolen.\n\n" +
+                                "Other users may then report a suspected sighting of your bike. Which you will be notified of.\n\n" +
+                                "To use this feature first press the 'Add Location button' before saving changes.")
+                        .setTextColor(ContextCompat.getColor(getContext(),R.color.white))
+                        .setDismissOnClick(true)
+                        .setCancelable(true)
+                        .setGravity(Gravity.TOP)
+                        .setBackgroundColor(ContextCompat.getColor(getContext(),R.color.cyan)).show();
             }
         });
 
