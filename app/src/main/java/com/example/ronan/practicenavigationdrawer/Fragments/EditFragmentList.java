@@ -1,12 +1,17 @@
 package com.example.ronan.practicenavigationdrawer.Fragments;
 
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.util.AndroidException;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,6 +26,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.ronan.practicenavigationdrawer.Activities.MainActivity;
 import com.example.ronan.practicenavigationdrawer.DataModel.BikeData;
 import com.example.ronan.practicenavigationdrawer.R;
 import com.firebase.ui.database.FirebaseListAdapter;
@@ -31,6 +37,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.tooltip.Tooltip;
 
 import static com.example.ronan.practicenavigationdrawer.R.id.sighting;
 
@@ -47,11 +54,46 @@ public class EditFragmentList extends Fragment {
     private TextView noData;
     private View loadingIndicator;
     private ImageView info;
-
-
+    private DatabaseReference stolenBikesDatabse;
+    private DatabaseReference mDatabase;
+    private String dB_KeyRefrence;
     public EditFragmentList() {
         // Required empty public constructor
     }
+
+
+
+    //===================================================================================
+    //=        dialog listener for pop up to confirm delete
+    //===================================================================================
+    DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            switch (which) {
+                case DialogInterface.BUTTON_POSITIVE:
+                    mDatabase = FirebaseDatabase.getInstance().getReference().child("Bikes Registered By User").child(uniqueIdentifier).child(dB_KeyRefrence);
+                    stolenBikesDatabse.child(dB_KeyRefrence).removeValue();
+                    mDatabase.removeValue();
+
+                    FragmentManager fm = getFragmentManager();
+                    fm.beginTransaction().replace(R.id.fragment_container, new EditFragmentList()).commit();
+
+                    //feedback
+                    Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Delete successful", Toast.LENGTH_SHORT);
+                    toast.show();
+
+                    break;
+
+                case DialogInterface.BUTTON_NEGATIVE:
+
+                    //feedback
+                    Toast toastCanceled = Toast.makeText(getActivity().getApplicationContext(), "Delete canceled", Toast.LENGTH_SHORT);
+                    toastCanceled.show();
+                    break;
+            }
+        }
+    };
+
 
     //===========================================================================================================
     //  Firebase listeer to handel displaying either a loading bar or empty message depending in state of DB
@@ -90,8 +132,10 @@ public class EditFragmentList extends Fragment {
             uniqueIdentifier = uniqueIdentifier.split("@")[0];
         }
 
+        stolenBikesDatabse = FirebaseDatabase.getInstance().getReference().child("Stolen Bikes");
+
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_edit_list, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_edit_list, container, false);
 
 
         //  get IDs
@@ -110,6 +154,14 @@ public class EditFragmentList extends Fragment {
             @Override
             public void onClick(View view) {
 
+
+                Tooltip tooltip = new Tooltip.Builder(info)
+                        .setText("Click a bike to edit, Long click to delete")
+                        .setTextColor(ContextCompat.getColor(getContext(),R.color.white))
+                        .setDismissOnClick(true)
+                        .setCancelable(true)
+                        .setBackgroundColor(ContextCompat.getColor(getContext(),R.color.cyan)).show();
+
                 final Animation animation = new AlphaAnimation((float) 0.5, 0); // Change alpha from fully visible to invisible
                 animation.setDuration(500); // duration - half a second
                 animation.setInterpolator(new LinearInterpolator()); // do not alter
@@ -122,7 +174,7 @@ public class EditFragmentList extends Fragment {
                 // fade back in
                 info.startAnimation(animation);
 
-                Toast.makeText(getActivity().getApplication(), "Click a bike to edit, Long click to delete", Toast.LENGTH_SHORT).show();
+           //     Toast.makeText(getActivity().getApplication(), "Click a bike to edit, Long click to delete", Toast.LENGTH_SHORT).show();
 
 
             }
@@ -130,6 +182,7 @@ public class EditFragmentList extends Fragment {
 
         //Firebase DB setup
         usersBikesDatabase = FirebaseDatabase.getInstance().getReference().child("Bikes Registered By User").child(uniqueIdentifier);
+
         usersBikesDatabase.addValueEventListener(checkList);
 
 
@@ -200,6 +253,25 @@ public class EditFragmentList extends Fragment {
             }
         });
 
+        myListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
+                                           int arg2, long arg3) {
+
+                DatabaseReference itemRef = bikeAdapter.getRef(arg2);
+                dB_KeyRefrence = itemRef.getKey();
+
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setMessage("Are you sure you wish to delete?\n\nThis action is permanent and can not be undone").setPositiveButton("Yes", dialogClickListener)
+                        .setNegativeButton("No", dialogClickListener).show();
+
+
+                //for testing remove
+               // Toast.makeText(getActivity().getApplication(), "Long Clicked Trigger: "+dB_KeyRefrence, Toast.LENGTH_LONG).show();
+                return true;
+            }
+        });
         return rootView;
 
     }//end onCreate View

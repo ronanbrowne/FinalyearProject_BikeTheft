@@ -32,6 +32,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.tooltip.Tooltip;
 
 import static com.example.ronan.practicenavigationdrawer.R.layout.fragment_view_reported_sightings;
 
@@ -77,6 +78,13 @@ public class ViewReportedSightingsFragment extends Fragment  {
             @Override
             public void onClick(View view) {
 
+                Tooltip tooltip = new Tooltip.Builder(info)
+                        .setText("long press a bike to interact with sighting")
+                        .setTextColor(ContextCompat.getColor(getContext(),R.color.white))
+                        .setDismissOnClick(true)
+                        .setCancelable(true)
+                        .setBackgroundColor(ContextCompat.getColor(getContext(),R.color.cyan)).show();
+
 
                 final Animation animation = new AlphaAnimation((float) 0.5, 0); // Change alpha from fully visible to invisible
                 animation.setDuration(500); // duration - half a second
@@ -90,7 +98,7 @@ public class ViewReportedSightingsFragment extends Fragment  {
                 // fade back in
                 info.startAnimation(animation);
 
-                Toast.makeText(getActivity().getApplication(), "long press a bike to interact with sighting", Toast.LENGTH_SHORT).show();
+               // Toast.makeText(getActivity().getApplication(), "long press a bike to interact with sighting", Toast.LENGTH_SHORT).show();
 
 
             }

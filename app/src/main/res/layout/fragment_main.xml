@@ -78,6 +78,7 @@
             android:text="Bike Details"
             android:id="@+id/textView" />
 
+
         <!-- Input fields -->
         <LinearLayout
             android:layout_width="0dp"
@@ -106,14 +107,30 @@
                 style="@style/EditorFieldStyle"
                 android:hint="Bike Colour"
                 />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
             <!-- size field -->
             <EditText
                 android:id="@+id/edit_bike_size"
                 style="@style/EditorFieldStyle"
-                android:hint="Bike Frame Size"
+                android:hint="Frame Size"
+                android:layout_weight="3"
+                android:layout_width="0dp"
                 android:inputType="number" />
 
+
+                <ImageView
+                    android:id="@+id/infoSize"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="right"
+                    android:src="@drawable/ic_info_outline_black_24dp"/>
+
+                </LinearLayout>
 
             <!-- other field -->
             <EditText

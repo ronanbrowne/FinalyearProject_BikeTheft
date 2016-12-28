@@ -54,6 +54,7 @@
             />
 
 <ListView
+    android:longClickable="true"
     android:id="@+id/list"
     android:paddingTop="5dp"
     android:layout_width="match_parent"

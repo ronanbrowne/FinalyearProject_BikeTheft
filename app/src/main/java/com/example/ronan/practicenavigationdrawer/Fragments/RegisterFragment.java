@@ -11,6 +11,7 @@ import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,6 +28,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.StorageReference;
+import com.tooltip.Tooltip;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -51,6 +53,7 @@ public class RegisterFragment extends Fragment {
     private ImageView mThumbnailPreview;
     Bitmap bitmap;
     String base64 = "No image";
+    private ImageView info;
 
     private static final int SELECT_PICTURE = 0;
     private static final int REQUEST_IMAGE_CAPTURE = 1;
@@ -116,6 +119,7 @@ public class RegisterFragment extends Fragment {
         mThumbnailPreview = (ImageView) rootView.findViewById(R.id.upload_image);
         upload = (FloatingActionButton) rootView.findViewById(R.id.floatingUpload);
         addBikeFloatingActionButton = (FloatingActionButton) rootView.findViewById(R.id.floatingAdd);
+        info = (ImageView) rootView.findViewById(R.id.infoSize);
 
         //setting up FireBase DB
         mDatabase = FirebaseDatabase.getInstance().getReference().child("Bikes Registered By User");
@@ -128,6 +132,18 @@ public class RegisterFragment extends Fragment {
                 AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
                 builder.setMessage("Use picture from Gallery or launch camera?").setPositiveButton("Gallery", dialogClickListener)
                         .setNegativeButton("Camera", dialogClickListener).show();
+            }
+        });
+
+        info.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Tooltip tooltip = new Tooltip.Builder(info)
+                        .setText("This is the height of the bike.\nAverage adult male frame size: 22 \nAverage adult female frame size: 18\nAverage child's size (10+ years): 13")
+                        .setTextColor(ContextCompat.getColor(getContext(),R.color.white))
+                        .setDismissOnClick(true)
+                        .setCancelable(true)
+                        .setBackgroundColor(ContextCompat.getColor(getContext(),R.color.cyan)).show();
             }
         });
 
