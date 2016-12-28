@@ -1,11 +1,13 @@
 package com.example.ronan.practicenavigationdrawer.Activities;
 
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -69,6 +71,7 @@ public class MainActivity extends AppCompatActivity
     private String mEmail;
     private TextView emailNavBar;
     private TextView userNameNavBar;
+    private MenuItem menuItem;
     View rootView;
     View cv;
     GmapFragment fragment;
@@ -88,7 +91,9 @@ private long sightingsCount;
             Log.v("*", "sight: " + sightingsCount);
             Toast.makeText(MainActivity.this, "(testing, delete later) mail Box:   "+sightingsCount, Toast.LENGTH_SHORT).show();
 
-            menuItem.setIcon(buildCounterDrawable((int) sightingsCount,  R.drawable.ic_mail_outline_white_24dp));
+            if (menuItem!=null) {
+                menuItem.setIcon(buildCounterDrawable((int) sightingsCount, R.drawable.ic_mail_outline_white_24dp));
+            }
         }
 
         @Override
@@ -324,7 +329,6 @@ private long sightingsCount;
 
     int counInt = 5;
 
-    MenuItem menuItem ;
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -335,14 +339,16 @@ private long sightingsCount;
 
 
 
-        // MenuInflater inflater = getSherlockActivity().getSupportMenuInflater();
         menuItem = menu.findItem(R.id.testAction);
-      //  menuItem.setIcon(buildCounterDrawable( counInt,  R.drawable.ic_mail_outline_white_24dp));
+      //  menuItem.setIcon(R.drawable.ic_mail_outline_white_24dp);
+
+        //  menuItem.setIcon(buildCounterDrawable( counInt,  R.drawable.ic_mail_outline_white_24dp));
 
         return true;
     }
 
-    private Drawable buildCounterDrawable(int count, int backgroundImageId) {
+        @TargetApi(Build.VERSION_CODES.KITKAT)
+        private Drawable buildCounterDrawable(int count, int backgroundImageId) {
         LayoutInflater inflater = LayoutInflater.from(this);
         View view = inflater.inflate(R.layout.badge_layout_messenger_icon, null);
         //view.setBackgroundResource(backgroundImageId);
@@ -366,7 +372,11 @@ private long sightingsCount;
         Bitmap bitmap = Bitmap.createBitmap(view.getDrawingCache());
         view.setDrawingCacheEnabled(false);
 
-        return new BitmapDrawable(getResources(), bitmap);
+//
+//                bitmap.setWidth(90);
+//                bitmap.setHeight(90);
+
+            return new BitmapDrawable(getResources(), bitmap);
     }
 
     @Override
