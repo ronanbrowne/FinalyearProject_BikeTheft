@@ -1,8 +1,12 @@
 package com.example.ronan.practicenavigationdrawer.Fragments;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.ContextWrapper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -11,11 +15,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.ronan.practicenavigationdrawer.Activities.MainActivity;
 import com.example.ronan.practicenavigationdrawer.DataModel.BikeData;
 import com.example.ronan.practicenavigationdrawer.DataModel.UserData;
 import com.example.ronan.practicenavigationdrawer.R;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -23,7 +31,14 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -54,6 +69,8 @@ public class WelcomeFragment extends Fragment {
     private DatabaseReference mDatabaseUsers;
     private DatabaseReference reportedStolen;
     private DatabaseReference readReportOfStolenQuery;
+    // storage
+    FirebaseStorage storage = FirebaseStorage.getInstance();
 
     ArrayList<String> registeredBikeKeys = new ArrayList<>();
     ArrayList<String> sightingBikeKeys = new ArrayList<>();
@@ -65,8 +82,9 @@ public class WelcomeFragment extends Fragment {
         // Required empty public constructor
     }
 
+    private Bitmap bitmap;;
     private String imageValue = "";
-
+   // ContextWrapper cw = new ContextWrapper(getActivity().getApplicationContext());
     //======================================================================================
     // FireBase listener to grab the specific user data
     //======================================================================================
@@ -82,9 +100,61 @@ public class WelcomeFragment extends Fragment {
             user = dataSnapshot.getValue(UserData.class);
             imageValue = user.getUser_image_In_Base64();
 
-            if (!imageValue.equals("imageValue")) {
-                getBitMapFromString(imageValue);
-            }
+//            //if there was a image set grab it and set pic
+//            if (!imageValue.equals("imageValue")) {
+//                getBitMapFromString(imageValue);
+////                Log.v("*File path exist", "settign bitmap image");
+////
+////                Activity activity = getActivity();
+////
+////                //set up file location
+////                ContextWrapper cw = new ContextWrapper(activity.getApplicationContext());
+////                File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
+////                File mypath=new File(directory,uniqueIdentifier); //file name
+////
+////                //sett if it has been previously created grab cached file it so
+////                if(mypath.exists()){
+////                    loadImageFromStorage(uniqueIdentifier);
+////                    Log.v("*File path exist", "true: "+mypath.getAbsolutePath());
+////                }
+////                //other wise grab remote file
+////                else{
+////                   // saveToInternalStorage(bitmap);
+////                    profielPic.setImageBitmap(bitmap);
+////                    Log.v("*File path exist", "false");
+////                }
+//
+//
+//
+//            }
+
+
+            //if there was a image set grab it and set pic
+//            if (!imageValue.equals("imageValue")) {
+//               // getBitMapFromString(imageValue);
+//                Log.v("*File path exist", "settign bitmap image");
+//
+//                //set up file location
+//                ContextWrapper cw = new ContextWrapper(getActivity().getApplicationContext());
+//                File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
+//                File mypath=new File(directory,uniqueIdentifier); //file name
+//
+//                //sett if it has been previously created grab cached file it so
+//                if(mypath.exists()){
+//                    loadImageFromStorage(uniqueIdentifier);
+//                    Log.v("*File path exist", "true: "+mypath.getAbsolutePath());
+//                }
+//                //other wise grab remote file
+//                else{
+//                    saveToInternalStorage(bitmap);
+//                    loadProfileImage(uniqueIdentifier);
+//                    //    upload_image.setImageBitmap(bitmap);
+//                    Log.v("*File path exist", "false");
+//                }
+//
+//
+//
+//            }
 
             //if no username is set use uniqueIdentifier from users email
             if (user.getUsername() != null) {
@@ -115,10 +185,34 @@ public class WelcomeFragment extends Fragment {
             } else {
                 byte[] decodedString = Base64.decode(imageAsString, Base64.DEFAULT);
                 Bitmap bitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-                profielPic.setImageBitmap(bitmap);
+              //  profielPic.setImageBitmap(bitmap);
             }
         } else {
             Log.v("***", "Null paramater passed into getBitMapFromString");
+        }
+    }
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        //set up file location
+        ContextWrapper cw = new ContextWrapper(getActivity().getApplicationContext());
+        File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
+        File mypath=new File(directory,uniqueIdentifier); //file name
+
+        //sett if it has been previously created grab cached file it so
+        if(mypath.exists()){
+            loadImageFromStorage(uniqueIdentifier);
+            Log.v("*File path exist", "true: "+mypath.getAbsolutePath());
+        }
+        //other wise grab remote file
+        else{
+       //     saveToInternalStorage(bitmap);
+            loadProfileImage(uniqueIdentifier);
+            //    upload_image.setImageBitmap(bitmap);
+            Log.v("*File path exist", "false");
         }
     }
 
@@ -294,6 +388,103 @@ public class WelcomeFragment extends Fragment {
         return rootView;
 
     }// end onCreateView
+
+
+
+    private void loadImageFromStorage(String path)
+    {
+        try {
+            Log.v("*File storage Load", "file exists retreving from storage");
+            ContextWrapper cw = new ContextWrapper(getActivity().getApplicationContext());
+            File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
+            // path for this user
+            File mypath=new File(directory,uniqueIdentifier); //file name
+
+            Bitmap b = BitmapFactory.decodeStream(new FileInputStream(mypath));
+            profielPic.setImageBitmap(b);
+
+            Log.v("*File storage Load", mypath.getAbsolutePath());
+            Log.v("*File storage Load", uniqueIdentifier);
+        }
+        catch (FileNotFoundException e)
+        {
+            e.printStackTrace();
+        }
+
+    }
+
+
+    //fill users image to selected view
+    public String loadProfileImage (final String userToLoad){
+
+        // Create storage reference
+        final StorageReference storageRef = storage.getReferenceFromUrl("gs://findmybike-1a1af.appspot.com/Profilers/");
+
+        //set image based on user id
+        StorageReference  myProfilePic = storageRef.child(userToLoad);
+
+        //set max image download size
+        final long ONE_MEGABYTE = 10000 * 10000;
+        myProfilePic.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+
+                //decode image
+                Bitmap userImage = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+
+                //save this user image to local device
+                saveToInternalStorage(userImage);
+
+                profielPic.setImageBitmap(userImage);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+       //         reset to default image if no image is selected
+                StorageReference myProfilePic = storageRef.child("default.jpg");
+                myProfilePic.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>(){
+                    @Override
+                    public void onSuccess(byte[] bytes) {
+                        //decode image
+                        Bitmap userImage = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+
+
+                        profielPic.setImageBitmap(userImage);
+                    }
+                });
+
+
+            }
+        });
+
+        return null;
+    }
+
+    //save user images when downloaded
+    private String saveToInternalStorage(Bitmap bitmapImage){
+        Log.v("*File storage Load", "saving to local storage no image here");
+        ContextWrapper cw = new ContextWrapper(getActivity().getApplicationContext());
+        // path to /data/data/yourapp/app_data/imageDir
+        File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
+        // Create imageDir
+        File mypath=new File(directory, uniqueIdentifier);
+
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(mypath);
+            // Use the compress method on the BitMap object to write image to the OutputStream
+            bitmapImage.compress(Bitmap.CompressFormat.PNG, 100, fos);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                fos.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return directory.getAbsolutePath();
+    }
 
 }//end class
 
