@@ -2,9 +2,12 @@ package com.example.ronan.practicenavigationdrawer.Activities;
 
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
+import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -25,6 +28,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,6 +43,8 @@ import com.example.ronan.practicenavigationdrawer.Fragments.ViewReportedSighting
 import com.example.ronan.practicenavigationdrawer.Fragments.WelcomeFragment;
 import com.example.ronan.practicenavigationdrawer.R;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -46,9 +52,16 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -65,6 +78,9 @@ public class MainActivity extends AppCompatActivity
     private DatabaseReference usersBikesDatabase;
     private DatabaseReference userSightings;
 
+    // storage
+    FirebaseStorage storage = FirebaseStorage.getInstance();
+    String email = "";
 
     private String mUsername;
     private String mPhotoUrl;
@@ -72,6 +88,7 @@ public class MainActivity extends AppCompatActivity
     private TextView emailNavBar;
     private TextView userNameNavBar;
     private MenuItem menuItem;
+    private CircleImageView navProvile;
     View rootView;
     View cv;
     GmapFragment fragment;
@@ -247,7 +264,7 @@ private long sightingsCount;
         mFirebaseAuth.addAuthStateListener(mAuthListener);
 
 
-        String email = "";
+
         //get current user
         mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         //if its not null grab email address then remove the @ bit , firebase cant take special symbols in node names
@@ -305,6 +322,7 @@ private long sightingsCount;
         View header = navigationView.getHeaderView(0);
         emailNavBar = (TextView) header.findViewById(R.id.email);
         userNameNavBar = (TextView) header.findViewById(R.id.username);
+        navProvile = (CircleImageView) header.findViewById(R.id.profile_image);
 
         if (mFirebaseUser == null) {
             emailNavBar.setText("no login");
@@ -490,5 +508,98 @@ private long sightingsCount;
 
 
 
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        //set up file location
+        ContextWrapper cw = new ContextWrapper(getApplicationContext());
+        File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
+        File mypath=new File(directory,email); //file name
+
+        //sett if it has been previously created grab cached file it so
+        if(mypath.exists()){
+            loadImageFromStorage(email);
+            Log.v("*File path exist", "true: "+mypath.getAbsolutePath());
+        }
+        //other wise grab remote file
+        else{
+            //     saveToInternalStorage(bitmap);
+            loadProfileImage(email);
+            //    upload_image.setImageBitmap(bitmap);
+            Log.v("*File path exist", "false");
+        }
+    }
+
+
+
+    private void loadImageFromStorage(String path)
+    {
+        try {
+            Log.v("*File storage Load", "file exists retreving from storage");
+            ContextWrapper cw = new ContextWrapper(getApplicationContext());
+            File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
+            // path for this user
+            File mypath=new File(directory,email); //file name
+
+            Bitmap b = BitmapFactory.decodeStream(new FileInputStream(mypath));
+            navProvile.setImageBitmap(b);
+
+            Log.v("*File storage Load", mypath.getAbsolutePath());
+            Log.v("*File storage Load", email);
+        }
+        catch (FileNotFoundException e)
+        {
+            e.printStackTrace();
+        }
+
+    }
+
+
+    //fill users image to selected view
+    public String loadProfileImage (final String userToLoad){
+
+        // Create storage reference
+        final StorageReference storageRef = storage.getReferenceFromUrl("gs://findmybike-1a1af.appspot.com/Profilers/");
+
+        //set image based on user id
+        StorageReference  myProfilePic = storageRef.child(userToLoad);
+
+        //set max image download size
+        final long ONE_MEGABYTE = 10000 * 10000;
+        myProfilePic.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+
+                //decode image
+                Bitmap userImage = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+
+                //save this user image to local device
+            //    saveToInternalStorage(userImage);
+
+                navProvile.setImageBitmap(userImage);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                //         reset to default image if no image is selected
+                StorageReference myProfilePic = storageRef.child("default.jpg");
+                myProfilePic.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>(){
+                    @Override
+                    public void onSuccess(byte[] bytes) {
+                        //decode image
+                        Bitmap userImage = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+
+
+                        navProvile.setImageBitmap(userImage);
+                    }
+                });
+
+
+            }
+        });
+
+        return null;
+    }
 
 }
