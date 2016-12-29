@@ -12,8 +12,11 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,6 +29,8 @@ import android.widget.Toast;
 
 import com.example.ronan.practicenavigationdrawer.DataModel.UserData;
 import com.example.ronan.practicenavigationdrawer.R;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -34,6 +39,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -103,30 +110,31 @@ public class Profile_Fragment extends Fragment {
             }
 
             //if there was a image set grab it and set pic
-            if (!imageValue.equals("imageValue")) {
-               getBitMapFromString(imageValue);
-                Log.v("*File path exist", "settign bitmap image");
-
-                //set up file location
-                ContextWrapper cw = new ContextWrapper(getActivity().getApplicationContext());
-                File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
-                File mypath=new File(directory,uniqueIdentifier); //file name
-
-                //sett if it has been previously created grab cached file it so
-                if(mypath.exists()){
-                    loadImageFromStorage(uniqueIdentifier);
-                    Log.v("*File path exist", "true: "+mypath.getAbsolutePath());
-                }
-                //other wise grab remote file
-                else{
-                    saveToInternalStorage(bitmap);
-                    upload_image.setImageBitmap(bitmap);
-                    Log.v("*File path exist", "false");
-                }
-
-
-
-            }
+//            if (!imageValue.equals("imageValue")) {
+//              // getBitMapFromString(imageValue);
+//                Log.v("*File path exist", "settign bitmap image");
+//
+//                //set up file location
+//                ContextWrapper cw = new ContextWrapper(getActivity().getApplicationContext());
+//                File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
+//                File mypath=new File(directory,uniqueIdentifier); //file name
+//
+//                //sett if it has been previously created grab cached file it so
+//                if(mypath.exists()){
+//                    loadImageFromStorage(uniqueIdentifier);
+//                    Log.v("*File path exist", "true: "+mypath.getAbsolutePath());
+//                }
+//                //other wise grab remote file
+//                else{
+//                    saveToInternalStorage(bitmap);
+//                    loadProfileImage(uniqueIdentifier);
+//                //    upload_image.setImageBitmap(bitmap);
+//                    Log.v("*File path exist", "false");
+//                }
+//
+//
+//
+//            }
 
         }
 
@@ -146,6 +154,29 @@ public class Profile_Fragment extends Fragment {
         // Required empty public constructor
     }
 
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        //set up file location
+        ContextWrapper cw = new ContextWrapper(getActivity().getApplicationContext());
+        File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
+        File mypath=new File(directory,uniqueIdentifier); //file name
+
+        //sett if it has been previously created grab cached file it so
+        if(mypath.exists()){
+            loadImageFromStorage(uniqueIdentifier);
+            Log.v("*File path exist", "true: "+mypath.getAbsolutePath());
+        }
+        //other wise grab remote file
+        else{
+          //  saveToInternalStorage(bitmap);
+            loadProfileImage(uniqueIdentifier);
+            //    upload_image.setImageBitmap(bitmap);
+            Log.v("*File path exist", "false");
+        }
+    }
 
     //================================================================================
     //=      onCreateView
@@ -295,6 +326,36 @@ public class Profile_Fragment extends Fragment {
                 }
                 upload_image.setImageBitmap(bitmap);
                 base64 = imageConvertBase64(bitmap);
+
+                // Create storage reference
+                StorageReference storageRef = storage.getReferenceFromUrl("gs://findmybike-1a1af.appspot.com/Profilers/");
+
+                // Create a reference to user picture
+                StorageReference imageRef = storageRef.child(uniqueIdentifier);
+
+//                upload_image.setDrawingCacheEnabled(true);
+//                upload_image.buildDrawingCache();
+//                Bitmap bitmap = upload_image.getDrawingCache();
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                byte[] dataBitmap = baos.toByteArray();
+
+                UploadTask uploadTask = imageRef.putBytes(dataBitmap);
+                uploadTask.addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        // Handle unsuccessful uploads
+                    }
+                }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                        Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                    }
+                });
+
+
+
             } else if (resultCode == RESULT_CANCELED) {
                 Log.i("message", "the user cancelled the request");
             }
@@ -395,6 +456,54 @@ public class Profile_Fragment extends Fragment {
             e.printStackTrace();
         }
 
+    }
+
+
+    //fill users image to selected view
+    public String loadProfileImage (final String userToLoad){
+
+        // Create storage reference
+        final StorageReference storageRef = storage.getReferenceFromUrl("gs://findmybike-1a1af.appspot.com/Profilers/");
+
+        //set image based on user id
+        StorageReference  myProfilePic = storageRef.child(userToLoad);
+
+        //set max image download size
+        final long ONE_MEGABYTE = 10000 * 10000;
+        myProfilePic.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+
+                //decode image
+                Bitmap userImage = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+
+                //save this user image to local device
+                saveToInternalStorage(userImage);
+
+                upload_image.setImageBitmap(userImage);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                //reset to default image if no image is selected
+                StorageReference myProfilePic = storageRef.child("default.jpg");
+                myProfilePic.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>(){
+                    @Override
+                    public void onSuccess(byte[] bytes) {
+                        //decode image
+                        Bitmap userImage = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+
+
+
+                        upload_image.setImageBitmap(userImage);
+                    }
+                });
+
+
+            }
+        });
+
+        return null;
     }
 
 }// end class
