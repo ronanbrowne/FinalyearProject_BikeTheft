@@ -325,7 +325,8 @@ public class Profile_Fragment extends Fragment {
                     Log.v("Exception", " : " + e.toString());
                 }
                 upload_image.setImageBitmap(bitmap);
-                base64 = imageConvertBase64(bitmap);
+                saveToInternalStorage(bitmap);
+               // base64 = imageConvertBase64(bitmap);
 
                 // Create storage reference
                 StorageReference storageRef = storage.getReferenceFromUrl("gs://findmybike-1a1af.appspot.com/Profilers/");
@@ -351,6 +352,7 @@ public class Profile_Fragment extends Fragment {
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                         // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
                         Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                        Log.i("**", "uploaded from galery");
                     }
                 });
 
@@ -366,7 +368,40 @@ public class Profile_Fragment extends Fragment {
                 Bundle extras = data.getExtras();
                 Bitmap imageBitmap = (Bitmap) extras.get("data");
                 upload_image.setImageBitmap(imageBitmap);
-                base64 = imageConvertBase64(imageBitmap);
+
+                saveToInternalStorage(imageBitmap);
+
+                // Create storage reference
+                StorageReference storageRef = storage.getReferenceFromUrl("gs://findmybike-1a1af.appspot.com/Profilers/");
+
+                // Create a reference to user picture
+                StorageReference imageRef = storageRef.child(uniqueIdentifier);
+
+//                upload_image.setDrawingCacheEnabled(true);
+//                upload_image.buildDrawingCache();
+//                Bitmap bitmap = upload_image.getDrawingCache();
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                byte[] dataBitmap = baos.toByteArray();
+
+                UploadTask uploadTask = imageRef.putBytes(dataBitmap);
+                uploadTask.addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        // Handle unsuccessful uploads
+                    }
+                }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                        Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                        Log.i("**", "uploaded from cam");
+                    }
+                });
+
+
+
+               // base64 = imageConvertBase64(imageBitmap);
             } else if (resultCode == RESULT_CANCELED) {
                 Log.i("message", "the user cancelled the request");
             }
