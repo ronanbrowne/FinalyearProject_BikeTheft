@@ -1,11 +1,16 @@
 package com.example.ronan.practicenavigationdrawer.Fragments;
 
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.util.Base64;
 import android.util.Log;
@@ -15,6 +20,7 @@ import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -39,18 +45,84 @@ import static com.example.ronan.practicenavigationdrawer.R.layout.fragment_view_
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ViewReportedSightingsFragment extends Fragment  {
+public class ViewReportedSightingsFragment extends Fragment {
 
     private FirebaseUser mFirebaseUser;
     private DatabaseReference usersSightings;
+    private DatabaseReference databaseReported;
     private String email;
+    private String dB_KeyRefrence;
     private ImageView bike_image;
     private ImageView info;
-
+    private BikeData stolenBike;
 
     public ViewReportedSightingsFragment() {
         // Required empty public constructor
     }
+
+
+    //===================================================================================
+    //=        dialog listener for pop up to send email to origional user
+    //===================================================================================
+    DialogInterface.OnClickListener dialogClickListenerForEmail = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            switch (which) {
+                case DialogInterface.BUTTON_POSITIVE:
+
+                    /// TODO: 30/12/2016  chage this to a email address
+                    String[] email = {stolenBike.getRegisteredBy()};
+                    String subject = "Re: Suspected sighting of my bike: " + stolenBike.getMake();
+                    String body = "Hello, \n\n Regarding the potentially sighting of my bike  (" + (stolenBike.getColor() + " " + stolenBike.getMake()) + "). " +
+                            "\n\n At the location " + stolenBike.getReportedLocation() + "\n\n" +
+                            "Can you please provide me with some futher info so i can look into this." +
+                            "\n\n Regards.";
+
+
+                    composeEmail(email, subject, body);
+
+
+                    break;
+
+                case DialogInterface.BUTTON_NEGATIVE:
+
+                    //feedback
+                    Toast toastCanceled = Toast.makeText(getActivity().getApplicationContext(), " canceled", Toast.LENGTH_SHORT);
+                    toastCanceled.show();
+                    break;
+            }
+        }
+    };
+
+
+    //===================================================================================
+    //=        dialog listener for pop up to confirm clear from sightings list
+    //===================================================================================
+    DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            switch (which) {
+                case DialogInterface.BUTTON_POSITIVE:
+                    //remove from your list
+                    usersSightings.child(dB_KeyRefrence).removeValue();
+                    //and the sightings node
+                    databaseReported.child(dB_KeyRefrence).removeValue();
+
+                    //feedback
+                    Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Sighting cleared successfully", Toast.LENGTH_SHORT);
+                    toast.show();
+
+                    break;
+
+                case DialogInterface.BUTTON_NEGATIVE:
+
+                    //feedback
+                    Toast toastCanceled = Toast.makeText(getActivity().getApplicationContext(), "Canceled", Toast.LENGTH_SHORT);
+                    toastCanceled.show();
+                    break;
+            }
+        }
+    };
 
 
     @Override
@@ -63,7 +135,9 @@ public class ViewReportedSightingsFragment extends Fragment  {
             email = email.split("@")[0];
         }
 
+        databaseReported = FirebaseDatabase.getInstance().getReference().child("Reported Bikes") ;
         // Inflate the layout for this fragment
+
         View rootView = inflater.inflate(fragment_view_reported_sightings, container, false);
 
         info = (ImageView) rootView.findViewById(R.id.infoReport);
@@ -73,17 +147,16 @@ public class ViewReportedSightingsFragment extends Fragment  {
         final View loadingIndicator = rootView.findViewById(R.id.loading_indicator_edit);
 
 
-
         info.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
                 Tooltip tooltip = new Tooltip.Builder(info)
-                        .setText("long press a bike to interact with sighting")
-                        .setTextColor(ContextCompat.getColor(getContext(),R.color.white))
+                        .setText("Click a sighting to contact the person who filed report.\n\n Long click to clear an item.")
+                        .setTextColor(ContextCompat.getColor(getContext(), R.color.white))
                         .setDismissOnClick(true)
                         .setCancelable(true)
-                        .setBackgroundColor(ContextCompat.getColor(getContext(),R.color.cyan)).show();
+                        .setBackgroundColor(ContextCompat.getColor(getContext(), R.color.cyan)).show();
 
 
                 final Animation animation = new AlphaAnimation((float) 0.5, 0); // Change alpha from fully visible to invisible
@@ -98,7 +171,7 @@ public class ViewReportedSightingsFragment extends Fragment  {
                 // fade back in
                 info.startAnimation(animation);
 
-               // Toast.makeText(getActivity().getApplication(), "long press a bike to interact with sighting", Toast.LENGTH_SHORT).show();
+                // Toast.makeText(getActivity().getApplication(), "long press a bike to interact with sighting", Toast.LENGTH_SHORT).show();
 
 
             }
@@ -165,6 +238,46 @@ public class ViewReportedSightingsFragment extends Fragment  {
         myListView.setAdapter(bikeAdapter);
 
 
+        //what happens when user clicks on am item
+        myListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                stolenBike = bikeAdapter.getItem(i);
+
+                //launch Gmail
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle("Investigate Further").setMessage("Contact person who reported the suspected sighting for more information.\n\n" +
+                        "This will launch your email client").setPositiveButton("Proceed", dialogClickListenerForEmail)
+                        .setNegativeButton("Cancel", dialogClickListenerForEmail).show();
+
+            }
+        });
+
+
+        myListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
+                                           int arg2, long arg3) {
+
+                DatabaseReference itemRef = bikeAdapter.getRef(arg2);
+                dB_KeyRefrence = itemRef.getKey();
+
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle("Clear from sightings").setMessage("Are you sure you wish to remove this item?" +
+                        "\n\nThis indicates that you have dealt with this suspected sighting.\n\n" +
+                        "Once removed it will no longer appear on this list.").setPositiveButton("Proceed", dialogClickListener)
+                        .setNegativeButton("Cancel", dialogClickListener).show();
+
+
+                //for testing remove
+                // Toast.makeText(getActivity().getApplication(), "Long Clicked Trigger: "+dB_KeyRefrence, Toast.LENGTH_LONG).show();
+                return true;
+            }
+        });
+
         // Inflate the layout for this fragment
         return rootView;
     }
@@ -182,6 +295,20 @@ public class ViewReportedSightingsFragment extends Fragment  {
     }
 
 
-
+    //================================================================================
+    //   Method to compose a email called when a user clicks on bike item in listView.
+    //   Email generated to send to origional user.
+    //=================================================================================
+    public void composeEmail(String[] addresses, String subject, String body) {
+        Intent intent = new Intent(Intent.ACTION_SENDTO);
+        intent.setData(Uri.parse("mailto:")); // only email apps should handle this
+        intent.putExtra(Intent.EXTRA_EMAIL, addresses);
+        intent.putExtra(Intent.EXTRA_SUBJECT, subject);
+        intent.putExtra(Intent.EXTRA_TEXT, body);
+        //,ake sure user has a app capable of carrying out this intent
+        if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+            startActivity(intent);
+        }
+    }//end method
 
 }

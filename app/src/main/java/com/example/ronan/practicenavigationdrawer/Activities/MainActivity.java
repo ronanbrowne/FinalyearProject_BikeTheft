@@ -109,7 +109,7 @@ private long sightingsCount;
             Toast.makeText(MainActivity.this, "(testing, delete later) mail Box:   "+sightingsCount, Toast.LENGTH_SHORT).show();
 
             if (menuItem!=null) {
-                menuItem.setIcon(buildCounterDrawable((int) sightingsCount, R.drawable.ic_mail_outline_white_24dp));
+                menuItem.setIcon(buildCounterDrawable((int) sightingsCount, R.drawable.ic_remove_red_eye_black_24dp));
             }
         }
 
