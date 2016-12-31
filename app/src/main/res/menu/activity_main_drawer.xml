@@ -38,6 +38,14 @@
 </menu>
     </item>
 
+    <item android:title="Theft Prevention">
+        <menu>
+            <item
+                android:id="@+id/nav_beacons"
+                android:icon="@drawable/ic_router_black_24dp"
+                android:title="Manage Sensors" />
 
+        </menu>
+    </item>
 
 </menu>

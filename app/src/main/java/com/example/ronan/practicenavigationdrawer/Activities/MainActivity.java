@@ -34,6 +34,7 @@ import android.widget.Toast;
 
 import com.example.ronan.practicenavigationdrawer.DataModel.BikeData;
 import com.example.ronan.practicenavigationdrawer.DataModel.UserData;
+import com.example.ronan.practicenavigationdrawer.Fragments.BeaconsFragment;
 import com.example.ronan.practicenavigationdrawer.Fragments.DatabaseFragment;
 import com.example.ronan.practicenavigationdrawer.Fragments.EditFragmentList;
 import com.example.ronan.practicenavigationdrawer.Fragments.GmapFragment;
@@ -106,7 +107,7 @@ private long sightingsCount;
         public void onDataChange(DataSnapshot dataSnapshot) {
             sightingsCount = dataSnapshot.getChildrenCount();
             Log.v("*", "sight: " + sightingsCount);
-            Toast.makeText(MainActivity.this, "(testing, delete later) mail Box:   "+sightingsCount, Toast.LENGTH_SHORT).show();
+          //  Toast.makeText(MainActivity.this, "(testing, delete later) mail Box:   "+sightingsCount, Toast.LENGTH_SHORT).show();
 
             if (menuItem!=null) {
                 menuItem.setIcon(buildCounterDrawable((int) sightingsCount, R.drawable.ic_remove_red_eye_black_24dp));
@@ -498,9 +499,19 @@ private long sightingsCount;
             fm.beginTransaction().replace(R.id.fragment_container, new GmapFragment(), "mapp").commit();
 
 
+        }else if (id == R.id.nav_beacons) {
+
+            //setFragment
+            BeaconsFragment beaconsFragment = new BeaconsFragment();
+            FragmentTransaction fts = getSupportFragmentManager().beginTransaction();
+            fts.replace(R.id.fragment_container, beaconsFragment);
+            fts.commit();
+
+            mapOpen = false;
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+
+            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
