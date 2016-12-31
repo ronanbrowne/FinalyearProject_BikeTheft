@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import com.example.ronan.practicenavigationdrawer.DataModel.BikeData;
 import com.example.ronan.practicenavigationdrawer.R;
+import com.firebase.client.ServerValue;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -32,6 +33,7 @@ import com.tooltip.Tooltip;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Map;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
@@ -180,6 +182,7 @@ public class RegisterFragment extends Fragment {
                 }
                 //if all fields are vilid
                 else {
+
                     //newBike object using constructor to populate attributes
                     BikeData newBike = new BikeData(make, frameSize, color, other, stolen, base64, model, "N/A", 0, 0, uniqueIdentifier);
 

@@ -38,14 +38,17 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.tooltip.Tooltip;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
@@ -218,6 +221,11 @@ public class EditFragment extends Fragment {
                 Log.v(TAG, "else**" + bikeStolen.toString());
             }
 
+
+            //gettign time
+           // Date date = new Date ();
+          //  date.setTime((long)mybike.getTimestampCreatedLong()*1000);
+           // Toast.makeText(getActivity().getApplicationContext(),"time"+ date , Toast.LENGTH_SHORT).show();
         }
 
         @Override
@@ -244,7 +252,7 @@ public class EditFragment extends Fragment {
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             dB_KeyRefrence_fromBundle = bundle.getString("dB_Ref");
-            Toast.makeText(getActivity().getApplicationContext(),dB_KeyRefrence_fromBundle , Toast.LENGTH_SHORT).show();
+          //  Toast.makeText(getActivity().getApplicationContext(),dB_KeyRefrence_fromBundle , Toast.LENGTH_SHORT).show();
 
         }
 

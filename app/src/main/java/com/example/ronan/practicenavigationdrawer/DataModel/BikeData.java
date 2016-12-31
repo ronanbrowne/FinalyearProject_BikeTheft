@@ -1,6 +1,13 @@
 package com.example.ronan.practicenavigationdrawer.DataModel;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import com.google.firebase.database.Exclude;
+import com.firebase.client.ServerValue;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class BikeData {
 //======================================================================================
@@ -25,7 +32,9 @@ public class BikeData {
     private String reportedLocation;
     private String reportedDate;
     private boolean reportedSigting;
-
+   // private Map<String, String> creationDate = new HashMap<String, String>();
+      private HashMap<String, Object> timestampCreated;
+  //  private Long creationDate;
 
 
     //constructor
@@ -41,6 +50,12 @@ public class BikeData {
         this.lastSeen = lastSeen;
         this.latitude = latitude;
         this.longditude = longditude;
+
+        // TIME STAMP
+        HashMap<String, Object> timestampCreatedObj = new HashMap<String, Object>();
+        timestampCreatedObj.put("date", ServerValue.TIMESTAMP);
+        this.timestampCreated = timestampCreatedObj;
+
 
     }
 
@@ -64,6 +79,15 @@ public class BikeData {
         this.stolen = stolen;
     }
 
+
+    public HashMap<String, Object> getTimestampCreated(){
+        return timestampCreated;
+    }
+
+    @Exclude
+    public long getTimestampCreatedLong(){
+        return (long)timestampCreated.get("date");
+    }
 
     public void setReportedBy(String reportedBy) {
         this.reportedBy = reportedBy;
