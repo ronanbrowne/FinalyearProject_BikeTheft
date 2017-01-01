@@ -28,6 +28,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -35,6 +36,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SeekBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -58,16 +60,19 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.maps.android.SphericalUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Calendar;
 import java.text.SimpleDateFormat;
+import java.util.concurrent.TimeUnit;
 
 import static com.example.ronan.practicenavigationdrawer.R.id.infoStolen;
 import static com.example.ronan.practicenavigationdrawer.R.id.mapwhere;
@@ -99,6 +104,7 @@ public class DatabaseFragment extends Fragment {
     private TextView noDataMessage;
     private View loadingIndicator;
     private LinearLayout queryArea;
+    private Spinner months_Spinner;
 
 
     private LatLng userInput1 = new LatLng(53.3498, 6.2603);
@@ -129,6 +135,9 @@ public class DatabaseFragment extends Fragment {
 
     private String input_from_reported_Location = "";
     boolean flag = false;
+
+    private int spinnerSelcter = 0;
+
 
     //==============================================================================================
     //=          dialog listener for pop up to confirm report sightings
@@ -331,8 +340,30 @@ public class DatabaseFragment extends Fragment {
         noDataMessage = (TextView) rootView.findViewById(R.id.empty_view_Notification);
         expand = (ImageView) rootView.findViewById(R.id.expand);
         queryArea = (LinearLayout) rootView.findViewById(R.id.query_area);
+        months_Spinner = (Spinner) rootView.findViewById(R.id.months_Spinner);
 
         radiousTV.setText("Radius: " + seekBar.getProgress() + "km");
+
+
+        Integer[] items = new Integer[]{0,1, 2, 3, 4};
+        ArrayAdapter<Integer> adapter = new ArrayAdapter<Integer>(getActivity().getApplicationContext(), R.layout.custom_spinner, items);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        months_Spinner.setAdapter(adapter);
+
+
+        //grab spinner data if there
+        months_Spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                Toast.makeText(getActivity().getApplicationContext(), "selected: " + adapterView.getItemAtPosition(i), Toast.LENGTH_SHORT).show();
+                spinnerSelcter = (int) adapterView.getItemAtPosition(i);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
 
         //handel seekbar used for radius input
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -359,25 +390,22 @@ public class DatabaseFragment extends Fragment {
             @Override
             public void onClick(View view) {
 
-                if(queryArea.isShown()){
+                if (queryArea.isShown()) {
 
                     queryArea.setVisibility(View.GONE);
                     expand.setImageResource(R.drawable.ic_expand_more_black_24dp);
 
                     //if closing query area also close results map if its open
-                    if(frameLayout.isShown()){
+                    if (frameLayout.isShown()) {
                         closeMap.performClick();
                     }
 
-                }else {
+                } else {
                     queryArea.setVisibility(View.VISIBLE);
                     expand.setImageResource(R.drawable.ic_expand_less_black_24dp);
 
 
-
                 }
-
-
 
 
             }
@@ -519,6 +547,7 @@ public class DatabaseFragment extends Fragment {
                 } else {
                     Toast.makeText(getActivity().getApplicationContext(), "Query fields can not be left blank", Toast.LENGTH_SHORT).show();
                 }
+
 
             }
         });
@@ -722,56 +751,127 @@ public class DatabaseFragment extends Fragment {
 
     public void handelQuery() {
 
-        final FirebaseListAdapter<BikeData> bikeAdapterQuery = new FirebaseListAdapter<BikeData>
-                (getActivity(), BikeData.class, R.layout.list_item, mDatabaseQuery) {
-            @Override
-            protected void populateView(View v, BikeData model, int position) {
+
+        if (spinnerSelcter != 0) {
+
+            //int month= spinnerSelcter*30;
+
+            Toast.makeText(getActivity().getApplicationContext(), "here queru", Toast.LENGTH_SHORT).show();
+
+            long cutoff = new Date().getTime() - TimeUnit.MILLISECONDS.convert(30, TimeUnit.DAYS);
+
+            Query oldItems = mDatabaseQuery.child("timestampCreated").orderByChild("date").endAt(cutoff);
 
 
-                // Find the TextView IDs of list_item.xml
-                TextView makeView = (TextView) v.findViewById(R.id.make);
-                TextView modelView = (TextView) v.findViewById(R.id.model);
-                TextView sizeView = (TextView) v.findViewById(R.id.size);
-                TextView colorView = (TextView) v.findViewById(R.id.color);
-                TextView otherView = (TextView) v.findViewById(R.id.other);
-                TextView lastlocationView = (TextView) v.findViewById(R.id.loaction);
-                bike_image = (ImageView) v.findViewById(R.id.bike_image);
-
-                // Log.v("***here", model.getModel());
+            final FirebaseListAdapter<BikeData> bikeAdapterQuery = new FirebaseListAdapter<BikeData>
+                    (getActivity(), BikeData.class, R.layout.list_item, oldItems) {
+                @Override
+                protected void populateView(View v, BikeData model, int position) {
 
 
-                //setting the textViews to Bike data
-                makeView.setText(model.getMake());
-                modelView.setText(model.getModel());
-                sizeView.setText(String.valueOf(model.getFrameSize()));
-                colorView.setText(model.getColor());
-                otherView.setText(model.getOther());
-                lastlocationView.setText(model.getLastSeen());
-                //call method to set image, which turns base64 string to image
-                getBitMapFromString(model.getImageBase64());
+                    // Find the TextView IDs of list_item.xml
+                    TextView makeView = (TextView) v.findViewById(R.id.make);
+                    TextView modelView = (TextView) v.findViewById(R.id.model);
+                    TextView sizeView = (TextView) v.findViewById(R.id.size);
+                    TextView colorView = (TextView) v.findViewById(R.id.color);
+                    TextView otherView = (TextView) v.findViewById(R.id.other);
+                    TextView lastlocationView = (TextView) v.findViewById(R.id.loaction);
+                    bike_image = (ImageView) v.findViewById(R.id.bike_image);
 
-            }
-        };
+                    // Log.v("***here", model.getModel());
 
 
-        myListView.setAdapter(bikeAdapterQuery);
+                    //setting the textViews to Bike data
+                    makeView.setText(model.getMake());
+                    modelView.setText(model.getModel());
+                    sizeView.setText(String.valueOf(model.getFrameSize()));
+                    colorView.setText(model.getColor());
+                    otherView.setText(model.getOther());
+                    lastlocationView.setText(model.getLastSeen());
+                    //call method to set image, which turns base64 string to image
+                    getBitMapFromString(model.getImageBase64());
 
-        myListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                }
+            };
 
-                itemRef = bikeAdapterQuery.getRef(i);
+            myListView.setAdapter(bikeAdapterQuery);
 
-                stolenBike = bikeAdapterQuery.getItem(i);
+            myListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
-                builder.setMessage("Are you sure you wish to report a sighting of this bike?" +
-                        "\nthis will notify the origional owner")
-                        .setPositiveButton("Report Sighting", dialogClickListener)
-                        .setNegativeButton("Cancel", dialogClickListener).show();
+                    itemRef = bikeAdapterQuery.getRef(i);
 
-            }
-        });//end onClick for listView
+                    stolenBike = bikeAdapterQuery.getItem(i);
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+                    builder.setMessage("Are you sure you wish to report a sighting of this bike?" +
+                            "\nthis will notify the origional owner")
+                            .setPositiveButton("Report Sighting", dialogClickListener)
+                            .setNegativeButton("Cancel", dialogClickListener).show();
+
+                }
+            });//end onClick for listView
+
+
+        }
+        else {
+
+
+            final FirebaseListAdapter<BikeData> bikeAdapterQuery = new FirebaseListAdapter<BikeData>
+                    (getActivity(), BikeData.class, R.layout.list_item, mDatabaseQuery) {
+                @Override
+                protected void populateView(View v, BikeData model, int position) {
+
+
+                    // Find the TextView IDs of list_item.xml
+                    TextView makeView = (TextView) v.findViewById(R.id.make);
+                    TextView modelView = (TextView) v.findViewById(R.id.model);
+                    TextView sizeView = (TextView) v.findViewById(R.id.size);
+                    TextView colorView = (TextView) v.findViewById(R.id.color);
+                    TextView otherView = (TextView) v.findViewById(R.id.other);
+                    TextView lastlocationView = (TextView) v.findViewById(R.id.loaction);
+                    bike_image = (ImageView) v.findViewById(R.id.bike_image);
+
+                    // Log.v("***here", model.getModel());
+
+
+                    //setting the textViews to Bike data
+                    makeView.setText(model.getMake());
+                    modelView.setText(model.getModel());
+                    sizeView.setText(String.valueOf(model.getFrameSize()));
+                    colorView.setText(model.getColor());
+                    otherView.setText(model.getOther());
+                    lastlocationView.setText(model.getLastSeen());
+                    //call method to set image, which turns base64 string to image
+                    getBitMapFromString(model.getImageBase64());
+
+                }
+            };
+
+            myListView.setAdapter(bikeAdapterQuery);
+
+            myListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                    itemRef = bikeAdapterQuery.getRef(i);
+
+                    stolenBike = bikeAdapterQuery.getItem(i);
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+                    builder.setMessage("Are you sure you wish to report a sighting of this bike?" +
+                            "\nthis will notify the origional owner")
+                            .setPositiveButton("Report Sighting", dialogClickListener)
+                            .setNegativeButton("Cancel", dialogClickListener).show();
+
+                }
+            });//end onClick for listView
+
+        }
+
+
+
 
 
     }//end query
@@ -793,11 +893,11 @@ public class DatabaseFragment extends Fragment {
     }//end method
 
     //get current date instanc use this to log when bike sighting was reported
-       public String getDate() {
-                Calendar cal = Calendar.getInstance();
-                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-                return sdf.format(cal.getTime());
-           }
+    public String getDate() {
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+        return sdf.format(cal.getTime());
+    }
 
 }//end class
 

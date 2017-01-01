@@ -55,13 +55,21 @@
     </LinearLayout>
 
         <!-- QUERY -->
+
+    <LinearLayout
+        android:animateLayoutChanges="true"
+        android:id="@+id/query_area"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="visible">
+
         <LinearLayout
-            android:animateLayoutChanges="true"
-            android:id="@+id/query_area"
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:visibility="gone"
+
             >
 
             <EditText
@@ -112,6 +120,43 @@
         </LinearLayout>
 
 
+        <LinearLayout
+            android:animateLayoutChanges="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="visible"
+            >
+
+            <TextView
+
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:textSize="15sp"
+                android:layout_height="wrap_content"
+                android:text="Within months ago: "
+                android:id="@+id/textView6"
+                android:layout_gravity="right|center"/>
+
+
+            <Spinner
+                android:id="@+id/months_Spinner"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight=".5"
+                android:spinnerMode="dropdown"
+                android:layout_gravity="right|center"
+   />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="0dp"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+
         <!-- Empty view is only visible when the list has no items. ***************************************to be implemented-->
         <TextView
             android:paddingTop="20dp"
@@ -131,7 +176,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal" />
-
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#000000" />
 
         <!-- MAIN AREA -->
         <LinearLayout
