@@ -89,6 +89,7 @@ public class DatabaseFragment extends Fragment {
 
     private FirebaseUser mFirebaseUser;
     private DatabaseReference mDatabaseStolen;
+    private DatabaseReference mDatabaseStolenDateQuery;
     private DatabaseReference mDatabaseQuery;
     private SupportMapFragment mSupportMapFragment;
     private DatabaseReference mDatabaseReported;
@@ -341,8 +342,13 @@ public class DatabaseFragment extends Fragment {
         expand = (ImageView) rootView.findViewById(R.id.expand);
         queryArea = (LinearLayout) rootView.findViewById(R.id.query_area);
         months_Spinner = (Spinner) rootView.findViewById(R.id.months_Spinner);
-
         radiousTV.setText("Radius: " + seekBar.getProgress() + "km");
+
+
+        //  ListView
+        myListView = (ListView) rootView.findViewById(R.id.list);
+        myListView.setDivider(ContextCompat.getDrawable(getActivity(), R.drawable.divider));
+        myListView.setDividerHeight(1);
 
 
         Integer[] items = new Integer[]{0,1, 2, 3, 4};
@@ -385,41 +391,13 @@ public class DatabaseFragment extends Fragment {
         });
 
 
-        //handel expand / close query area and change expand /hide image as necassary
-        expand.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                if (queryArea.isShown()) {
-
-                    queryArea.setVisibility(View.GONE);
-                    expand.setImageResource(R.drawable.ic_expand_more_black_24dp);
-
-                    //if closing query area also close results map if its open
-                    if (frameLayout.isShown()) {
-                        closeMap.performClick();
-                    }
-
-                } else {
-                    queryArea.setVisibility(View.VISIBLE);
-                    expand.setImageResource(R.drawable.ic_expand_less_black_24dp);
-
-
-                }
-
-
-            }
-        });
 
 
         //get and initally hide slide up map fragment
         frameLayout = (FrameLayout) rootView.findViewById(R.id.mapwhere);
         frameLayout.setVisibility(View.GONE);
 
-        //  ListView
-        myListView = (ListView) rootView.findViewById(R.id.list);
-        myListView.setDivider(ContextCompat.getDrawable(getActivity(), R.drawable.divider));
-        myListView.setDividerHeight(1);
+
 
 
         //===================================================================================
@@ -487,6 +465,34 @@ public class DatabaseFragment extends Fragment {
         });//end onClick for listView
 
 
+
+        //handel expand / close query area and change expand /hide image as necassary
+        expand.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if (queryArea.isShown()) {
+                    queryArea.setVisibility(View.GONE);
+                    expand.setImageResource(R.drawable.ic_expand_more_black_24dp);
+                    //reset main listview if closing
+                    myListView.setAdapter(bikeAdapter);
+                    //if closing query area also close results map if its open
+                    if (frameLayout.isShown()) {
+                        closeMap.performClick();
+                    }
+                    Toast.makeText(getActivity().getApplicationContext(), "Exiting query mode, showing full DB", Toast.LENGTH_SHORT).show();
+
+
+                } else {
+                    queryArea.setVisibility(View.VISIBLE);
+                    expand.setImageResource(R.drawable.ic_expand_less_black_24dp);
+
+                }
+
+            }
+        });
+
+
         //click to close map and re-set the listview returning default query of all
         closeMap.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -544,8 +550,16 @@ public class DatabaseFragment extends Fragment {
                     //hide keyboard
                     hideKeyboardFrom(getActivity().getApplicationContext(), rootView);
 
+
+
+
                 } else {
-                    Toast.makeText(getActivity().getApplicationContext(), "Query fields can not be left blank", Toast.LENGTH_SHORT).show();
+
+                    if(spinnerSelcter != 0){
+                        handelQuery();
+                    }else{
+                        Toast.makeText(getActivity().getApplicationContext(), "Query fields can not be left blank", Toast.LENGTH_SHORT).show();
+                    }
                 }
 
 
@@ -754,13 +768,18 @@ public class DatabaseFragment extends Fragment {
 
         if (spinnerSelcter != 0) {
 
-            //int month= spinnerSelcter*30;
+            //implment this later
+            int month= spinnerSelcter*30;
 
             Toast.makeText(getActivity().getApplicationContext(), "here queru", Toast.LENGTH_SHORT).show();
 
-            long cutoff = new Date().getTime() - TimeUnit.MILLISECONDS.convert(30, TimeUnit.DAYS);
+            //working hardcoded
+            long cutoff = new Date().getTime() - TimeUnit.MILLISECONDS.convert(60, TimeUnit.MINUTES);
+            mDatabaseStolenDateQuery = FirebaseDatabase.getInstance().getReference().child("Stolen Bikes");
 
-            Query oldItems = mDatabaseQuery.child("timestampCreated").orderByChild("date").endAt(cutoff);
+
+
+            Query oldItems = mDatabaseStolenDateQuery.orderByChild("timestampCreated/date").startAt(cutoff);
 
 
             final FirebaseListAdapter<BikeData> bikeAdapterQuery = new FirebaseListAdapter<BikeData>
@@ -898,6 +917,8 @@ public class DatabaseFragment extends Fragment {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
         return sdf.format(cal.getTime());
     }
+
+
 
 }//end class
 

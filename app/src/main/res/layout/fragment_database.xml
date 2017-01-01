@@ -62,7 +62,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <LinearLayout
 
@@ -147,7 +147,7 @@
                 android:spinnerMode="dropdown"
                 android:layout_gravity="right|center"
    />
-
+            <!-- Loading indicator is only shown before the first load --><!-- Loading indicator is only shown before the first load -->
             <View
                 android:layout_width="0dp"
                 android:layout_weight="1"
@@ -168,14 +168,7 @@
             android:text="No bikes have been listed as stolen"
             android:textAppearance="?android:textAppearanceMedium" />
 
-        <!-- Loading indicator is only shown before the first load -->
-        <ProgressBar
-            android:paddingTop="20dp"
-            android:id="@+id/loading_indicator"
-            style="@style/Widget.AppCompat.ProgressBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal" />
+
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
@@ -186,7 +179,14 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
-
+            <!-- Loading indicator is only shown before the first load -->
+            <ProgressBar
+                android:paddingTop="20dp"
+                android:id="@+id/loading_indicator"
+                style="@style/Widget.AppCompat.ProgressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal" />
 
             <ListView
                 android:id="@+id/list"
