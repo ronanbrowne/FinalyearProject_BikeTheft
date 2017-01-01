@@ -69,6 +69,7 @@ import java.util.Locale;
 import java.util.Calendar;
 import java.text.SimpleDateFormat;
 
+import static com.example.ronan.practicenavigationdrawer.R.id.infoStolen;
 import static com.example.ronan.practicenavigationdrawer.R.id.mapwhere;
 import static com.google.android.gms.wearable.DataMap.TAG;
 
@@ -89,6 +90,7 @@ public class DatabaseFragment extends Fragment {
     private DatabaseReference itemRef;
 
     private ImageView bike_image;
+    private ImageView expand;
     private EditText street;
     private Button query;
     private Button closeMap;
@@ -96,6 +98,7 @@ public class DatabaseFragment extends Fragment {
     private TextView radiousTV;
     private TextView noDataMessage;
     private View loadingIndicator;
+    private LinearLayout queryArea;
 
 
     private LatLng userInput1 = new LatLng(53.3498, 6.2603);
@@ -125,6 +128,7 @@ public class DatabaseFragment extends Fragment {
     private int progress = 0;
 
     private String input_from_reported_Location = "";
+    boolean flag = false;
 
     //==============================================================================================
     //=          dialog listener for pop up to confirm report sightings
@@ -325,6 +329,8 @@ public class DatabaseFragment extends Fragment {
         seekBar = (SeekBar) rootView.findViewById(R.id.seekBar);
         radiousTV = (TextView) rootView.findViewById(R.id.radiusTV);
         noDataMessage = (TextView) rootView.findViewById(R.id.empty_view_Notification);
+        expand = (ImageView) rootView.findViewById(R.id.expand);
+        queryArea = (LinearLayout) rootView.findViewById(R.id.query_area);
 
         radiousTV.setText("Radius: " + seekBar.getProgress() + "km");
 
@@ -344,6 +350,36 @@ public class DatabaseFragment extends Fragment {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+        });
+
+
+        //handel expand / close query area and change expand /hide image as necassary
+        expand.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if(queryArea.isShown()){
+
+                    queryArea.setVisibility(View.GONE);
+                    expand.setImageResource(R.drawable.ic_expand_more_black_24dp);
+
+                    //if closing query area also close results map if its open
+                    if(frameLayout.isShown()){
+                        closeMap.performClick();
+                    }
+
+                }else {
+                    queryArea.setVisibility(View.VISIBLE);
+                    expand.setImageResource(R.drawable.ic_expand_less_black_24dp);
+
+
+
+                }
+
+
+
+
             }
         });
 
