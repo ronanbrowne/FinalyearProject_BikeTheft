@@ -63,6 +63,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.maps.android.SphericalUtil;
+import com.tooltip.Tooltip;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -96,6 +97,7 @@ public class DatabaseFragment extends Fragment {
     private DatabaseReference itemRef;
 
     private ImageView bike_image;
+    private ImageView infoStolen;
     private ImageView expand;
     private EditText street;
     private Button query;
@@ -113,6 +115,7 @@ public class DatabaseFragment extends Fragment {
     private double latitude = 0;
     private double Longitude = 0;
     private boolean isMapFragmentVisavle = false;
+    private boolean fullqueryDate = false;
 
     private FrameLayout frameLayout;
     private String userInputAddress;
@@ -340,6 +343,7 @@ public class DatabaseFragment extends Fragment {
         radiousTV = (TextView) rootView.findViewById(R.id.radiusTV);
         noDataMessage = (TextView) rootView.findViewById(R.id.empty_view_Notification);
         expand = (ImageView) rootView.findViewById(R.id.expand);
+        infoStolen = (ImageView) rootView.findViewById(R.id.infoStolen);
         queryArea = (LinearLayout) rootView.findViewById(R.id.query_area);
         months_Spinner = (Spinner) rootView.findViewById(R.id.months_Spinner);
         radiousTV.setText("Radius: " + seekBar.getProgress() + "km");
@@ -351,7 +355,7 @@ public class DatabaseFragment extends Fragment {
         myListView.setDividerHeight(1);
 
 
-        Integer[] items = new Integer[]{0,1, 2, 3, 4};
+        Integer[] items = new Integer[]{0, 1, 2, 3, 4};
         ArrayAdapter<Integer> adapter = new ArrayAdapter<Integer>(getActivity().getApplicationContext(), R.layout.custom_spinner, items);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         months_Spinner.setAdapter(adapter);
@@ -391,13 +395,24 @@ public class DatabaseFragment extends Fragment {
         });
 
 
+        infoStolen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Tooltip tooltip = new Tooltip.Builder(infoStolen)
+                        .setText("Here yopu can view all bikes reported stolen.\n\nUse the arrow to left to show query area\n where you may narrow down search.\n\n" +
+                                "By default only showing bikes in system for 3 months or less. Message developers if you wish to search older.")
+                        .setTextColor(ContextCompat.getColor(getContext(), R.color.white))
+                        .setDismissOnClick(true)
+                        .setCancelable(true)
+                        .setGravity(Gravity.BOTTOM)
+                        .setBackgroundColor(ContextCompat.getColor(getContext(), R.color.cyan)).show();
+            }
+        });
 
 
         //get and initally hide slide up map fragment
         frameLayout = (FrameLayout) rootView.findViewById(R.id.mapwhere);
         frameLayout.setVisibility(View.GONE);
-
-
 
 
         //===================================================================================
@@ -463,7 +478,6 @@ public class DatabaseFragment extends Fragment {
 
             }
         });//end onClick for listView
-
 
 
         //handel expand / close query area and change expand /hide image as necassary
@@ -542,6 +556,15 @@ public class DatabaseFragment extends Fragment {
 
                 //user validation make sure inputs not null
                 if ((userInputAddress != null && !userInputAddress.isEmpty()) && (progress > 0)) {
+
+                    if(spinnerSelcter!=0){
+                        fullqueryDate=true;
+                    }
+                    else {
+                        fullqueryDate=false;
+                    }
+
+
                     //getting co-ordinates
                     GeocodeAsyncTaskForQuery asyncTaskForQuery = new GeocodeAsyncTaskForQuery();
                     frameLayout.setVisibility(View.VISIBLE);
@@ -551,13 +574,11 @@ public class DatabaseFragment extends Fragment {
                     hideKeyboardFrom(getActivity().getApplicationContext(), rootView);
 
 
-
-
                 } else {
 
-                    if(spinnerSelcter != 0){
+                    if (spinnerSelcter != 0) {
                         handelQuery();
-                    }else{
+                    } else {
                         Toast.makeText(getActivity().getApplicationContext(), "Query fields can not be left blank", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -766,76 +787,85 @@ public class DatabaseFragment extends Fragment {
     public void handelQuery() {
 
 
-        if (spinnerSelcter != 0) {
+        if (fullqueryDate) {
 
-            //implment this later
-            int month= spinnerSelcter*30;
+            if(spinnerSelcter!=0) {
+                //implment this later
+                int month = spinnerSelcter * 30;
 
-            Toast.makeText(getActivity().getApplicationContext(), "here queru", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity().getApplicationContext(), "full query", Toast.LENGTH_SHORT).show();
 
-            //working hardcoded
-            long cutoff = new Date().getTime() - TimeUnit.MILLISECONDS.convert(60, TimeUnit.MINUTES);
-            mDatabaseStolenDateQuery = FirebaseDatabase.getInstance().getReference().child("Stolen Bikes");
+                //working hardcoded
+                long cutoff = new Date().getTime() - TimeUnit.MILLISECONDS.convert(160, TimeUnit.DAYS);
+                //should be mDatabaseQuery
+                //mDatabaseStolenDateQuery = FirebaseDatabase.getInstance().getReference().child("Stolen Bikes");
 
-
-
-            Query oldItems = mDatabaseStolenDateQuery.orderByChild("timestampCreated/date").startAt(cutoff);
-
-
-            final FirebaseListAdapter<BikeData> bikeAdapterQuery = new FirebaseListAdapter<BikeData>
-                    (getActivity(), BikeData.class, R.layout.list_item, oldItems) {
-                @Override
-                protected void populateView(View v, BikeData model, int position) {
+                Query oldItems = mDatabaseQuery.orderByChild("timestampCreated/date").startAt(cutoff);
 
 
-                    // Find the TextView IDs of list_item.xml
-                    TextView makeView = (TextView) v.findViewById(R.id.make);
-                    TextView modelView = (TextView) v.findViewById(R.id.model);
-                    TextView sizeView = (TextView) v.findViewById(R.id.size);
-                    TextView colorView = (TextView) v.findViewById(R.id.color);
-                    TextView otherView = (TextView) v.findViewById(R.id.other);
-                    TextView lastlocationView = (TextView) v.findViewById(R.id.loaction);
-                    bike_image = (ImageView) v.findViewById(R.id.bike_image);
-
-                    // Log.v("***here", model.getModel());
+                final FirebaseListAdapter<BikeData> bikeAdapterQuery = new FirebaseListAdapter<BikeData>
+                        (getActivity(), BikeData.class, R.layout.list_item, oldItems) {
+                    @Override
+                    protected void populateView(View v, BikeData model, int position) {
 
 
-                    //setting the textViews to Bike data
-                    makeView.setText(model.getMake());
-                    modelView.setText(model.getModel());
-                    sizeView.setText(String.valueOf(model.getFrameSize()));
-                    colorView.setText(model.getColor());
-                    otherView.setText(model.getOther());
-                    lastlocationView.setText(model.getLastSeen());
-                    //call method to set image, which turns base64 string to image
-                    getBitMapFromString(model.getImageBase64());
+                        // Find the TextView IDs of list_item.xml
+                        TextView makeView = (TextView) v.findViewById(R.id.make);
+                        TextView modelView = (TextView) v.findViewById(R.id.model);
+                        TextView sizeView = (TextView) v.findViewById(R.id.size);
+                        TextView colorView = (TextView) v.findViewById(R.id.color);
+                        TextView otherView = (TextView) v.findViewById(R.id.other);
+                        TextView lastlocationView = (TextView) v.findViewById(R.id.loaction);
+                        bike_image = (ImageView) v.findViewById(R.id.bike_image);
 
-                }
-            };
-
-            myListView.setAdapter(bikeAdapterQuery);
-
-            myListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
-                    itemRef = bikeAdapterQuery.getRef(i);
-
-                    stolenBike = bikeAdapterQuery.getItem(i);
-
-                    AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
-                    builder.setMessage("Are you sure you wish to report a sighting of this bike?" +
-                            "\nthis will notify the origional owner")
-                            .setPositiveButton("Report Sighting", dialogClickListener)
-                            .setNegativeButton("Cancel", dialogClickListener).show();
-
-                }
-            });//end onClick for listView
+                        // Log.v("***here", model.getModel());
 
 
-        }
-        else {
+                        //setting the textViews to Bike data
+                        makeView.setText(model.getMake());
+                        modelView.setText(model.getModel());
+                        sizeView.setText(String.valueOf(model.getFrameSize()));
+                        colorView.setText(model.getColor());
+                        otherView.setText(model.getOther());
+                        lastlocationView.setText(model.getLastSeen());
+                        //call method to set image, which turns base64 string to image
+                        getBitMapFromString(model.getImageBase64());
 
+                    }
+                };
+
+                myListView.setAdapter(bikeAdapterQuery);
+
+                myListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                        itemRef = bikeAdapterQuery.getRef(i);
+
+                        stolenBike = bikeAdapterQuery.getItem(i);
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+                        builder.setMessage("Are you sure you wish to report a sighting of this bike?" +
+                                "\nthis will notify the origional owner")
+                                .setPositiveButton("Report Sighting", dialogClickListener)
+                                .setNegativeButton("Cancel", dialogClickListener).show();
+
+                    }
+                });//end onClick for listView
+            }
+
+        } else {
+
+            //testing // TODO: 01/01/2017 come back and sort this with new data
+            if(spinnerSelcter!=0){
+                long cutoff = new Date().getTime() - TimeUnit.MILLISECONDS.convert(60, TimeUnit.DAYS);
+                mDatabaseStolen.orderByChild("timestampCreated/date").startAt(cutoff);
+            }
+            else if(spinnerSelcter==0){
+                mDatabaseQuery=
+                mDatabaseStolen = FirebaseDatabase.getInstance().getReference().child("Stolen Bikes");
+
+            }
 
             final FirebaseListAdapter<BikeData> bikeAdapterQuery = new FirebaseListAdapter<BikeData>
                     (getActivity(), BikeData.class, R.layout.list_item, mDatabaseQuery) {
@@ -890,9 +920,6 @@ public class DatabaseFragment extends Fragment {
         }
 
 
-
-
-
     }//end query
 
 
@@ -917,7 +944,6 @@ public class DatabaseFragment extends Fragment {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
         return sdf.format(cal.getTime());
     }
-
 
 
 }//end class
