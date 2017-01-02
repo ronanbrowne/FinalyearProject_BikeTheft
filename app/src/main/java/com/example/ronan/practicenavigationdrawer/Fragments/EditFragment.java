@@ -302,7 +302,7 @@ public class EditFragment extends Fragment {
                     geoCodeArea.setVisibility(View.VISIBLE);
                 } else {
                     geoCodeArea.setVisibility(View.GONE);
-                    bikeLastSeen.setText("");
+                   // bikeLastSeen.setText("");
                 }
             }
         });

@@ -51,9 +51,9 @@
             android:textColor="@color/colorPrimaryDark"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Upload Image"
+            android:text="           "
             style="@style/CategoryStyle"
-            />
+            android:id="@+id/textView4" />
 
 
         <ImageView
@@ -68,6 +68,7 @@
             android:layout_height="wrap_content"
             android:layout_marginRight="16dp"
             android:clickable="true"
+            app:backgroundTint="#B2EBF2"
             app:fabSize="mini"
             app:srcCompat="@drawable/ic_camera_enhance_black_24dp"
             android:id="@+id/floatingUpload"
@@ -110,7 +111,7 @@
                 <!-- Make field -->
                 <EditText
                     android:id="@+id/edit_bike_make"
-                    android:hint="Bike Make"
+                    android:hint="Make"
                     android:layout_width="0dp"
                     android:layout_weight="2"
                     android:inputType="textCapWords"
@@ -134,7 +135,7 @@
                 <!-- Make field -->
                 <EditText
                     android:id="@+id/edit_bike_model"
-                    android:hint="Bike Model"
+                    android:hint="Model"
                     android:layout_width="0dp"
                     android:layout_weight="2"
                     android:inputType="textCapWords"
@@ -157,7 +158,7 @@
                 <!-- Make field -->
                 <EditText
                     android:id="@+id/edit_bike_colour"
-                    android:hint="Bike Colour"
+                    android:hint="Colour"
                     android:layout_width="0dp"
                     android:layout_weight="2"
                     android:inputType="textCapWords"
@@ -382,6 +383,7 @@
             android:layout_marginRight="16dp"
             android:layout_marginTop="16dp"
             android:clickable="true"
+            app:backgroundTint="#B2EBF2"
             app:fabSize="mini"
             app:srcCompat="@drawable/ic_add_location_black_24dp"
             android:id="@+id/floatingGeoCode"
@@ -479,16 +481,6 @@ v
 
 
 
-        <android.support.design.widget.FloatingActionButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="16dp"
-            android:layout_marginTop="16dp"
-            android:clickable="true"
-            app:fabSize="mini"
-            app:srcCompat="@drawable/ic_delete_forever_black_24dp"
-            android:id="@+id/floatingDelete"
-            android:layout_gravity="right"/>
 
 
         <RelativeLayout
@@ -498,7 +490,7 @@ v
             android:gravity="right">
 
 
-        <android.support.design.widget.FloatingActionButton
+            <android.support.design.widget.FloatingActionButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="16dp"
@@ -508,7 +500,21 @@ v
             android:id="@+id/floatingConfirmEdit"
             android:layout_gravity="right"/>
 
-        </RelativeLayout>r
+            <android.support.design.widget.FloatingActionButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="30dp"
+                android:clickable="true"
+                app:fabSize="mini"
+                app:srcCompat="@drawable/ic_delete_forever_black_24dp"
+                android:id="@+id/floatingDelete"
+                android:layout_marginEnd="28dp"
+                android:layout_alignParentTop="true"
+                android:layout_toLeftOf="@+id/floatingConfirmEdit"
+                android:layout_toStartOf="@+id/floatingConfirmEdit" />
+
+        </RelativeLayout>
+        r
 
         </LinearLayout>
 

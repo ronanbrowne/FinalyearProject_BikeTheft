@@ -40,6 +40,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="top"
+            android:textColor="@color/colorPrimaryDark"
             android:text="Upload Image" />
 
 
@@ -55,6 +56,8 @@
             android:layout_height="wrap_content"
             android:layout_marginRight="16dp"
             android:clickable="true"
+            app:backgroundTint="#B2EBF2"
+            app:borderWidth="5dp"
             app:fabSize="mini"
             app:srcCompat="@drawable/ic_camera_enhance_black_24dp"
             android:id="@+id/floatingUpload"
@@ -76,6 +79,7 @@
         <TextView
             style="@style/CategoryStyle"
             android:text="Bike Details"
+            android:textColor="@color/colorPrimaryDark"
             android:id="@+id/textView" />
 
 
@@ -91,21 +95,21 @@
             <EditText
                 android:id="@+id/edit_bike_make"
                 style="@style/EditorFieldStyle"
-                android:hint="Bike Make"
+                android:hint="Make"
                 />
 
             <!-- make field -->
             <EditText
                 android:id="@+id/edit_bike_model"
                 style="@style/EditorFieldStyle"
-                android:hint="Bike Model"
+                android:hint="Model"
                  />
 
             <!-- color field -->
             <EditText
                 android:id="@+id/edit_bike_colour"
                 style="@style/EditorFieldStyle"
-                android:hint="Bike Colour"
+                android:hint="Colour"
                 />
             <LinearLayout
                 android:layout_width="match_parent"

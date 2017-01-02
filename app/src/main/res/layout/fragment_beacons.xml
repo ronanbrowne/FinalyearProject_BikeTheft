@@ -30,7 +30,7 @@
             android:layout_weight="5"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Here you can manage all info related to your beacons" />
+            android:text="Manage my beacons" />
 
         <ImageView
             android:id="@+id/infobeacon"

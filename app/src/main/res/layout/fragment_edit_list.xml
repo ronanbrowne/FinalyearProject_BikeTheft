@@ -31,7 +31,7 @@
         android:layout_weight="5"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Select Bike you wish to edit:" />
+        android:text="Select bike to edit:" />
 
     <ImageView
         android:id="@+id/infoReportEdit"

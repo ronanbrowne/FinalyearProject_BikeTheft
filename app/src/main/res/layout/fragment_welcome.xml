@@ -70,7 +70,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="left"
                     android:padding="12dp"
-                    android:text="System summary"
+                    android:text="Profile summary"
                     android:textColor="@color/colorAccent"
                     android:textSize="16sp"
                     android:textStyle="bold" />

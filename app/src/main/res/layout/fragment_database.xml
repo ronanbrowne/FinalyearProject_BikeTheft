@@ -40,7 +40,7 @@
             android:layout_height="wrap_content"
             android:padding="12dp"
             android:paddingTop="20dp"
-            android:text="Viewing all bikes repoted Stolen"
+            android:text="Viewing all bikes reported stolen"
             android:textStyle="bold" />
 
         <ImageView
@@ -55,7 +55,6 @@
     </LinearLayout>
 
         <!-- QUERY -->
-
     <LinearLayout
         android:animateLayoutChanges="true"
         android:id="@+id/query_area"
@@ -75,9 +74,11 @@
             <EditText
                 android:id="@+id/streetgeo"
                 android:layout_width="0dp"
+                android:textSize="18sp"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:hint="search area"
+                android:hint="Location"
                 android:maxLines="1" />
 
             <RelativeLayout
@@ -92,14 +93,15 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentTop="true"
-                    android:layout_marginTop="25dp"
+                    android:layout_marginTop="29dp"
                     android:layout_below="@+id/radiusTV"
 
                     android:max="50"/>
 
                 <TextView
                     android:id="@+id/radiusTV"
-                    tools:text="radious"
+                    tools:text="radius"
+                    android:layout_marginTop="10dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
@@ -112,7 +114,8 @@
             <Button
                 android:id="@+id/runQuery"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:background="@drawable/btn_background"
+                android:layout_height="30dp"
                 android:layout_weight="1"
                 android:text="Run query" />
 
@@ -132,9 +135,9 @@
 
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:textSize="15sp"
+                android:textSize="18sp"
                 android:layout_height="wrap_content"
-                android:text="Within months ago: "
+                android:text=" Within months:   "
                 android:id="@+id/textView6"
                 android:layout_gravity="right|center"/>
 
@@ -143,15 +146,18 @@
                 android:id="@+id/months_Spinner"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight=".5"
+                android:layout_weight="1"
                 android:spinnerMode="dropdown"
                 android:layout_gravity="right|center"
    />
             <!-- Loading indicator is only shown before the first load --><!-- Loading indicator is only shown before the first load -->
-            <View
+            <Button
+                android:id="@+id/mapShowHide"
                 android:layout_width="0dp"
+                android:background="@drawable/btn_background"
+                android:layout_height="30dp"
                 android:layout_weight="1"
-                android:layout_height="0dp"/>
+                android:text="Show map" />
         </LinearLayout>
 
     </LinearLayout>
@@ -170,6 +176,7 @@
 
 
         <View
+            android:layout_marginTop="8dp"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="#000000" />
@@ -208,10 +215,10 @@
 
                 <Button
                     android:id="@+id/closeMap"
-                    android:layout_width="70dp"
-                    android:layout_height="50dp"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
                     android:layout_gravity="right"
-                    android:drawableLeft="@drawable/ic_clear_black_24dp" />
+                    android:drawableLeft="@drawable/ic_expand_more_black_24dp" />
 
 
             </FrameLayout>

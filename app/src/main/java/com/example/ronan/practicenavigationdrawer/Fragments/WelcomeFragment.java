@@ -274,7 +274,7 @@ public class WelcomeFragment extends Fragment {
                 //cout children nodes in this DB area.
                 loadingIndicator.setVisibility(View.GONE);
                 countReg = dataSnapshot.getChildrenCount();
-                registered.setText("Bikes registered to you: " + countReg);
+                registered.setText("My Bikes: " + countReg);
                 registered.setVisibility(View.VISIBLE);
                 stolen.setVisibility(View.VISIBLE);
                 systemStolen.setVisibility(View.VISIBLE);
@@ -315,7 +315,7 @@ public class WelcomeFragment extends Fragment {
                         }
                     }
                 }//end for
-                stolen.setText("Bikes you've listed as stolen: " + thisStolen);
+                stolen.setText("My stolen bikes: " + thisStolen);
                 systemStolen.setText("Total bikes stolen in system: " + countStolen);
 
                //set UI

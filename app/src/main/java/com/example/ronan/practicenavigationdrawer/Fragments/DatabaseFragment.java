@@ -101,6 +101,7 @@ public class DatabaseFragment extends Fragment {
     private EditText street;
     private Button query;
     private Button closeMap;
+    private Button mapShowHide;
     private SeekBar seekBar;
     private TextView radiousTV;
     private TextView noDataMessage;
@@ -342,6 +343,7 @@ public class DatabaseFragment extends Fragment {
         //  radius = (EditText) rootView.findViewById(R.id.radius);
         query = (Button) rootView.findViewById(R.id.runQuery);
         closeMap = (Button) rootView.findViewById(R.id.closeMap);
+        mapShowHide = (Button) rootView.findViewById(R.id.mapShowHide);
         loadingIndicator = rootView.findViewById(R.id.loading_indicator);
         seekBar = (SeekBar) rootView.findViewById(R.id.seekBar);
         radiousTV = (TextView) rootView.findViewById(R.id.radiusTV);
@@ -363,6 +365,24 @@ public class DatabaseFragment extends Fragment {
         ArrayAdapter<Integer> adapter = new ArrayAdapter<Integer>(getActivity().getApplicationContext(), R.layout.custom_spinner, items);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         months_Spinner.setAdapter(adapter);
+
+
+        mapShowHide.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (frameLayout.isShown()) {
+                    Animation backDoww = AnimationUtils.loadAnimation(getContext(),
+                            R.anim.slidedown);
+                    frameLayout.startAnimation(backDoww);
+                    frameLayout.setVisibility(View.GONE);
+                }else{
+                    Animation up = AnimationUtils.loadAnimation(getContext(),
+                            R.anim.slide);
+                    frameLayout.startAnimation(up);
+                    frameLayout.setVisibility(View.VISIBLE);
+                }
+            }
+        });
 
 
         //grab spinner data if there
@@ -497,7 +517,7 @@ public class DatabaseFragment extends Fragment {
                     if (frameLayout.isShown()) {
                         closeMap.performClick();
                     }
-                    Toast.makeText(getActivity().getApplicationContext(), "Exiting query mode, showing full DB", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity().getApplicationContext(), "Exiting query mode, showing full listings", Toast.LENGTH_SHORT).show();
 
 
                 } else {
@@ -571,19 +591,19 @@ public class DatabaseFragment extends Fragment {
                         Log.v("*Query", "just location query, should be true : " + justlocationQuery);
                         Log.v("*Query", "fully query 3 things, Should be fasle here: " + fullqueryLoactionAndDate);
 
-                        if (!isMapFragmentVisavle) {
-                            isMapFragmentVisavle = true;
-                            Animation bottomUp = AnimationUtils.loadAnimation(getContext(),
-                                    R.anim.slide);
-                            frameLayout.startAnimation(bottomUp);
-                        }
+//                        if (!isMapFragmentVisavle) {
+//                            isMapFragmentVisavle = true;
+//                            Animation bottomUp = AnimationUtils.loadAnimation(getContext(),
+//                                    R.anim.slide);
+//                            frameLayout.startAnimation(bottomUp);
+//                        }
 
                     }
 
 
                     //getting co-ordinates
                     GeocodeAsyncTaskForQuery asyncTaskForQuery = new GeocodeAsyncTaskForQuery();
-                    frameLayout.setVisibility(View.VISIBLE);
+                    //frameLayout.setVisibility(View.VISIBLE);
                     asyncTaskForQuery.execute();
 
                     //hide keyboard
