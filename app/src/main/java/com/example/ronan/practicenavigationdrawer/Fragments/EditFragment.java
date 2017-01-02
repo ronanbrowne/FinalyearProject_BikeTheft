@@ -78,11 +78,12 @@ public class EditFragment extends Fragment {
     private LinearLayout geoCodeArea;
     private ImageView upload_image;
     private ImageView infoStolen;
+    private ImageView infoSize;
     private boolean geoCodeClicked;
 
     private String base64 = "No image";
     private String uniqueIdentifier = "";
-    private String emailFull ="";
+    private String emailFull = "";
 
     private String dB_KeyRefrence_fromBundle;
     private double latitude = 0;
@@ -223,9 +224,9 @@ public class EditFragment extends Fragment {
 
 
             //gettign time
-           // Date date = new Date ();
-          //  date.setTime((long)mybike.getTimestampCreatedLong()*1000);
-           // Toast.makeText(getActivity().getApplicationContext(),"time"+ date , Toast.LENGTH_SHORT).show();
+            // Date date = new Date ();
+            //  date.setTime((long)mybike.getTimestampCreatedLong()*1000);
+            // Toast.makeText(getActivity().getApplicationContext(),"time"+ date , Toast.LENGTH_SHORT).show();
         }
 
         @Override
@@ -252,7 +253,7 @@ public class EditFragment extends Fragment {
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             dB_KeyRefrence_fromBundle = bundle.getString("dB_Ref");
-          //  Toast.makeText(getActivity().getApplicationContext(),dB_KeyRefrence_fromBundle , Toast.LENGTH_SHORT).show();
+            //  Toast.makeText(getActivity().getApplicationContext(),dB_KeyRefrence_fromBundle , Toast.LENGTH_SHORT).show();
 
         }
 
@@ -285,6 +286,7 @@ public class EditFragment extends Fragment {
         bikeStolen = (CheckBox) rootView.findViewById(R.id.bike_stolen);
         upload_image = (ImageView) rootView.findViewById(R.id.upload_image);
         infoStolen = (ImageView) rootView.findViewById(R.id.infoStolen);
+        infoSize = (ImageView) rootView.findViewById(R.id.infoSize);
         imageUpload = (FloatingActionButton) rootView.findViewById(R.id.floatingUpload);
         comfirmEdit = (FloatingActionButton) rootView.findViewById(R.id.floatingConfirmEdit);
         geoCode = (FloatingActionButton) rootView.findViewById(R.id.floatingGeoCode);
@@ -300,6 +302,7 @@ public class EditFragment extends Fragment {
                     geoCodeArea.setVisibility(View.VISIBLE);
                 } else {
                     geoCodeArea.setVisibility(View.GONE);
+                    bikeLastSeen.setText("");
                 }
             }
         });
@@ -308,17 +311,33 @@ public class EditFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Tooltip tooltip = new Tooltip.Builder(infoStolen)
+                        .setText("This is the height of the bike.\nAverage adult male frame size: 22" +
+                                " \nAverage adult female frame size: 18\nAverage child's size (10+ years): 13")
+
+                        .setTextColor(ContextCompat.getColor(getContext(), R.color.white))
+                        .setDismissOnClick(true)
+                        .setCancelable(true)
+                        .setGravity(Gravity.TOP)
+                        .setBackgroundColor(ContextCompat.getColor(getContext(), R.color.cyan)).show();
+            }
+        });
+
+        infoSize.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Tooltip tooltip = new Tooltip.Builder(infoSize)
                         .setText("Here you may register your bike as stolen.\n\n" +
                                 "It will be added to our shared database of bikes listed as stolen.\n\n" +
                                 "Other users may then report a suspected sighting of your bike. Which you will be notified of.\n\n" +
                                 "To use this feature first press the 'Add Location button' before saving changes.")
-                        .setTextColor(ContextCompat.getColor(getContext(),R.color.white))
+                        .setTextColor(ContextCompat.getColor(getContext(), R.color.white))
                         .setDismissOnClick(true)
                         .setCancelable(true)
                         .setGravity(Gravity.TOP)
-                        .setBackgroundColor(ContextCompat.getColor(getContext(),R.color.cyan)).show();
+                        .setBackgroundColor(ContextCompat.getColor(getContext(), R.color.cyan)).show();
             }
         });
+
 
         //upload image listeer
         imageUpload.setOnClickListener(new View.OnClickListener() {
@@ -364,10 +383,9 @@ public class EditFragment extends Fragment {
                 }
 
                 //validation of edittext fields
-                if ((bikeMake.getText().toString().trim().length() == 0) || (bikeModel.getText().toString().trim().length() == 0) ||  (bikeColor.getText().toString().trim().length() == 0)||  (bikeSize.getText().toString().trim().length() == 0)) {
+                if ((bikeMake.getText().toString().trim().length() == 0) || (bikeModel.getText().toString().trim().length() == 0) || (bikeColor.getText().toString().trim().length() == 0) || (bikeSize.getText().toString().trim().length() == 0)) {
                     Toast.makeText(getActivity().getApplicationContext(), "\"All fields are required except \"other\"", Toast.LENGTH_SHORT).show();
-                }
-                else{
+                } else {
 
                     BikeData newBike = new BikeData(make, frameSize, color, other, stolen, base64, model, lastSeen, latitude, longitud, emailFull);
                     mDatabase.setValue(newBike);
@@ -447,7 +465,6 @@ public class EditFragment extends Fragment {
 
         return rootView;
     }// end oncreate
-
 
 
     //===================================================================================
@@ -584,7 +601,6 @@ public class EditFragment extends Fragment {
         galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(galleryIntent, "Select Picture"), SELECT_PICTURE);
     }
-
 
 
 }//end class

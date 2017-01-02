@@ -28,6 +28,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -35,6 +36,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SeekBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -58,16 +60,20 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.maps.android.SphericalUtil;
+import com.tooltip.Tooltip;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Calendar;
 import java.text.SimpleDateFormat;
+import java.util.concurrent.TimeUnit;
 
 import static com.example.ronan.practicenavigationdrawer.R.id.mapwhere;
 import static com.google.android.gms.wearable.DataMap.TAG;
@@ -83,12 +89,15 @@ public class DatabaseFragment extends Fragment {
 
     private FirebaseUser mFirebaseUser;
     private DatabaseReference mDatabaseStolen;
+    private DatabaseReference mDatabaseStolenDateQuery;
     private DatabaseReference mDatabaseQuery;
     private SupportMapFragment mSupportMapFragment;
     private DatabaseReference mDatabaseReported;
     private DatabaseReference itemRef;
 
     private ImageView bike_image;
+    private ImageView infoStolen;
+    private ImageView expand;
     private EditText street;
     private Button query;
     private Button closeMap;
@@ -96,6 +105,8 @@ public class DatabaseFragment extends Fragment {
     private TextView radiousTV;
     private TextView noDataMessage;
     private View loadingIndicator;
+    private LinearLayout queryArea;
+    private Spinner months_Spinner;
 
 
     private LatLng userInput1 = new LatLng(53.3498, 6.2603);
@@ -103,6 +114,9 @@ public class DatabaseFragment extends Fragment {
     private double latitude = 0;
     private double Longitude = 0;
     private boolean isMapFragmentVisavle = false;
+    private boolean fullqueryLoactionAndDate = false;
+    private boolean justqueryDate = false;
+    private boolean justlocationQuery = false;
 
     private FrameLayout frameLayout;
     private String userInputAddress;
@@ -125,6 +139,10 @@ public class DatabaseFragment extends Fragment {
     private int progress = 0;
 
     private String input_from_reported_Location = "";
+    boolean flag = false;
+
+    private int spinnerSelcter = 0;
+
 
     //==============================================================================================
     //=          dialog listener for pop up to confirm report sightings
@@ -261,20 +279,23 @@ public class DatabaseFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-
-        //set up firebase instances also get user email we use this for uniqe DB refrences
-        mDatabaseQuery = FirebaseDatabase.getInstance().getReference().child("QueryResults").child(email);
-        mDatabaseStolen = FirebaseDatabase.getInstance().getReference().child("Stolen Bikes");
-        mDatabaseReported = FirebaseDatabase.getInstance().getReference().child("Reported Bikes");
-
         mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-
         if (mFirebaseUser != null) {
             email = mFirebaseUser.getEmail();
         }
 
         //firbase DB does not allow @ in names of nodes so we split email at the @ take first bit
         email = email.split("@")[0];
+        Log.v("*email", email );
+
+
+        //set up firebase instances also get user email we use this for uniqe DB refrences
+        mDatabaseQuery = FirebaseDatabase.getInstance().getReference().child("QueryResults");
+        mDatabaseStolen = FirebaseDatabase.getInstance().getReference().child("Stolen Bikes");
+        mDatabaseReported = FirebaseDatabase.getInstance().getReference().child("Reported Bikes");
+
+
+
 
         //Firebase DB setup
         mDatabaseStolen.addValueEventListener(bikeListener);
@@ -325,8 +346,37 @@ public class DatabaseFragment extends Fragment {
         seekBar = (SeekBar) rootView.findViewById(R.id.seekBar);
         radiousTV = (TextView) rootView.findViewById(R.id.radiusTV);
         noDataMessage = (TextView) rootView.findViewById(R.id.empty_view_Notification);
-
+        expand = (ImageView) rootView.findViewById(R.id.expand);
+        infoStolen = (ImageView) rootView.findViewById(R.id.infoStolen);
+        queryArea = (LinearLayout) rootView.findViewById(R.id.query_area);
+        months_Spinner = (Spinner) rootView.findViewById(R.id.months_Spinner);
         radiousTV.setText("Radius: " + seekBar.getProgress() + "km");
+
+
+        //  ListView
+        myListView = (ListView) rootView.findViewById(R.id.list);
+        myListView.setDivider(ContextCompat.getDrawable(getActivity(), R.drawable.divider));
+        myListView.setDividerHeight(1);
+
+
+        Integer[] items = new Integer[]{0, 1, 2, 3, 4};
+        ArrayAdapter<Integer> adapter = new ArrayAdapter<Integer>(getActivity().getApplicationContext(), R.layout.custom_spinner, items);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        months_Spinner.setAdapter(adapter);
+
+
+        //grab spinner data if there
+        months_Spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                spinnerSelcter = (int) adapterView.getItemAtPosition(i);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
 
         //handel seekbar used for radius input
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -348,14 +398,24 @@ public class DatabaseFragment extends Fragment {
         });
 
 
+        infoStolen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Tooltip tooltip = new Tooltip.Builder(infoStolen)
+                        .setText("Here you can view all bikes reported stolen.\n\nUse the arrow to left to show query area,\nWhere you may narrow down your search.\n\n" +
+                                "By default only showing bikes in system for 3 months or less. Message developers if you wish to search older items.")
+                        .setTextColor(ContextCompat.getColor(getContext(), R.color.white))
+                        .setDismissOnClick(true)
+                        .setCancelable(true)
+                        .setGravity(Gravity.BOTTOM)
+                        .setBackgroundColor(ContextCompat.getColor(getContext(), R.color.cyan)).show();
+            }
+        });
+
+
         //get and initally hide slide up map fragment
         frameLayout = (FrameLayout) rootView.findViewById(R.id.mapwhere);
         frameLayout.setVisibility(View.GONE);
-
-        //  ListView
-        myListView = (ListView) rootView.findViewById(R.id.list);
-        myListView.setDivider(ContextCompat.getDrawable(getActivity(), R.drawable.divider));
-        myListView.setDividerHeight(1);
 
 
         //===================================================================================
@@ -423,6 +483,33 @@ public class DatabaseFragment extends Fragment {
         });//end onClick for listView
 
 
+        //handel expand / close query area and change expand /hide image as necassary
+        expand.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if (queryArea.isShown()) {
+                    queryArea.setVisibility(View.GONE);
+                    expand.setImageResource(R.drawable.ic_expand_more_black_24dp);
+                    //reset main listview if closing
+                    myListView.setAdapter(bikeAdapter);
+                    //if closing query area also close results map if its open
+                    if (frameLayout.isShown()) {
+                        closeMap.performClick();
+                    }
+                    Toast.makeText(getActivity().getApplicationContext(), "Exiting query mode, showing full DB", Toast.LENGTH_SHORT).show();
+
+
+                } else {
+                    queryArea.setVisibility(View.VISIBLE);
+                    expand.setImageResource(R.drawable.ic_expand_less_black_24dp);
+
+                }
+
+            }
+        });
+
+
         //click to close map and re-set the listview returning default query of all
         closeMap.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -461,17 +548,39 @@ public class DatabaseFragment extends Fragment {
             public void onClick(View view) {
 
                 //only do slide up animation if map was previously hidden
-                if (!isMapFragmentVisavle) {
-                    isMapFragmentVisavle = true;
-                    Animation bottomUp = AnimationUtils.loadAnimation(getContext(),
-                            R.anim.slide);
-                    frameLayout.startAnimation(bottomUp);
-                }
+
 
                 userInputAddress = street.getText().toString();
 
                 //user validation make sure inputs not null
                 if ((userInputAddress != null && !userInputAddress.isEmpty()) && (progress > 0)) {
+
+                    if (spinnerSelcter != 0) {
+                        fullqueryLoactionAndDate = true;
+                        justlocationQuery = false;
+                        justqueryDate = false;
+                        Log.v("*Query", "**full query** ");
+                        Log.v("*Query", "fully query 3 things: " + fullqueryLoactionAndDate);
+                        Log.v("*Query", "just location query, should be false : " + justlocationQuery);
+
+                    } else {
+                        fullqueryLoactionAndDate = false;
+                        justlocationQuery = true;
+                        justqueryDate = false;
+                        Log.v("*Query", "**location only** " + justqueryDate);
+                        Log.v("*Query", "just location query, should be true : " + justlocationQuery);
+                        Log.v("*Query", "fully query 3 things, Should be fasle here: " + fullqueryLoactionAndDate);
+
+                        if (!isMapFragmentVisavle) {
+                            isMapFragmentVisavle = true;
+                            Animation bottomUp = AnimationUtils.loadAnimation(getContext(),
+                                    R.anim.slide);
+                            frameLayout.startAnimation(bottomUp);
+                        }
+
+                    }
+
+
                     //getting co-ordinates
                     GeocodeAsyncTaskForQuery asyncTaskForQuery = new GeocodeAsyncTaskForQuery();
                     frameLayout.setVisibility(View.VISIBLE);
@@ -480,9 +589,24 @@ public class DatabaseFragment extends Fragment {
                     //hide keyboard
                     hideKeyboardFrom(getActivity().getApplicationContext(), rootView);
 
+
                 } else {
-                    Toast.makeText(getActivity().getApplicationContext(), "Query fields can not be left blank", Toast.LENGTH_SHORT).show();
+                    if (spinnerSelcter != 0) {
+
+                        justqueryDate = true;
+                        fullqueryLoactionAndDate = false;
+                        justlocationQuery = false;
+                        handelQuery();
+                        Log.v("*Query", "**Date only query** " + justqueryDate);
+                        Log.v("*Query", "Date alone: " + justqueryDate);
+                        Log.v("*Query", "just location query, should be false here, date only : " + justlocationQuery);
+                        Log.v("*Query", "fully query 3 things, Should be fasle here:, date only " + fullqueryLoactionAndDate);
+                    } else {
+                        Toast.makeText(getActivity().getApplicationContext(), "Query fields can not be left blank", Toast.LENGTH_SHORT).show();
+
+                    }
                 }
+
 
             }
         });
@@ -661,13 +785,14 @@ public class DatabaseFragment extends Fragment {
         if (queryBike.isEmpty()) {
             Toast.makeText(getActivity().getApplicationContext(), "No bikes in that area", Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(getActivity().getApplicationContext(), queryBike.size() + " results returned", Toast.LENGTH_SHORT).show();
+           // Toast.makeText(getActivity().getApplicationContext(), queryBike.size() + " results returned", Toast.LENGTH_SHORT).show();
         }
 
         //we store bike within the radus in  queryBike. we then push this to seprate DB node
         //we use this to populate our updated list adapter then
         for (BikeData bike : queryBike) {
-            mDatabaseQuery.push().setValue(bike);
+            mDatabaseQuery.child(email).push().setValue(bike);
+            Log.v("*email", email );
         }
 
         //method to populate list adapter
@@ -686,10 +811,55 @@ public class DatabaseFragment extends Fragment {
 
     public void handelQuery() {
 
+        DatabaseReference handelQuery;
+        Query itemQuery = null;
+
+
+
+                //hours
+        int time = spinnerSelcter;
+
+        if (justlocationQuery) {
+            handelQuery = FirebaseDatabase.getInstance().getReference().child("QueryResults").child(email);
+            itemQuery = handelQuery.orderByChild("make");
+            Log.v("*query", "just location" );
+
+        } else if (justqueryDate) {
+            long cutoff = new Date().getTime() - TimeUnit.MILLISECONDS.convert(time, TimeUnit.HOURS);
+            handelQuery = FirebaseDatabase.getInstance().getReference().child("Stolen Bikes");
+            itemQuery = handelQuery.orderByChild("timestampCreated/date").startAt(cutoff);
+            Log.v("*query", "Date only query" );
+
+
+        } else if (fullqueryLoactionAndDate) {
+            handelQuery = FirebaseDatabase.getInstance().getReference().child("QueryResults").child(email);
+            long cutoff = new Date().getTime() - TimeUnit.MILLISECONDS.convert(time, TimeUnit.HOURS);
+            itemQuery = handelQuery.orderByChild("timestampCreated/date").startAt(cutoff);
+            Log.v("*query", "full query" );
+        }
+        Log.v("*email", email );
+
+         Long resultCount;
+        final Query finalItemQuery = itemQuery;
+
         final FirebaseListAdapter<BikeData> bikeAdapterQuery = new FirebaseListAdapter<BikeData>
-                (getActivity(), BikeData.class, R.layout.list_item, mDatabaseQuery) {
+                (getActivity(), BikeData.class, R.layout.list_item, finalItemQuery) {
+
+            //result cout for output
+            Long resultCount;
             @Override
             protected void populateView(View v, BikeData model, int position) {
+                finalItemQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        resultCount =  dataSnapshot.getChildrenCount() ;
+                        Toast.makeText(getActivity().getApplicationContext(),    resultCount + " results returned", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                    }
+                });
 
 
                 // Find the TextView IDs of list_item.xml
@@ -717,7 +887,6 @@ public class DatabaseFragment extends Fragment {
             }
         };
 
-
         myListView.setAdapter(bikeAdapterQuery);
 
         myListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -736,9 +905,15 @@ public class DatabaseFragment extends Fragment {
 
             }
         });//end onClick for listView
+    }
 
 
-    }//end query
+
+
+
+
+
+    //end query
 
 
     //================================================================================
@@ -757,13 +932,12 @@ public class DatabaseFragment extends Fragment {
     }//end method
 
     //get current date instanc use this to log when bike sighting was reported
-       public String getDate() {
-                Calendar cal = Calendar.getInstance();
-                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-                return sdf.format(cal.getTime());
-           }
+    public String getDate() {
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+        return sdf.format(cal.getTime());
+    }
+
 
 }//end class
-
-
 

@@ -168,6 +168,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:orientation="horizontal" >
 
                 <TextView
@@ -182,9 +183,19 @@
                     android:id="@+id/edit_bike_size"
                     android:hint="Frame Size"
                     android:layout_width="0dp"
-                    android:layout_weight="2"
-                    android:inputType="textCapWords"
+                    android:layout_weight="1"
+                    android:inputType="number"
                     style="@style/EditorFieldStyle" />
+
+
+                <ImageView
+                    android:id="@+id/infoSize"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:src="@drawable/ic_info_outline_black_24dp"/>
+
 
             </LinearLayout>
 
