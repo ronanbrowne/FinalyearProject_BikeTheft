@@ -311,9 +311,10 @@ public class EditFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Tooltip tooltip = new Tooltip.Builder(infoStolen)
-                        .setText("This is the height of the bike.\nAverage adult male frame size: 22" +
-                                " \nAverage adult female frame size: 18\nAverage child's size (10+ years): 13")
-
+                        .setText("Here you may register your bike as stolen.\n\n" +
+                                "It will be added to our shared database of bikes listed as stolen.\n\n" +
+                                "Other users may then report a suspected sighting of your bike. Which you will be notified of.\n\n" +
+                                "To use this feature first press the 'Add Location button' before saving changes.")
                         .setTextColor(ContextCompat.getColor(getContext(), R.color.white))
                         .setDismissOnClick(true)
                         .setCancelable(true)
@@ -326,10 +327,8 @@ public class EditFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Tooltip tooltip = new Tooltip.Builder(infoSize)
-                        .setText("Here you may register your bike as stolen.\n\n" +
-                                "It will be added to our shared database of bikes listed as stolen.\n\n" +
-                                "Other users may then report a suspected sighting of your bike. Which you will be notified of.\n\n" +
-                                "To use this feature first press the 'Add Location button' before saving changes.")
+                        .setText("This is the height of the bike.\nAverage adult male frame size: 22" +
+                                " \nAverage adult female frame size: 18\nAverage child's size (10+ years): 13")
                         .setTextColor(ContextCompat.getColor(getContext(), R.color.white))
                         .setDismissOnClick(true)
                         .setCancelable(true)
