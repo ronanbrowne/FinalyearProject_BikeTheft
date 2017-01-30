@@ -43,7 +43,7 @@
             <item
                 android:id="@+id/nav_beacons"
                 android:icon="@drawable/ic_router_black_24dp"
-                android:title="Manage Sensors" />
+                android:title="Link To Bike" />
 
         </menu>
     </item>
