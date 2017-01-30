@@ -5,7 +5,7 @@
     android:animateLayoutChanges="true"
     android:layout_height="match_parent"
     android:background="#FFFFFF"
-    tools:context="com.example.ronan.practicenavigationdrawer.Fragments.DatabaseFragment">
+    tools:context="com.example.ronan.bikepro.Fragments.DatabaseFragment">
 
 
     <!-- MIAN LINEAR LAYOUT-->
