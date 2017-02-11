@@ -141,7 +141,7 @@
                         android:id="@+id/edit_bike_size"
                         style="@style/EditorFieldStyle"
                         android:layout_width="0dp"
-                        android:layout_weight="3"
+                        android:layout_weight="2.4"
                         android:hint="Frame Size"
                         android:inputType="number" />
 
@@ -166,7 +166,7 @@
                         android:id="@+id/edit_bike_UUID"
                         style="@style/EditorFieldStyle"
                         android:layout_width="0dp"
-                        android:layout_weight="3"
+                        android:layout_weight="2.4"
                         android:hint="Beacon ID" />
 
 
@@ -198,10 +198,10 @@
             android:layout_height="wrap_content"
             android:layout_gravity="right"
             android:layout_marginRight="32dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="20dp"
             android:clickable="true"
             app:fabSize="mini"
-            app:srcCompat="@drawable/ic_add_black_24dp" />
+            app:srcCompat="@drawable/ic_done_all_black_24dp" />
 
 
     </LinearLayout>
