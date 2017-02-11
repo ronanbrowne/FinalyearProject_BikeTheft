@@ -48,12 +48,14 @@ public class RegisterFragment extends Fragment {
     private EditText bikeFrameSize;
     private EditText bikeOther;
     private EditText bikeModel;
+    private EditText edit_bike_UUID;
     private FloatingActionButton upload;
     private FloatingActionButton addBikeFloatingActionButton;
     private ImageView mThumbnailPreview;
     Bitmap bitmap;
     String base64 = "No image";
     private ImageView info;
+    private ImageView infoUUID;
 
     private static final int SELECT_PICTURE = 0;
     private static final int REQUEST_IMAGE_CAPTURE = 1;
@@ -114,12 +116,14 @@ public class RegisterFragment extends Fragment {
         bikeMake = (EditText) rootView.findViewById(R.id.edit_bike_make);
         bikeModel = (EditText) rootView.findViewById(R.id.edit_bike_model);
         bikeColor = (EditText) rootView.findViewById(R.id.edit_bike_colour);
+        edit_bike_UUID = (EditText) rootView.findViewById(R.id.edit_bike_UUID);
         bikeFrameSize = (EditText) rootView.findViewById(R.id.edit_bike_size);
         bikeOther = (EditText) rootView.findViewById(R.id.edit_othe_features);
         mThumbnailPreview = (ImageView) rootView.findViewById(R.id.upload_image);
         upload = (FloatingActionButton) rootView.findViewById(R.id.floatingUpload);
         addBikeFloatingActionButton = (FloatingActionButton) rootView.findViewById(R.id.floatingAdd);
         info = (ImageView) rootView.findViewById(R.id.infoSize);
+        infoUUID = (ImageView) rootView.findViewById(R.id.infoUUID);
 
         //setting up FireBase DB
         mDatabase = FirebaseDatabase.getInstance().getReference().child("Bikes Registered By User");
@@ -147,6 +151,19 @@ public class RegisterFragment extends Fragment {
             }
         });
 
+
+        infoUUID.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Tooltip tooltip = new Tooltip.Builder(infoUUID)
+                        .setText("This is the unique sensor code\nThis will allow your bike\nTo be tracked in event of theft")
+                        .setTextColor(ContextCompat.getColor(getContext(),R.color.white))
+                        .setDismissOnClick(true)
+                        .setCancelable(true)
+                        .setBackgroundColor(ContextCompat.getColor(getContext(),R.color.cyan)).show();
+            }
+        });
+
         //when a user click add bike
         addBikeFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -162,6 +179,7 @@ public class RegisterFragment extends Fragment {
                 String color = bikeColor.getText().toString();
                 String other = bikeOther.getText().toString();
                 String frameSizeString = bikeFrameSize.getText().toString();
+                String beacon_UUID = edit_bike_UUID.getText().toString();
 
                 //if framesize has data turn into int and catch exception
                 if (frameSizeString != null || !frameSizeString.isEmpty()) {
@@ -182,7 +200,7 @@ public class RegisterFragment extends Fragment {
                 else {
 
                     //newBike object using constructor to populate attributes
-                    BikeData newBike = new BikeData(make, frameSize, color, other, stolen, base64, model, "N/A", 0, 0, uniqueIdentifier);
+                    BikeData newBike = new BikeData(make, frameSize, color, other, stolen, base64, model, "N/A", 0, 0, uniqueIdentifier,beacon_UUID);
 
                     //get id part of email use this for where to place in DB. Firebase cant have a @ in DB refrence
                     uniqueIdentifier = uniqueIdentifier.split("@")[0];

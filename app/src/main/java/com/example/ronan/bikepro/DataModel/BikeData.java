@@ -29,13 +29,14 @@ public class BikeData {
     private String reportedLocation;
     private String reportedDate;
     private boolean reportedSigting;
-   // private Map<String, String> creationDate = new HashMap<String, String>();
-      private HashMap<String, Object> timestampCreated;
-  //  private Long creationDate;
+    // private Map<String, String> creationDate = new HashMap<String, String>();
+    private HashMap<String, Object> timestampCreated;
+    //  private Long creationDate;
+    private String beaconUUID;
 
 
     //constructor
-    public BikeData(String make, int frameSize, String color, String other, boolean stolen, String imageBase64, String model, String lastSeen, double latitude, double longditude, String registeredBy) {
+    public BikeData(String make, int frameSize, String color, String other, boolean stolen, String imageBase64, String model, String lastSeen, double latitude, double longditude, String registeredBy, String beaconUUID) {
         this.make = make;
         this.registeredBy = registeredBy;
         this.frameSize = frameSize;
@@ -47,6 +48,7 @@ public class BikeData {
         this.lastSeen = lastSeen;
         this.latitude = latitude;
         this.longditude = longditude;
+        this.beaconUUID = beaconUUID;
 
         // TIME STAMP
         HashMap<String, Object> timestampCreatedObj = new HashMap<String, Object>();
@@ -77,13 +79,13 @@ public class BikeData {
     }
 
 
-    public HashMap<String, Object> getTimestampCreated(){
+    public HashMap<String, Object> getTimestampCreated() {
         return timestampCreated;
     }
 
     @Exclude
-    public long getTimestampCreatedLong(){
-        return (long)timestampCreated.get("date");
+    public long getTimestampCreatedLong() {
+        return (long) timestampCreated.get("date");
     }
 
     public void setReportedBy(String reportedBy) {
@@ -163,6 +165,10 @@ public class BikeData {
 
     public int getFrameSize() {
         return frameSize;
+    }
+
+    public String getBeaconUUID() {
+        return beaconUUID;
     }
 
     public String getColor() {
