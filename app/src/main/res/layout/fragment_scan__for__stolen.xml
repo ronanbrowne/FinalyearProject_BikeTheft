@@ -45,29 +45,25 @@
 
 
 
-        <LinearLayout
-            android:layout_marginTop="16dp"
-            android:layout_width="wrap_content"
-            android:paddingBottom="8dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:background="@drawable/background_shadow"
-            android:orientation="vertical">
+        <!--<LinearLayout-->
+            <!--android:layout_marginTop="16dp"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:paddingBottom="8dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="center"-->
+            <!--android:background="@drawable/background_shadow"-->
+            <!--android:orientation="vertical">-->
 
-            <ImageView
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_gravity="center"
-                android:src="@drawable/ic_search_accent_48dp" />
+           <!---->
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:padding="3dip"
-                android:text="Start Search" />
+            <!--<TextView-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:gravity="center"-->
+                <!--android:padding="3dip"-->
+                <!--android:text="Start Search" />-->
 
-        </LinearLayout>
+        <!--</LinearLayout>-->
 
 
         <!--search results area-->
@@ -83,14 +79,25 @@
 
 
         <TextView
-            android:id="@+id/textView7"
+            android:id="@+id/searchAreaHeading"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
-            android:text="Searching Area"
+            android:text="Searching Area...."
             android:textStyle="bold"
             android:textColor="@color/colorPrimaryDark" />
 
+
+        <ListView
+            android:longClickable="true"
+            android:id="@+id/listRanging"
+            android:paddingTop="5dp"
+            android:layout_margin="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="@null"
+            android:dividerHeight="1dp"
+            android:orientation="vertical" />
 
 
         </LinearLayout>

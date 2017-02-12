@@ -40,6 +40,7 @@ import com.example.ronan.bikepro.Fragments.RegisterFragment;
 import com.example.ronan.bikepro.Fragments.ViewReportedSightingsFragment;
 import com.example.ronan.bikepro.Fragments.WelcomeFragment;
 import com.example.ronan.bikepro.R;
+import com.example.ronan.bikepro.Scan_For_Stolen;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -499,7 +500,7 @@ private long sightingsCount;
         }else if (id == R.id.nav_beacons) {
 
             //setFragment
-            BeaconsFragment beaconsFragment = new BeaconsFragment();
+            Scan_For_Stolen beaconsFragment = new Scan_For_Stolen();
             FragmentTransaction fts = getSupportFragmentManager().beginTransaction();
             fts.replace(R.id.fragment_container, beaconsFragment);
             fts.commit();
