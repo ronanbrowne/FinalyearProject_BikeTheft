@@ -92,7 +92,7 @@ public class Scan_For_Stolen extends Fragment {
         // Configure device list.
         adapter = new BeaconListAdapter(getContext());
         ListView list = (ListView) rootView.findViewById(R.id.listRanging);
-      list.setAdapter(adapter);
+        list.setAdapter(adapter);
         //list.setOnItemClickListener(createOnItemClickListener());
 
         usersBikesDatabase = FirebaseDatabase.getInstance().getReference().child("Stolen Bikes");
@@ -116,12 +116,14 @@ public class Scan_For_Stolen extends Fragment {
 
                     Log.v("**list**", "size: " + list.size());
 
-                 //   Beacon nearestBeacon = list.get(0);
-                  //  nearestBeacon.getMinor();
+                    //   Beacon nearestBeacon = list.get(0);
+                    //  nearestBeacon.getMinor();
 
                     //ArrayList<BikeData> stolenBikes = (ArrayList<BikeData>) StolenBikesInArea(nearestBeacon);
                     //ArrayList<BikeData> stolenBikes = (ArrayList<BikeData>) StolenBikesInArea(nearestBeacon);
 
+//                    if (!stolenBikes.isEmpty()) {
+//                    }
                     stolenBikes = StolenBikesInArea(list);
 
 
@@ -137,14 +139,16 @@ public class Scan_For_Stolen extends Fragment {
                     // TODO: update the UI here
                     //adapter.clear();
                     adapter.replaceWith(stolenBikes);
+                    stolenBikes.clear();
+
 
                     //   Log.v("**test", "Nearest places: " + stolenBikes);
                     //  beaconsUUIDInrange.clear();;
                     for (Beacon temp : list) {
 
-                         Log.v("**test***LIst", "Minor code: in range : " + temp.getMinor());
+                        Log.v("**test***LIst", "Minor code: in range : " + temp.getMinor());
 
-                         //list of all nearby beacons.
+                        //list of all nearby beacons.
                         //  beaconsUUIDInrange.add(String.format("%d:%d", temp.getMajor(), temp.getMinor()));
                     }
 
@@ -165,7 +169,7 @@ public class Scan_For_Stolen extends Fragment {
 
         //mylist.clear();
 
-        for(Beacon b: beacon){
+        for (Beacon b : beacon) {
 
             String beaconKey = String.valueOf(b.getMinor());
 
@@ -188,10 +192,6 @@ public class Scan_For_Stolen extends Fragment {
 
 
         }//end beacon list
-
-
-
-
 
 
         return matchedStolen;
