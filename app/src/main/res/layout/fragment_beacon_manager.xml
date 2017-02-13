@@ -4,6 +4,13 @@
     android:layout_height="match_parent"
     tools:context="com.example.ronan.bikepro.Fragments.Beacon_manager">
 
+    <ScrollView
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        >
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -42,16 +49,18 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
             android:orientation="horizontal">
 
             <LinearLayout
-                android:layout_marginRight="16dp"
-                android:paddingBottom="8dp"
-                android:layout_weight="1"
+                android:id="@+id/monitering"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginRight="16dp"
+                android:layout_weight="1"
                 android:background="@drawable/border"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:paddingBottom="8dp">
 
 
                 <ImageView
@@ -65,30 +74,29 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
+                    android:textStyle="bold"
                     android:padding="3dip"
-                    android:text="Establish Link" />
-
-
+                    android:text="\nLink your bike" />
 
 
             </LinearLayout>
 
 
-
             <LinearLayout
+                android:id="@+id/ranging"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
                 android:layout_weight="1"
-                android:layout_width="0dp"
-                android:paddingBottom="8dp"
-                android:layout_height="wrap_content"
                 android:background="@drawable/border"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:paddingBottom="8dp">
 
-            <ImageView
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:layout_gravity="center"
-                android:src="@drawable/ic_search_accent_48dp" />
+                <ImageView
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_search_accent_48dp" />
 
 
                 <TextView
@@ -96,99 +104,45 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:padding="3dip"
-                    android:text="Search" />
-
+                    android:textStyle="bold"
+                    android:text="\nSearch for stolen bikes" />
             </LinearLayout>
 
 
         </LinearLayout>
 
-
-        <!-- action result -->
 
         <LinearLayout
-            android:id="@+id/resultarea"
-            android:visibility="gone"
+            android:id="@+id/help"
+            android:layout_marginTop="30dp"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"
+            android:layout_width="wrap_content"
+            android:background="@drawable/background_shadow"
+            android:orientation="vertical"
+            android:paddingBottom="8dp">
+
+        <TextView
+            android:layout_marginTop="6dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="50dp"
-            android:orientation="vertical"
-            android:paddingBottom="16dp"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-
-            >
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingTop="12dp"
-                android:text="Establishing connection" />
+            android:padding="16dp"
+            android:text="'Link you bike' enables you to establish a connection between the sensor on your bike and your phone, you will be notified of anybreak in this link. " />
 
 
-            <!-- Link established images -->
-            <LinearLayout
-                android:id="@+id/main"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:orientation="horizontal">
 
 
-                <ImageView
-                    android:layout_width="0dp"
-                    android:layout_height="100dp"
-                    android:layout_gravity="right|center"
-                    android:layout_marginRight="16dp"
-                    android:layout_weight="1"
-                    android:src="@drawable/ic_phonelink_ring_blue_48dp" />
-
-                <ImageView
-                    android:id="@+id/link"
-                    android:layout_width="0dp"
-                    android:layout_height="100dp"
-                    android:layout_gravity="right|center"
-                    android:layout_marginRight="16dp"
-                    android:layout_weight="1"
-                    android:src="@drawable/ic_bluetooth_connected_red_48dp" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="'Search for stolen bikes' allows you to turn your phone into a scanning device, your phone will search your current location for bikes on this system that have been listed as stolen.should any be found bike details and aproximate distance are returned.  " />
 
 
-                <ImageView
-                    android:layout_width="0dp"
-                    android:layout_height="100dp"
-                    android:layout_gravity="right|center"
-                    android:layout_marginRight="16dp"
-                    android:layout_weight="1"
-                    android:src="@drawable/ic_motorcycle_blue_48dp" />
-
-            </LinearLayout>
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="12dp"
-                    android:paddingTop="12dp"
-                    android:text="Status:  "
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="12dp"
-                    android:text="No Connection." />
-
-            </LinearLayout>
-
-
-        </LinearLayout>
 
     </LinearLayout>
+    </LinearLayout>
+
+    </ScrollView>
 
 </FrameLayout>

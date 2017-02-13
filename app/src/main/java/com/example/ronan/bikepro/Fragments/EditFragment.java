@@ -66,6 +66,7 @@ public class EditFragment extends Fragment {
     private EditText bikeSize;
     private EditText bikeLastSeen;
     private EditText bikeOther;
+    private EditText bikeUUID;
     private TextView lastSeen;
     private CheckBox bikeStolen;
     private FloatingActionButton imageUpload;
@@ -76,6 +77,7 @@ public class EditFragment extends Fragment {
     private ImageView upload_image;
     private ImageView infoStolen;
     private ImageView infoSize;
+    private ImageView infoUUID;
     private boolean geoCodeClicked;
 
     private String base64 = "No image";
@@ -202,6 +204,7 @@ public class EditFragment extends Fragment {
 
             //set UI fields from data
             bikeMake.setText(mybike.getMake());
+            bikeUUID.setText(mybike.getBeaconUUID());
             bikeModel.setText(mybike.getModel());
             bikeColor.setText(mybike.getColor());
             bikeSize.setText(String.valueOf(mybike.getFrameSize()));
@@ -279,11 +282,13 @@ public class EditFragment extends Fragment {
         bikeModel = (EditText) rootView.findViewById(R.id.edit_bike_model);
         bikeColor = (EditText) rootView.findViewById(R.id.edit_bike_colour);
         bikeSize = (EditText) rootView.findViewById(R.id.edit_bike_size);
+        bikeUUID = (EditText) rootView.findViewById(R.id.edit_bike_UUID);
         bikeOther = (EditText) rootView.findViewById(R.id.edit_othe_features);
         bikeStolen = (CheckBox) rootView.findViewById(R.id.bike_stolen);
         upload_image = (ImageView) rootView.findViewById(R.id.upload_image);
         infoStolen = (ImageView) rootView.findViewById(R.id.infoStolen);
         infoSize = (ImageView) rootView.findViewById(R.id.infoSize);
+        infoUUID = (ImageView) rootView.findViewById(R.id.infoUUID);
         imageUpload = (FloatingActionButton) rootView.findViewById(R.id.floatingUpload);
         comfirmEdit = (FloatingActionButton) rootView.findViewById(R.id.floatingConfirmEdit);
         geoCode = (FloatingActionButton) rootView.findViewById(R.id.floatingGeoCode);
@@ -335,6 +340,19 @@ public class EditFragment extends Fragment {
         });
 
 
+        infoUUID.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Tooltip tooltip = new Tooltip.Builder(infoUUID)
+                        .setText("This is the unique sensor code\nThis will allow your bike\nTo be tracked in event of theft")
+                        .setTextColor(ContextCompat.getColor(getContext(),R.color.white))
+                        .setDismissOnClick(true)
+                        .setCancelable(true)
+                        .setBackgroundColor(ContextCompat.getColor(getContext(),R.color.cyan)).show();
+            }
+        });
+
+
         //upload image listeer
         imageUpload.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -367,6 +385,7 @@ public class EditFragment extends Fragment {
                 String color = bikeColor.getText().toString();
                 String other = bikeOther.getText().toString();
                 String lastSeen = bikeLastSeen.getText().toString();
+                String beaconID = bikeUUID.getText().toString();
 
                 //if frame size has data turn into int and catch exception
                 if (frameSizeString != null || !frameSizeString.isEmpty()) {
@@ -383,7 +402,7 @@ public class EditFragment extends Fragment {
                     Toast.makeText(getActivity().getApplicationContext(), "\"All fields are required except \"other\"", Toast.LENGTH_SHORT).show();
                 } else {
 
-                    BikeData newBike = new BikeData(make, frameSize, color, other, stolen, base64, model, lastSeen, latitude, longitud, emailFull);
+                    BikeData newBike = new BikeData(make, frameSize, color, other, stolen, base64, model, lastSeen, latitude, longitud, emailFull,beaconID,0);
                     mDatabase.setValue(newBike);
 
                     if (stolen) {

@@ -13,25 +13,25 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.ronan.bikepro.DataModel.BikeData;
 import com.example.ronan.bikepro.DataModel.UserData;
-import com.example.ronan.bikepro.Fragments.BeaconsFragment;
+import com.example.ronan.bikepro.Fragments.Beacon_manager;
 import com.example.ronan.bikepro.Fragments.DatabaseFragment;
 import com.example.ronan.bikepro.Fragments.EditFragmentList;
 import com.example.ronan.bikepro.Fragments.GmapFragment;
@@ -40,6 +40,7 @@ import com.example.ronan.bikepro.Fragments.RegisterFragment;
 import com.example.ronan.bikepro.Fragments.ViewReportedSightingsFragment;
 import com.example.ronan.bikepro.Fragments.WelcomeFragment;
 import com.example.ronan.bikepro.R;
+import com.example.ronan.bikepro.Scan_For_Stolen;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -499,7 +500,7 @@ private long sightingsCount;
         }else if (id == R.id.nav_beacons) {
 
             //setFragment
-            BeaconsFragment beaconsFragment = new BeaconsFragment();
+            Beacon_manager beaconsFragment = new Beacon_manager();
             FragmentTransaction fts = getSupportFragmentManager().beginTransaction();
             fts.replace(R.id.fragment_container, beaconsFragment);
             fts.commit();
