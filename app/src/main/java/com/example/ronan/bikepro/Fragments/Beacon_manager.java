@@ -47,9 +47,8 @@ public class Beacon_manager extends Fragment {
 
     LinearLayout scanForStolen;
     LinearLayout linkToBike;
-
-
-
+    LinearLayout helpArea;
+    ImageView infobeacon;
 
 
     public Beacon_manager() {
@@ -65,6 +64,8 @@ public class Beacon_manager extends Fragment {
 
         linkToBike = (LinearLayout) rootView.findViewById(R.id.monitering);
         scanForStolen = (LinearLayout) rootView.findViewById(R.id.ranging);
+        helpArea = (LinearLayout) rootView.findViewById(R.id.help);
+        infobeacon = (ImageView) rootView.findViewById(R.id.infobeacon);
 
 
         //Button click to launch edit profile page
@@ -90,17 +91,21 @@ public class Beacon_manager extends Fragment {
         });
 
 
+        infobeacon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!helpArea.isShown()) {
+                    helpArea.setVisibility(View.VISIBLE);
+                }
+                else
+                {
+                    helpArea.setVisibility(View.GONE);
+                }
 
-
-//beacon
-
-
+            }
+        });
 
         return rootView;
-    }
+    }//end on create
 
-
-
-
-
-}
+}//end class
