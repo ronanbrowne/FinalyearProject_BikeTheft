@@ -6,6 +6,8 @@
     android:paddingEnd="16dp"
     android:paddingLeft="16dp"
     android:paddingBottom="16dp"
+
+    android:layout_marginTop="16dp"
     android:background="@drawable/background_shadow"
     android:paddingTop="8dp"
     android:paddingRight="16dp"
@@ -179,7 +181,7 @@
             android:layout_height="wrap_content"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:text="Last Known Location: " />
+            android:text="Last Location: " />
 
         <TextView
             android:id="@+id/loaction_ranging"
