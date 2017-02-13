@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.estimote.sdk.Beacon;
@@ -24,7 +23,6 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -44,6 +42,10 @@ public class Scan_For_Stolen extends Fragment {
 
     private BeaconListAdapter adapter;
     private ArrayList mylist = new ArrayList();
+    ArrayList<BikeData> matchedStolen = new ArrayList<>();
+
+    List<BikeData> stolenBikes;
+
 
 
     public Scan_For_Stolen() {
@@ -81,7 +83,6 @@ public class Scan_For_Stolen extends Fragment {
     };
 
 
-    List<BikeData> stolenBikes;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -89,23 +90,18 @@ public class Scan_For_Stolen extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_scan__for__stolen, container, false);
 
-        // Configure device list.
+        // set up adapter for list view
         adapter = new BeaconListAdapter(getContext());
         ListView list = (ListView) rootView.findViewById(R.id.listRanging);
         list.setAdapter(adapter);
-        //list.setOnItemClickListener(createOnItemClickListener());
 
         usersBikesDatabase = FirebaseDatabase.getInstance().getReference().child("Stolen Bikes");
         usersBikesDatabase.addValueEventListener(bikeDataListener);
 
-//        final ArrayAdapter<String> adapter = new ArrayAdapter<>(
-//                getActivity().getApplicationContext(), android.R.layout.simple_list_item_1);
-//        list.setAdapter(adapter);
 
         beaconManager = new BeaconManager(getActivity().getApplicationContext());
 
         //   ranging
-
         region = new Region("ranged region",
                 UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"), null, null);
 
@@ -114,19 +110,9 @@ public class Scan_For_Stolen extends Fragment {
             public void onBeaconsDiscovered(Region region, List<Beacon> list) {
                 if (!list.isEmpty()) {
 
-                    Log.v("**list**", "size: " + list.size());
-
-                    //   Beacon nearestBeacon = list.get(0);
-                    //  nearestBeacon.getMinor();
-
-                    //ArrayList<BikeData> stolenBikes = (ArrayList<BikeData>) StolenBikesInArea(nearestBeacon);
-                    //ArrayList<BikeData> stolenBikes = (ArrayList<BikeData>) StolenBikesInArea(nearestBeacon);
-
-//                    if (!stolenBikes.isEmpty()) {
-//                    }
                     stolenBikes = StolenBikesInArea(list);
 
-
+                    //testing can delete later
                     for (BikeData s : stolenBikes) {
                         Log.v("**test", "Nearest places: " + s.getMake() + " " + s.getModel());
                         mylist.add(s.getModel());
@@ -136,66 +122,43 @@ public class Scan_For_Stolen extends Fragment {
                     Log.v("**test**", "Nearest places: " + mylist.size());
 
 
-                    // TODO: update the UI here
-                    //adapter.clear();
+                    // UI update
                     adapter.replaceWith(stolenBikes);
                     stolenBikes.clear();
 
 
-                    //   Log.v("**test", "Nearest places: " + stolenBikes);
-                    //  beaconsUUIDInrange.clear();;
+                    //list all beacons nearby for debug
                     for (Beacon temp : list) {
-
                         Log.v("**test***LIst", "Minor code: in range : " + temp.getMinor());
-
-                        //list of all nearby beacons.
-                        //  beaconsUUIDInrange.add(String.format("%d:%d", temp.getMajor(), temp.getMinor()));
                     }
-
-
                 }
             }
         });
-
-        //adapter.addAll(mylist);
-
         return rootView;
     }
 
-    ArrayList<BikeData> matchedStolen = new ArrayList<>();
 
     //scan the list of beacons reterned by ranging and compare to firebase listed as stolem
     private List<BikeData> StolenBikesInArea(List<Beacon> beacon) {
 
-        //mylist.clear();
-
         for (Beacon b : beacon) {
-
             String beaconKey = String.valueOf(b.getMinor());
-
-
             for (BikeData data : bikes) {
 
                 Log.v("**test", "UUID from bikes registered as stolen " + data.getBeaconUUID());
                 Log.v("**test", "comparing the above to  " + beaconKey);
 
+                //see if DB stored UUID matches that of one nearby, pull back match if so
                 if (data.getBeaconUUID().equals(beaconKey)) {
                     matchedStolen.add(data);
                     Log.v("**test", "match found");
-
                 } else {
                     Log.v("**test", "no match found");
-
                 }
-
             }
-
-
-        }//end beacon list
-
-
+        }//end root for
         return matchedStolen;
-    }
+    }//end method
 
 
     @Override
