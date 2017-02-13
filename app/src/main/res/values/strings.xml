@@ -67,6 +67,8 @@
     <string name="title_activity_maps_new">Map</string>
     <string name="sighting_details"><u>Sighting Details</u></string>
     <string name="bike_detais"><u>Bike Detais</u></string>
+    <string name="owner_details"><u>Owner Details</u></string>
+    <string name="aproximate_distance"><u>Aproximate Distance</u></string>
 </resources>
 
 

@@ -4,6 +4,8 @@ package com.example.ronan.bikepro.Helpers;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.GradientDrawable;
+import android.support.v4.content.ContextCompat;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,6 +17,7 @@ import android.widget.TextView;
 
 import com.example.ronan.bikepro.DataModel.BikeData;
 import com.example.ronan.bikepro.R;
+import com.example.ronan.bikepro.Scan_For_Stolen;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -31,10 +34,12 @@ public class BeaconListAdapter extends BaseAdapter {
 
     private ArrayList<BikeData> bikes;
     private LayoutInflater inflater;
+    Context myContext;
 
     public BeaconListAdapter(Context context) {
         this.inflater = LayoutInflater.from(context);
         this.bikes = new ArrayList<>();
+        this.myContext = context;
     }
 
     public void replaceWith(Collection<BikeData> newBikes) {
@@ -78,12 +83,19 @@ public class BeaconListAdapter extends BaseAdapter {
         holder.bikePic.setImageBitmap(getBitMapFromString(bikeData.getImageBase64()));
 
         DecimalFormat df = new DecimalFormat("#.00");
-        String RangeFormated = df.format(bikeData.getBeaconAccuracy()) + " Meters";
-
+        String RangeFormated = df.format(bikeData.getBeaconAccuracy());
+        double proxDecimal = Double.parseDouble(df.format(bikeData.getBeaconAccuracy()));
         holder.aproxDistance.setText(RangeFormated);
 
-//                holder.measuredPowerTextView.setText("MPower: " + beacon.getMeasuredPower());
-//                holder.rssiTextView.setText("RSSI: " + beacon.getRssi());
+        // Set the proper background color on the proximity circle.
+        // Fetch the background from the TextView, which is a GradientDrawable.
+        GradientDrawable proximityCircle = (GradientDrawable) holder.aproxDistance.getBackground();
+        // Get the appropriate background color based on the current earthquake proximity
+        int proximittColour = getproximityColor(proxDecimal);
+        // Set the color on the proximity circle
+        proximityCircle.setColor(proximittColour);
+
+
 
     }
 
@@ -133,5 +145,51 @@ public class BeaconListAdapter extends BaseAdapter {
 
         return b;
     }// end getBitMapFromString
+
+
+    //change background based on location
+    private int getproximityColor(double proximity) {
+        int proximityColorResourceId;
+        int proximityFloor = (int) Math.floor(proximity);
+        switch (proximityFloor) {
+            case 0:
+                proximityColorResourceId = R.color.proximity10plus;
+                break;
+            case 9:
+                proximityColorResourceId = R.color.proximity1;
+                break;
+            case 8:
+                proximityColorResourceId = R.color.proximity2;
+                break;
+            case 7:
+                proximityColorResourceId = R.color.proximity2;
+                break;
+            case 6:
+                proximityColorResourceId = R.color.proximity3;
+                break;
+            case 5:
+                proximityColorResourceId = R.color.proximity3;
+                break;
+            case 4:
+                proximityColorResourceId = R.color.proximity4;
+                break;
+            case 3:
+                proximityColorResourceId = R.color.proximity5;
+                break;
+            case 2:
+                proximityColorResourceId = R.color.proximity7;
+                break;
+            case 1:
+                proximityColorResourceId = R.color.proximity9;
+                break;
+            default:
+                proximityColorResourceId = R.color.proximity10plus;
+                break;
+        }
+
+        return ContextCompat.getColor(myContext, proximityColorResourceId);
+    }
+
+
 }
 

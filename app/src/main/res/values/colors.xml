@@ -5,4 +5,36 @@
     <color name="colorAccent">#FF5252</color>
     <color name="cyan">#0000ff</color>
     <color name="white">#ffffff</color>
+
+
+
+    <!-- Color for an bike with proximity 0 and 2 -->
+    <color name="proximity1">#4A7BA7</color>
+
+    <!-- proximity circle color for an bike with proximity between 2 and 3 -->
+    <color name="proximity2">#04B4B3</color>
+
+    <!-- proximity circle color for an bike with proximity between 3 and 4 -->
+    <color name="proximity3">#10CAC9</color>
+
+    <!-- proximity circle color for an bike with proximity between 4 and 5 -->
+    <color name="proximity4">#F5A623</color>
+
+    <!-- proximity circle color for an bike with proximity between 5 and 6 -->
+    <color name="proximity5">#FF7D50</color>
+
+    <!-- proximity circle color for an bike with proximity between 6 and 7 -->
+    <color name="proximity6">#FC6644</color>
+
+    <!-- proximity circle color for an bike with proximity between 7 and 8 -->
+    <color name="proximity7">#E75F40</color>
+
+    <!-- proximity circle color for an bike with proximity between 8 and 9 -->
+    <color name="proximity8">#E13A20</color>
+
+    <!-- proximity circle color for an bike with proximity between 9 and 10 -->
+    <color name="proximity9">#D93218</color>
+
+    <!-- proximity circle color for an bike with proximity over 10 -->
+    <color name="proximity10plus">#C03823</color>
 </resources>
