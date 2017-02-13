@@ -200,7 +200,7 @@ public class RegisterFragment extends Fragment {
                 else {
 
                     //newBike object using constructor to populate attributes
-                    BikeData newBike = new BikeData(make, frameSize, color, other, stolen, base64, model, "N/A", 0, 0, uniqueIdentifier,beacon_UUID);
+                    BikeData newBike = new BikeData(make, frameSize, color, other, stolen, base64, model, "N/A", 0, 0, uniqueIdentifier,beacon_UUID,0);
 
                     //get id part of email use this for where to place in DB. Firebase cant have a @ in DB refrence
                     uniqueIdentifier = uniqueIdentifier.split("@")[0];

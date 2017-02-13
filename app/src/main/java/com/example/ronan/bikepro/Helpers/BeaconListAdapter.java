@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.example.ronan.bikepro.DataModel.BikeData;
 import com.example.ronan.bikepro.R;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -66,6 +67,14 @@ public class BeaconListAdapter extends BaseAdapter {
         holder.makeView.setText(bikeData.getMake());
         holder.modelTextView.setText(bikeData.getModel());
         holder.colourTextView.setText(bikeData.getColor());
+        holder.ownerTextView.setText(bikeData.getRegisteredBy());
+        holder.lastLocationTextView.setText(bikeData.getLastSeen());
+
+        DecimalFormat df = new DecimalFormat("#.00");
+        String RangeFormated = df.format(bikeData.getBeaconAccuracy())+ " Meters";
+
+        holder.aproxDistance.setText(RangeFormated);
+
 //                holder.measuredPowerTextView.setText("MPower: " + beacon.getMeasuredPower());
 //                holder.rssiTextView.setText("RSSI: " + beacon.getRssi());
 
@@ -73,7 +82,7 @@ public class BeaconListAdapter extends BaseAdapter {
 
     private View inflateIfRequired(View view, int position, ViewGroup parent) {
         if (view == null) {
-            view = inflater.inflate(R.layout.list_item, null);
+            view = inflater.inflate(R.layout.list_item_ranging, null);
             view.setTag(new ViewHolder(view));
         }
         return view;
@@ -83,13 +92,19 @@ public class BeaconListAdapter extends BaseAdapter {
         final TextView makeView;
         final TextView modelTextView;
         final TextView colourTextView;
+        final TextView ownerTextView;
+        final TextView lastLocationTextView;
+        final TextView aproxDistance;
 
 
         ViewHolder(View view) {
             // makeView = (TextView) view.findViewById(ma)
-            makeView = (TextView) view.findViewById(R.id.make);
-            modelTextView = (TextView) view.findViewById(R.id.model);
-            colourTextView = (TextView) view.findViewById(R.id.color);
+            makeView = (TextView) view.findViewById(R.id.make_ranging);
+            modelTextView = (TextView) view.findViewById(R.id.model_ranging);
+            colourTextView = (TextView) view.findViewById(R.id.color_ranging);
+            ownerTextView = (TextView) view.findViewById(R.id.owner_ranging);
+            lastLocationTextView = (TextView) view.findViewById(R.id.loaction_ranging);
+            aproxDistance = (TextView) view.findViewById(R.id.Distance_ranging);
 
 
         }

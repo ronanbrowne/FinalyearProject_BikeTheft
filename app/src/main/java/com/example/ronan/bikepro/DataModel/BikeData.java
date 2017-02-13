@@ -33,10 +33,11 @@ public class BikeData {
     private HashMap<String, Object> timestampCreated;
     //  private Long creationDate;
     private String beaconUUID;
+    private double beaconAccuracy;
 
 
     //constructor
-    public BikeData(String make, int frameSize, String color, String other, boolean stolen, String imageBase64, String model, String lastSeen, double latitude, double longditude, String registeredBy, String beaconUUID) {
+    public BikeData(String make, int frameSize, String color, String other, boolean stolen, String imageBase64, String model, String lastSeen, double latitude, double longditude, String registeredBy, String beaconUUID, double beaconAccuracy) {
         this.make = make;
         this.registeredBy = registeredBy;
         this.frameSize = frameSize;
@@ -49,15 +50,17 @@ public class BikeData {
         this.latitude = latitude;
         this.longditude = longditude;
         this.beaconUUID = beaconUUID;
+        this.beaconAccuracy=beaconAccuracy;
 
         // TIME STAMP
         HashMap<String, Object> timestampCreatedObj = new HashMap<String, Object>();
         timestampCreatedObj.put("date", ServerValue.TIMESTAMP);
         this.timestampCreated = timestampCreatedObj;
-
-
     }
 
+    public void setBeaconAccuracy(double beaconAccuracy) {
+        this.beaconAccuracy = beaconAccuracy;
+    }
 
     //constructor for reporting sighting
     public BikeData(String make, int frameSize, String color, String other, boolean stolen, String imageBase64, String model, String lastSeen, double latitude, double longditude, String registeredBy, String reportedLocation, boolean reportedSigting, String reportedBy, String reportedDate) {
@@ -98,6 +101,10 @@ public class BikeData {
 
     public void setReportedLocation(String reportedLocation) {
         this.reportedLocation = reportedLocation;
+    }
+
+    public double getBeaconAccuracy() {
+        return beaconAccuracy;
     }
 
     public void setReportedSigting(boolean reportedSigting) {

@@ -13,6 +13,7 @@ import com.estimote.sdk.Beacon;
 import com.estimote.sdk.BeaconManager;
 import com.estimote.sdk.Region;
 import com.estimote.sdk.SystemRequirementsChecker;
+import com.estimote.sdk.Utils;
 import com.example.ronan.bikepro.DataModel.BikeData;
 import com.example.ronan.bikepro.Helpers.BeaconListAdapter;
 import com.google.firebase.database.DataSnapshot;
@@ -112,6 +113,8 @@ public class Scan_For_Stolen extends Fragment {
 
                     stolenBikes = StolenBikesInArea(list);
 
+                    Beacon one = list.get(0);
+
                     //testing can delete later
                     for (BikeData s : stolenBikes) {
                         Log.v("**test", "Nearest places: " + s.getMake() + " " + s.getModel());
@@ -143,6 +146,8 @@ public class Scan_For_Stolen extends Fragment {
 
         for (Beacon b : beacon) {
             String beaconKey = String.valueOf(b.getMinor());
+      ;
+
             for (BikeData data : bikes) {
 
                 Log.v("**test", "UUID from bikes registered as stolen " + data.getBeaconUUID());
@@ -150,6 +155,7 @@ public class Scan_For_Stolen extends Fragment {
 
                 //see if DB stored UUID matches that of one nearby, pull back match if so
                 if (data.getBeaconUUID().equals(beaconKey)) {
+                    data.setBeaconAccuracy(Utils.computeAccuracy(b));
                     matchedStolen.add(data);
                     Log.v("**test", "match found");
                 } else {

@@ -402,7 +402,7 @@ public class EditFragment extends Fragment {
                     Toast.makeText(getActivity().getApplicationContext(), "\"All fields are required except \"other\"", Toast.LENGTH_SHORT).show();
                 } else {
 
-                    BikeData newBike = new BikeData(make, frameSize, color, other, stolen, base64, model, lastSeen, latitude, longitud, emailFull,beaconID);
+                    BikeData newBike = new BikeData(make, frameSize, color, other, stolen, base64, model, lastSeen, latitude, longitud, emailFull,beaconID,0);
                     mDatabase.setValue(newBike);
 
                     if (stolen) {
