@@ -105,7 +105,7 @@
                     android:gravity="center"
                     android:padding="3dip"
                     android:textStyle="bold"
-                    android:text="Search for stolen bikes" />
+                    android:text="\nSearch for stolen bikes" />
             </LinearLayout>
 
 
