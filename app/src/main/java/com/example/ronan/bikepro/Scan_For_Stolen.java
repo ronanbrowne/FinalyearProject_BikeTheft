@@ -135,7 +135,7 @@ public class Scan_For_Stolen extends Fragment {
 
                     //list all beacons nearby for debug
                     for (Beacon temp : list) {
-                        Log.v("**test**", "Minor code: in range : " + temp.getMinor());
+                        Log.v("**test**", "major code: in range : " + temp.getMajor());
                     }
                 }
             }
@@ -170,10 +170,10 @@ public class Scan_For_Stolen extends Fragment {
     private List<BikeData> StolenBikesInArea(List<Beacon> beacon) {
         for (Beacon b : beacon) {
             //get the unique ID of beacon
-            String beaconKey = String.valueOf(b.getMinor());
+            String beaconKey = String.valueOf(b.getMajor());
             for (BikeData data : bikes) {
 
-                Log.v("**test", "UUID from bikes registered as stolen " + data.getBeaconUUID());
+                Log.v("**test", "Major ID from bikes registered as stolen " + data.getBeaconUUID());
                 Log.v("**test", "comparing the above to  " + beaconKey);
 
                 //see if Firebase stored UUID matches that of ones in proximity, pull back match if so
