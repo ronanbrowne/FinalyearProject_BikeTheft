@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Region;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
@@ -25,6 +24,7 @@ import android.widget.TextView;
 
 import com.estimote.sdk.Beacon;
 import com.estimote.sdk.BeaconManager;
+import com.estimote.sdk.Region;
 import com.estimote.sdk.SystemRequirementsChecker;
 import com.example.ronan.bikepro.Activities.MainActivity;
 import com.example.ronan.bikepro.R;
@@ -43,7 +43,7 @@ public class BeaconsFragment extends Fragment {
 
     TextView text;
     BeaconManager beaconManager;
-    BeaconManager beaconManagerTwo;
+    private Region region;
 
 
     private ImageView info;
@@ -112,9 +112,9 @@ Bitmap b;
         beaconManager.connect(new BeaconManager.ServiceReadyCallback() {
             @Override
             public void onServiceReady() {
-                beaconManager.startMonitoring(new com.estimote.sdk.Region("monitored region",
+                beaconManager.startMonitoring(region = new com.estimote.sdk.Region("monitored region",
                         UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"),
-                        43739, 63406));
+                        43739,null));
 
                 Log.v("**test", "connect");
             }
@@ -155,6 +155,12 @@ Bitmap b;
     public void onResume() {
         super.onResume();
         SystemRequirementsChecker.checkWithDefaultDialogs(getActivity());
+    }
+
+    @Override
+    public void onPause() {
+        beaconManager.stopMonitoring(region);
+        super.onPause();
     }
 
 
