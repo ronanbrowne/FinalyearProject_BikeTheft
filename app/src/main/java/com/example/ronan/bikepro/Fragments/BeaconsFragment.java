@@ -210,13 +210,13 @@ public class BeaconsFragment extends Fragment {
                 beaconManager.setBackgroundScanPeriod(TimeUnit.SECONDS.toMillis(10), TimeUnit.SECONDS.toMillis(1));
 
                 showNotification("Beacon in range", "Link established with bike");
-                text.setText("Connection established.\n\nYou will receive a notification if your bike begins to move.\n\nBeacon ID: " + list.get(0).getMinor());
+                text.setText("Connection established.\n\nYou will receive a notification if your bike begins to move.\n\n\n");
                 link.setImageResource(R.drawable.ic_bluetooth_connected_green_48dp);
                 // showStolen(selectedBikeToLinksTo);
                 listArea.setText("Link established with");
                 listViewChooseBike.setVisibility(View.GONE);
                 selectedBike.setVisibility(View.VISIBLE);
-                Log.v("**test", "enter");
+                Log.v("**test", "Major ID: "+list.get(0).getMajor());
             }
 
             @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
@@ -225,7 +225,8 @@ public class BeaconsFragment extends Fragment {
                 showNotification("Beacon out of range", "Link with bike lost check on bike ASAP");
                 link.setImageResource(R.drawable.ic_bluetooth_connected_red_48dp);
                 text.setText("Connection lost.\n\nLast seen: " + getTime());
-                listArea.setText("Link lost to the following bike");
+                listArea.setText("**Link lost to the following bike**");
+                listArea.setTextColor(getResources().getColor(R.color.proximity6));
                 reportArea.setVisibility(View.VISIBLE);
                 //showStolen(selectedBikeToLinksTo);
                 Log.v("**test", "exit");

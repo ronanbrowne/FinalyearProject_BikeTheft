@@ -46,9 +46,11 @@
 
             </LinearLayout>
 
+            <!--top haf of screen-->
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_height="0dp"
                 android:background="@drawable/background_shadow"
                 android:orientation="vertical"
 
@@ -119,9 +121,11 @@
                 </LinearLayout>
             </LinearLayout>
 
+            <!--bottom half of screen-->
             <RelativeLayout
+                android:layout_weight="1"
                 android:layout_width="match_parent"
-                android:layout_height="250dp"
+                android:layout_height="0dp"
                 android:layout_marginTop="16dp"
                 android:paddingBottom="22dp"
                 android:background="@drawable/background_shadow">
@@ -137,16 +141,10 @@
                     android:textColor="@color/colorPrimaryDark"
                     android:textStyle="bold" />
 
-                <!--<TextView-->
-                <!--android:paddingBottom="32dp"-->
-                <!--android:layout_alignParentBottom="true"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:tool="Your phone will automatically link to your bikes sensor once in range.\n\nIf that link is broken you will then recieve a notification." />-->
                 <ListView
                     android:id="@+id/listViewChooseBike"
                     android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_below="@+id/choose"
                     android:layout_marginTop="0dp"
                     android:padding="8dp"/>
