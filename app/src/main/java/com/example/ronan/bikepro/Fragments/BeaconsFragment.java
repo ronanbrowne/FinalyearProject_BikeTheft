@@ -107,21 +107,21 @@ public class BeaconsFragment extends Fragment {
 
         info = (ImageView) rootView.findViewById(R.id.infobeacon);
         listArea = (TextView) rootView.findViewById(R.id.choose);
-        link = (ImageView) rootView.findViewById(R.id.link);
+        // link = (ImageView) rootView.findViewById(R.id.link);
         listViewChooseBike = (ListView) rootView.findViewById(R.id.listViewChooseBike);
-        floatingConfirmReport = (FloatingActionButton) rootView.findViewById(R.id.floatingConfirmReport);
-        selectedBike = (LinearLayout) rootView.findViewById(R.id.selectedBike);
-        reportArea = (LinearLayout) rootView.findViewById(R.id.reportArea);
+        // floatingConfirmReport = (FloatingActionButton) rootView.findViewById(R.id.floatingConfirmReport);
+        //  selectedBike = (LinearLayout) rootView.findViewById(R.id.selectedBike);
+        //  reportArea = (LinearLayout) rootView.findViewById(R.id.reportArea);
         b = BitmapFactory.decodeResource(getActivity().getResources(), R.drawable.ic_directions_bike_black_24dp);
 
-        makeView = (TextView) rootView.findViewById(R.id.make);
-        modelView = (TextView) rootView.findViewById(model);
-        colorView = (TextView) rootView.findViewById(R.id.color);
-        bike_imageSelected = (ImageView) rootView.findViewById(R.id.bike_image);
+//        makeView = (TextView) rootView.findViewById(R.id.make);
+//        modelView = (TextView) rootView.findViewById(model);
+//        colorView = (TextView) rootView.findViewById(R.id.color);
+//        bike_imageSelected = (ImageView) rootView.findViewById(R.id.bike_image);
 
-        listViewChooseBike.setVisibility(View.GONE);
-        selectedBike.setVisibility(View.GONE);
-        reportArea.setVisibility(View.INVISIBLE);
+        //listViewChooseBike.setVisibility(View.GONE);
+        // selectedBike.setVisibility(View.GONE);
+        //reportArea.setVisibility(View.INVISIBLE);
 
         mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         if (mFirebaseUser != null) {
@@ -135,31 +135,37 @@ public class BeaconsFragment extends Fragment {
 
         queryBikesUsingBeacons = myBikesDB.orderByChild("beaconUUID").startAt("!").endAt("~");
 
-
-        queryBikesUsingBeacons.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                if (dataSnapshot.getChildrenCount() > 1) {
-                    Log.d("Count", "more than one " + dataSnapshot.getChildrenCount());
-                    listViewChooseBike.setVisibility(View.VISIBLE);
-
-                    setUpListView();
-                    Log.v("***", "returned UUIDs " + bikes.size());
-                    Log.v("**test**Output2", Arrays.toString(bikes.toArray()));
-                } else {
-                    Log.d("Count", "just one " + dataSnapshot.getChildrenCount());
-
-                }
+        //use bundle to pass itemRef to next fragment
+        //pass with setArguments(bundle)
+//        Bundle bundle = new Bundle();
+//        bundle.putString("dB_Ref", selectedBikeToLinksTo.getKey());
+//        bundle.putInt("BeaconMajorID", selectedBikeUUID);
 
 
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+//        queryBikesUsingBeacons.addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//
+//                if (dataSnapshot.getChildrenCount() > 1) {
+//                    Log.d("Count", "more than one " + dataSnapshot.getChildrenCount());
+//                    listViewChooseBike.setVisibility(View.VISIBLE);
+//
+//                    setUpListView();
+//                    Log.v("***", "returned UUIDs " + bikes.size());
+//                    Log.v("**test**Output2", Arrays.toString(bikes.toArray()));
+//                } else {
+//                    Log.d("Count", "just one " + dataSnapshot.getChildrenCount());
+//
+//                }
+//
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//
+//            }
+//        });
 
 
         info.setOnClickListener(new View.OnClickListener() {
@@ -191,95 +197,55 @@ public class BeaconsFragment extends Fragment {
         });
 
 
-        text = (TextView) rootView.findViewById(R.id.text);
+        //  beaconManager = new BeaconManager(getActivity().getApplicationContext());
+        //beaconManager.setBackgroundScanPeriod(TimeUnit.SECONDS.toMillis(10), TimeUnit.SECONDS.toMillis(1));
+        // beaconManager.setBackgroundScanPeriod(1000, 0);
 
-        beaconManager = new BeaconManager(getActivity().getApplicationContext());
-        beaconManager.setBackgroundScanPeriod(TimeUnit.SECONDS.toMillis(10), TimeUnit.SECONDS.toMillis(1));
-        beaconManager.setRegionExitExpiration(TimeUnit.SECONDS.toMillis(10));
-
-
-        text = (TextView) rootView.findViewById(R.id.text);
+        // beaconManager.setRegionExitExpiration(TimeUnit.SECONDS.toMillis(10));
 
 
-        beaconManager.setMonitoringListener(new BeaconManager.MonitoringListener() {
+        //   text = (TextView) rootView.findViewById(R.id.text);
 
-            @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-            @Override
-            public void onEnteredRegion(com.estimote.sdk.Region region, List<Beacon> list) {
-
-                beaconManager.setBackgroundScanPeriod(TimeUnit.SECONDS.toMillis(10), TimeUnit.SECONDS.toMillis(1));
-
-                showNotification("Beacon in range", "Link established with bike");
-                text.setText("Connection established.\n\nYou will receive a notification if your bike begins to move.\n\n\n");
-                link.setImageResource(R.drawable.ic_bluetooth_connected_green_48dp);
-                // showStolen(selectedBikeToLinksTo);
-                listArea.setText("Link established with");
-                listViewChooseBike.setVisibility(View.GONE);
-                selectedBike.setVisibility(View.VISIBLE);
-                Log.v("**test", "Major ID: "+list.get(0).getMajor());
-            }
-
-            @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-            @Override
-            public void onExitedRegion(com.estimote.sdk.Region region) {
-                showNotification("Beacon out of range", "Link with bike lost check on bike ASAP");
-                link.setImageResource(R.drawable.ic_bluetooth_connected_red_48dp);
-                text.setText("Connection lost.\n\nLast seen: " + getTime());
-                listArea.setText("**Link lost to the following bike**");
-                listArea.setTextColor(getResources().getColor(R.color.proximity6));
-                reportArea.setVisibility(View.VISIBLE);
-                //showStolen(selectedBikeToLinksTo);
-                Log.v("**test", "exit");
-            }
-
-        });
-
-        return rootView;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        SystemRequirementsChecker.checkWithDefaultDialogs(getActivity());
-    }
-
-    @Override
-    public void onPause() {
-        beaconManager.stopMonitoring(region);
-        super.onPause();
-    }
-
-
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-    public void showNotification(String title, String message) {
-        Intent notifyIntent = new Intent(getActivity().getApplicationContext(), MainActivity.class);
-        notifyIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivities(getActivity().getApplicationContext(), 0,
-                new Intent[]{notifyIntent}, PendingIntent.FLAG_UPDATE_CURRENT);
-        Notification notification = new Notification.Builder(getActivity().getApplicationContext())
-                .setSmallIcon(android.R.drawable.ic_dialog_info)
-                .setContentTitle(title)
-                .setContentText(message)
-                .setAutoCancel(true)
-                .setLargeIcon(b)
-                .setSmallIcon(R.drawable.ic_motorcycle_black_24dp)
-                .setContentIntent(pendingIntent)
-                .build();
-        notification.defaults |= Notification.DEFAULT_SOUND;
-        NotificationManager notificationManager =
-                (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(1, notification);
-    }
-
-
-    public String getTime() {
-        Calendar c = Calendar.getInstance();
-        SimpleDateFormat dateformat = new SimpleDateFormat("dd-MMM-yyyy hh:mm aa");
-        String datetime = dateformat.format(c.getTime());
-        return datetime;
-    }
-
-    public void setUpListView() {
+//
+//        beaconManager.setMonitoringListener(new BeaconManager.MonitoringListener() {
+//
+//            @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+//            @Override
+//            public void onEnteredRegion(com.estimote.sdk.Region region, List<Beacon> list) {
+//
+//                Log.v("**region", "Entered region");
+//
+//                // beaconManager.setBackgroundScanPeriod(TimeUnit.SECONDS.toMillis(10), TimeUnit.SECONDS.toMillis(1));
+//
+//                showNotification("Beacon in range", "Link established with bike");
+//                text.setText("Connection established.\n\nYou will receive a notification if your bike begins to move.\n\n\n");
+//                link.setImageResource(R.drawable.ic_bluetooth_connected_green_48dp);
+//                // showStolen(selectedBikeToLinksTo);
+//                listArea.setText("Link established with");
+//                listViewChooseBike.setVisibility(View.GONE);
+//                reportArea.setVisibility(View.INVISIBLE);
+//                selectedBike.setVisibility(View.VISIBLE);
+//                listArea.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+//
+//                Log.v("**test", "Major ID: " + list.get(0).getMajor());
+//            }
+//
+//            @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+//            @Override
+//            public void onExitedRegion(com.estimote.sdk.Region region) {
+//                Log.v("**region", "exit region");
+//
+//                showNotification("Beacon out of range", "Link with bike lost check on bike ASAP");
+//                link.setImageResource(R.drawable.ic_bluetooth_connected_red_48dp);
+//                text.setText("Connection lost.\n\nLast seen: " + getTime());
+//                listArea.setText("**Link lost to the following bike**");
+//                listArea.setTextColor(getResources().getColor(R.color.proximity6));
+//                reportArea.setVisibility(View.VISIBLE);
+//                //showStolen(selectedBikeToLinksTo);
+//                Log.v("**test", "exit");
+//            }
+//
+//        });
 
 
         final FirebaseListAdapter<BikeData> bikeAdapter = new FirebaseListAdapter<BikeData>
@@ -332,20 +298,32 @@ public class BeaconsFragment extends Fragment {
 
                         BikeData b = dataSnapshot.getValue(BikeData.class);
 
-                       // selectedBike.setVisibility();
+//                        makeView.setText(b.getMake());
+//                        modelView.setText(b.getModel());
+//                        colorView.setText(b.getColor());
+//                        getBitMapFromString(b.getImageBase64(), bike_imageSelected);
 
-                        makeView.setText(b.getMake());
-                        modelView.setText(b.getModel());
-                        colorView.setText(b.getColor());
+                        String key = b.getBeaconUUID();
+                        String major = key.split(":")[0];
+                        String minor = key.split(":")[1];
+                        int selectedBikeMajor = Integer.parseInt(major);
+                        int selectedBikeMinor = Integer.parseInt(minor);
 
-                        getBitMapFromString(b.getImageBase64(), bike_imageSelected);
+                        Bundle bundle = new Bundle();
+                        //    bundle.putString("dB_Ref", itemRef.getKey());
+                        bundle.putString("dB_Ref", selectedBikeToLinksTo.getKey());
+                        bundle.putInt("BeaconMinorID", selectedBikeMinor);
+                        bundle.putInt("BeaconMajorID", selectedBikeMajor);
+                        //open the edit bike fragment. where the bike a user clicked on here will be edited.
+                        //we will use the above itemRef value stored in the bundle  to load the chosen bike info on editFragment
+                        BeaconConnect connectFragment = new BeaconConnect();
+                        connectFragment.setArguments(bundle);
+                        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                        fragmentTransaction.replace(R.id.fragment_container, connectFragment);
+                        fragmentTransaction.commit();
 
+//                        Log.v("**region", "Recieved bike UUID from click " + selectedBikeUUID);
 
-                        //testing delete
-                        Toast.makeText(getActivity().getApplicationContext(), "ref: " + b.getModel() + " uuid: " + b.getBeaconUUID(), Toast.LENGTH_SHORT).show();
-
-                        selectedBikeUUID = Integer.parseInt(b.getBeaconUUID());
-                        linkBike();
                     }
 
                     @Override
@@ -355,8 +333,59 @@ public class BeaconsFragment extends Fragment {
                 });
 
 
+
+
             }
         });
+
+        return rootView;
+    }
+
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//        SystemRequirementsChecker.checkWithDefaultDialogs(getActivity());
+//    }
+//
+//    @Override
+//    public void onPause() {
+//        beaconManager.stopMonitoring(region);
+//        super.onPause();
+//    }
+
+
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+    public void showNotification(String title, String message) {
+        Intent notifyIntent = new Intent(getActivity().getApplicationContext(), MainActivity.class);
+        notifyIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        PendingIntent pendingIntent = PendingIntent.getActivities(getActivity().getApplicationContext(), 0,
+                new Intent[]{notifyIntent}, PendingIntent.FLAG_UPDATE_CURRENT);
+        Notification notification = new Notification.Builder(getActivity().getApplicationContext())
+                .setSmallIcon(android.R.drawable.ic_dialog_info)
+                .setContentTitle(title)
+                .setContentText(message)
+                .setAutoCancel(true)
+                .setLargeIcon(b)
+                .setSmallIcon(R.drawable.ic_motorcycle_black_24dp)
+                .setContentIntent(pendingIntent)
+                .build();
+        notification.defaults |= Notification.DEFAULT_SOUND;
+        NotificationManager notificationManager =
+                (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(1, notification);
+    }
+
+
+//    public String getTime() {
+//        Calendar c = Calendar.getInstance();
+//        SimpleDateFormat dateformat = new SimpleDateFormat("dd-MMM-yyyy hh:mm aa");
+//        String datetime = dateformat.format(c.getTime());
+//        return datetime;
+//    }
+
+    public void setUpListView() {
+
+
     }
 
     //===============================================
@@ -372,19 +401,19 @@ public class BeaconsFragment extends Fragment {
         }
     }// end getBitMapFromString
 
-    public void linkBike() {
-        //start monitoring for the selected bike
-        beaconManager.connect(new BeaconManager.ServiceReadyCallback() {
-            @Override
-            public void onServiceReady() {
-                beaconManager.startMonitoring(region = new com.estimote.sdk.Region("monitored region",
-                        UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"),
-                        selectedBikeUUID, null));
-
-                Log.v("**test", "connect");
-            }
-        });
-    }//end linkbike
+//    public void linkBike() {
+//        //start monitoring for the selected bike
+//        beaconManager.connect(new BeaconManager.ServiceReadyCallback() {
+//            @Override
+//            public void onServiceReady() {
+//                beaconManager.startMonitoring(region = new com.estimote.sdk.Region("monitored region",
+//                        UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"),
+//                        selectedBikeUUID, null));
+//
+//                Log.v("**region", "connected to (link bike method)"+selectedBikeUUID);
+//            }
+//        });
+//    }//end linkbike
 
 //       public void showStolen(DatabaseReference selectedBikeToLinksTo) {
 //
@@ -423,5 +452,9 @@ public class BeaconsFragment extends Fragment {
 //        listViewChooseBike.setAdapter(bikeAdapter);
 //
 //    }
+
+    public void changeFrag() {
+
+    }
 
 }
