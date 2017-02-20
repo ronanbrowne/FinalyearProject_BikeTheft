@@ -42,7 +42,7 @@ dependencies {
     compile 'com.google.android.gms:play-services:10.0.1'
     compile 'com.joanzapata.iconify:android-iconify-fontawesome:2.1.+'
     compile 'com.github.vihtarb:tooltip:0.1.9'
-    compile 'com.estimote:sdk:0.15.0@aar'
+    compile 'com.estimote:sdk:0.16.0@aar'
     testCompile 'junit:junit:4.12'
 }
 apply plugin: 'com.google.gms.google-services'

@@ -1,6 +1,7 @@
 package com.example.ronan.bikepro.Fragments;
 
 
+import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -63,6 +64,7 @@ public class BeaconConnect extends Fragment {
     private TextView colorView;
 
     private Bitmap b;
+    private Bitmap bitmap;
     private BeaconManager beaconManager;
     private TextView textStatus;
     private TextView choose;
@@ -80,6 +82,11 @@ public class BeaconConnect extends Fragment {
     int BeaconMinorID;
     private FirebaseUser mFirebaseUser;
     private String uniqueIdentifier;
+
+    private String makeGlobal;
+    private String modelGlobal;
+    private String colourGlobal;
+    private String lastSeenTimeGlobal;
 
 
     @Override
@@ -171,11 +178,45 @@ public class BeaconConnect extends Fragment {
             public void onExitedRegion(Region region) {
                 showNotification("Beacon out of range", "Link with bike lost check on bike ASAP");
                 link.setImageResource(R.drawable.ic_bluetooth_connected_red_48dp);
-                textStatus.setText("Connection lost.\n\nLast seen: " + getTime());
+                lastSeenTimeGlobal = getTime();
+                textStatus.setText("Connection lost.\n\nLast seen: " + lastSeenTimeGlobal);
                 choose.setText("**Link lost to the following bike**");
-                choose.setTextColor(ContextCompat.getColor(getContext(), R.color.proximity6));
+                choose.setTextColor(ContextCompat.getColor(getContext(), R.color.colorAccent));
                 reportArea.setVisibility(View.VISIBLE);
                 Log.v("**test", "exit");
+            }
+        });
+
+        floatingConfirmReport.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                // get prompts.xml view
+                LayoutInflater li = LayoutInflater.from(v.getContext());
+                View popup = li.inflate(R.layout.custom_dialog_link_broken_report_stolen, null);
+
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                        v.getContext());
+
+                ImageView bike_image = (ImageView) popup.findViewById(R.id.bike_image);
+                TextView makeView = (TextView) popup.findViewById(R.id.make);
+                TextView modelView = (TextView) popup.findViewById(R.id.model);
+                TextView colorView = (TextView) popup.findViewById(R.id.color);
+
+                TextView lastDate = (TextView) popup.findViewById(R.id.lastKnownDate);
+
+
+                bike_image.setImageBitmap(bitmap);
+                makeView.setText(makeGlobal);
+                modelView.setText(modelGlobal);
+                colorView.setText(colourGlobal);
+                lastDate.setText(lastSeenTimeGlobal);
+
+                // set prompts.xml to alertdialog builder
+                alertDialogBuilder.setView(popup);
+
+                alertDialogBuilder.show();
+
             }
         });
 
@@ -189,11 +230,6 @@ public class BeaconConnect extends Fragment {
         SystemRequirementsChecker.checkWithDefaultDialogs(getActivity());
     }
 
-    @Override
-    public void onPause() {
-        beaconManager.stopMonitoring(region);
-        super.onPause();
-    }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     public void showNotification(String title, String message) {
@@ -219,7 +255,7 @@ public class BeaconConnect extends Fragment {
 
     public String getTime() {
         Calendar c = Calendar.getInstance();
-        SimpleDateFormat dateformat = new SimpleDateFormat("dd-MMM-yyyy hh:mm aa");
+        SimpleDateFormat dateformat = new SimpleDateFormat("dd-MMM-yyyy");
         String datetime = dateformat.format(c.getTime());
         return datetime;
     }
@@ -230,9 +266,13 @@ public class BeaconConnect extends Fragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 BikeData b = dataSnapshot.getValue(BikeData.class);
 
-                makeView.setText(b.getMake());
-                modelView.setText(b.getModel());
-                colorView.setText(b.getColor());
+                makeGlobal = b.getMake();
+                modelGlobal = b.getModel();
+                colourGlobal = b.getColor();
+
+                makeView.setText(makeGlobal);
+                modelView.setText(modelGlobal);
+                colorView.setText(colourGlobal);
                 getBitMapFromString(b.getImageBase64(), bike_image);
             }
 
@@ -251,7 +291,7 @@ public class BeaconConnect extends Fragment {
             Log.v("***", "No image Found");
         } else {
             byte[] decodedString = Base64.decode(imageAsString, Base64.DEFAULT);
-            Bitmap bitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+            bitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
             iv.setImageBitmap(bitmap);
         }
     }// end getBitMapFromString
