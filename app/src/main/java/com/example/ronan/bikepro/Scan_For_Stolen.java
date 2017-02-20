@@ -128,7 +128,6 @@ public class Scan_For_Stolen extends Fragment {
 
                     Log.v("**test**", "Stolen bikes nearby: " + stolenBikes.size());
 
-
                     // UI update
                     adapter.replaceWith(stolenBikes);
                     stolenBikes.clear();
@@ -176,8 +175,11 @@ public class Scan_For_Stolen extends Fragment {
                 Log.v("**test", "Major ID from bikes registered as stolen " + data.getBeaconUUID());
                 Log.v("**test", "comparing the above to  " + beaconKey);
 
+                String key = data.getBeaconUUID();
+                String major = key.split(":")[0];
+
                 //see if Firebase stored UUID matches that of ones in proximity, pull back match if so
-                if (data.getBeaconUUID().equals(beaconKey)) {
+                if (major.equals(beaconKey)) {
                     // check its aprox distance and set in Bike Object, need this for adapter class when populating UI
                     data.setBeaconAccuracy(Utils.computeAccuracy(b));
                     matchedStolen.add(data);

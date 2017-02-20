@@ -1,16 +1,8 @@
 package com.example.ronan.bikepro.Fragments;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.RequiresApi;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
@@ -24,16 +16,9 @@ import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.estimote.sdk.Beacon;
-import com.estimote.sdk.BeaconManager;
-import com.estimote.sdk.Region;
-import com.estimote.sdk.SystemRequirementsChecker;
-import com.example.ronan.bikepro.Activities.MainActivity;
 import com.example.ronan.bikepro.DataModel.BikeData;
 import com.example.ronan.bikepro.R;
 import com.firebase.ui.database.FirebaseListAdapter;
@@ -47,37 +32,13 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.tooltip.Tooltip;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
-
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.V;
-import static com.estimote.sdk.EstimoteSDK.getApplicationContext;
-import static com.example.ronan.bikepro.R.id.bike_image;
-import static com.example.ronan.bikepro.R.id.choose;
-import static com.example.ronan.bikepro.R.id.model;
-
 
 public class BeaconsFragment extends Fragment {
 
-    TextView text;
-    TextView listArea;
-    BeaconManager beaconManager;
-    private Region region;
-
-
+    private TextView listArea;
     private ImageView info;
-    private ImageView link;
     private ImageView bike_image;
-    private ImageView bike_imageSelected;
     private ListView listViewChooseBike;
-    private LinearLayout selectedBike;
-    private LinearLayout reportArea;
-    private FloatingActionButton floatingConfirmReport;
 
     private DatabaseReference myBikesDB;
     private DatabaseReference selectedBikeToLinksTo;
@@ -85,18 +46,10 @@ public class BeaconsFragment extends Fragment {
     private FirebaseUser mFirebaseUser;
     private String uniqueIdentifier;
 
-    private int selectedBikeUUID;
-
-    private ArrayList<BikeData> bikes = new ArrayList();
-    private TextView makeView;
-    private TextView modelView;
-    private TextView colorView;
 
     public BeaconsFragment() {
         // Required empty public constructor
     }
-
-    Bitmap b;
 
 
     @Override
@@ -107,21 +60,7 @@ public class BeaconsFragment extends Fragment {
 
         info = (ImageView) rootView.findViewById(R.id.infobeacon);
         listArea = (TextView) rootView.findViewById(R.id.choose);
-        // link = (ImageView) rootView.findViewById(R.id.link);
         listViewChooseBike = (ListView) rootView.findViewById(R.id.listViewChooseBike);
-        // floatingConfirmReport = (FloatingActionButton) rootView.findViewById(R.id.floatingConfirmReport);
-        //  selectedBike = (LinearLayout) rootView.findViewById(R.id.selectedBike);
-        //  reportArea = (LinearLayout) rootView.findViewById(R.id.reportArea);
-        b = BitmapFactory.decodeResource(getActivity().getResources(), R.drawable.ic_directions_bike_black_24dp);
-
-//        makeView = (TextView) rootView.findViewById(R.id.make);
-//        modelView = (TextView) rootView.findViewById(model);
-//        colorView = (TextView) rootView.findViewById(R.id.color);
-//        bike_imageSelected = (ImageView) rootView.findViewById(R.id.bike_image);
-
-        //listViewChooseBike.setVisibility(View.GONE);
-        // selectedBike.setVisibility(View.GONE);
-        //reportArea.setVisibility(View.INVISIBLE);
 
         mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         if (mFirebaseUser != null) {
@@ -134,38 +73,6 @@ public class BeaconsFragment extends Fragment {
 
 
         queryBikesUsingBeacons = myBikesDB.orderByChild("beaconUUID").startAt("!").endAt("~");
-
-        //use bundle to pass itemRef to next fragment
-        //pass with setArguments(bundle)
-//        Bundle bundle = new Bundle();
-//        bundle.putString("dB_Ref", selectedBikeToLinksTo.getKey());
-//        bundle.putInt("BeaconMajorID", selectedBikeUUID);
-
-
-//        queryBikesUsingBeacons.addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//
-//                if (dataSnapshot.getChildrenCount() > 1) {
-//                    Log.d("Count", "more than one " + dataSnapshot.getChildrenCount());
-//                    listViewChooseBike.setVisibility(View.VISIBLE);
-//
-//                    setUpListView();
-//                    Log.v("***", "returned UUIDs " + bikes.size());
-//                    Log.v("**test**Output2", Arrays.toString(bikes.toArray()));
-//                } else {
-//                    Log.d("Count", "just one " + dataSnapshot.getChildrenCount());
-//
-//                }
-//
-//
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//
-//            }
-//        });
 
 
         info.setOnClickListener(new View.OnClickListener() {
@@ -183,70 +90,14 @@ public class BeaconsFragment extends Fragment {
                 final Animation animation = new AlphaAnimation((float) 0.5, 0); // Change alpha from fully visible to invisible
                 animation.setDuration(500); // duration - half a second
                 animation.setInterpolator(new LinearInterpolator()); // do not alter
-                // animation
-                // rate
                 animation.setRepeatCount(1); // Repeat animation
-                // infinitely
                 animation.setRepeatMode(Animation.REVERSE); // Reverse animation at the
-                // end so the button will
-                // fade back in
+
                 info.startAnimation(animation);
 
 
             }
         });
-
-
-        //  beaconManager = new BeaconManager(getActivity().getApplicationContext());
-        //beaconManager.setBackgroundScanPeriod(TimeUnit.SECONDS.toMillis(10), TimeUnit.SECONDS.toMillis(1));
-        // beaconManager.setBackgroundScanPeriod(1000, 0);
-
-        // beaconManager.setRegionExitExpiration(TimeUnit.SECONDS.toMillis(10));
-
-
-        //   text = (TextView) rootView.findViewById(R.id.text);
-
-//
-//        beaconManager.setMonitoringListener(new BeaconManager.MonitoringListener() {
-//
-//            @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-//            @Override
-//            public void onEnteredRegion(com.estimote.sdk.Region region, List<Beacon> list) {
-//
-//                Log.v("**region", "Entered region");
-//
-//                // beaconManager.setBackgroundScanPeriod(TimeUnit.SECONDS.toMillis(10), TimeUnit.SECONDS.toMillis(1));
-//
-//                showNotification("Beacon in range", "Link established with bike");
-//                text.setText("Connection established.\n\nYou will receive a notification if your bike begins to move.\n\n\n");
-//                link.setImageResource(R.drawable.ic_bluetooth_connected_green_48dp);
-//                // showStolen(selectedBikeToLinksTo);
-//                listArea.setText("Link established with");
-//                listViewChooseBike.setVisibility(View.GONE);
-//                reportArea.setVisibility(View.INVISIBLE);
-//                selectedBike.setVisibility(View.VISIBLE);
-//                listArea.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
-//
-//                Log.v("**test", "Major ID: " + list.get(0).getMajor());
-//            }
-//
-//            @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-//            @Override
-//            public void onExitedRegion(com.estimote.sdk.Region region) {
-//                Log.v("**region", "exit region");
-//
-//                showNotification("Beacon out of range", "Link with bike lost check on bike ASAP");
-//                link.setImageResource(R.drawable.ic_bluetooth_connected_red_48dp);
-//                text.setText("Connection lost.\n\nLast seen: " + getTime());
-//                listArea.setText("**Link lost to the following bike**");
-//                listArea.setTextColor(getResources().getColor(R.color.proximity6));
-//                reportArea.setVisibility(View.VISIBLE);
-//                //showStolen(selectedBikeToLinksTo);
-//                Log.v("**test", "exit");
-//            }
-//
-//        });
-
 
         final FirebaseListAdapter<BikeData> bikeAdapter = new FirebaseListAdapter<BikeData>
                 (getActivity(), BikeData.class, R.layout.list_item_monitering, queryBikesUsingBeacons) {
@@ -298,11 +149,6 @@ public class BeaconsFragment extends Fragment {
 
                         BikeData b = dataSnapshot.getValue(BikeData.class);
 
-//                        makeView.setText(b.getMake());
-//                        modelView.setText(b.getModel());
-//                        colorView.setText(b.getColor());
-//                        getBitMapFromString(b.getImageBase64(), bike_imageSelected);
-
                         String key = b.getBeaconUUID();
                         String major = key.split(":")[0];
                         String minor = key.split(":")[1];
@@ -314,15 +160,13 @@ public class BeaconsFragment extends Fragment {
                         bundle.putString("dB_Ref", selectedBikeToLinksTo.getKey());
                         bundle.putInt("BeaconMinorID", selectedBikeMinor);
                         bundle.putInt("BeaconMajorID", selectedBikeMajor);
-                        //open the edit bike fragment. where the bike a user clicked on here will be edited.
-                        //we will use the above itemRef value stored in the bundle  to load the chosen bike info on editFragment
+
+
                         BeaconConnect connectFragment = new BeaconConnect();
                         connectFragment.setArguments(bundle);
                         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
                         fragmentTransaction.replace(R.id.fragment_container, connectFragment);
                         fragmentTransaction.commit();
-
-//                        Log.v("**region", "Recieved bike UUID from click " + selectedBikeUUID);
 
                     }
 
@@ -333,60 +177,12 @@ public class BeaconsFragment extends Fragment {
                 });
 
 
-
-
             }
         });
 
         return rootView;
-    }
+    } //end onCreate
 
-//    @Override
-//    public void onResume() {
-//        super.onResume();
-//        SystemRequirementsChecker.checkWithDefaultDialogs(getActivity());
-//    }
-//
-//    @Override
-//    public void onPause() {
-//        beaconManager.stopMonitoring(region);
-//        super.onPause();
-//    }
-
-
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-    public void showNotification(String title, String message) {
-        Intent notifyIntent = new Intent(getActivity().getApplicationContext(), MainActivity.class);
-        notifyIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivities(getActivity().getApplicationContext(), 0,
-                new Intent[]{notifyIntent}, PendingIntent.FLAG_UPDATE_CURRENT);
-        Notification notification = new Notification.Builder(getActivity().getApplicationContext())
-                .setSmallIcon(android.R.drawable.ic_dialog_info)
-                .setContentTitle(title)
-                .setContentText(message)
-                .setAutoCancel(true)
-                .setLargeIcon(b)
-                .setSmallIcon(R.drawable.ic_motorcycle_black_24dp)
-                .setContentIntent(pendingIntent)
-                .build();
-        notification.defaults |= Notification.DEFAULT_SOUND;
-        NotificationManager notificationManager =
-                (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(1, notification);
-    }
-
-
-//    public String getTime() {
-//        Calendar c = Calendar.getInstance();
-//        SimpleDateFormat dateformat = new SimpleDateFormat("dd-MMM-yyyy hh:mm aa");
-//        String datetime = dateformat.format(c.getTime());
-//        return datetime;
-//    }
-
-    public void setUpListView() {
-
-
-    }
 
     //===============================================
     // extract bitmap helper, this sets image view
@@ -401,60 +197,5 @@ public class BeaconsFragment extends Fragment {
         }
     }// end getBitMapFromString
 
-//    public void linkBike() {
-//        //start monitoring for the selected bike
-//        beaconManager.connect(new BeaconManager.ServiceReadyCallback() {
-//            @Override
-//            public void onServiceReady() {
-//                beaconManager.startMonitoring(region = new com.estimote.sdk.Region("monitored region",
-//                        UUID.fromString("B9407F30-F5F8-466E-AFF9-25556B57FE6D"),
-//                        selectedBikeUUID, null));
-//
-//                Log.v("**region", "connected to (link bike method)"+selectedBikeUUID);
-//            }
-//        });
-//    }//end linkbike
-
-//       public void showStolen(DatabaseReference selectedBikeToLinksTo) {
-//
-//        final FirebaseListAdapter<BikeData> bikeAdapter = new FirebaseListAdapter<BikeData>
-//                (getActivity(), BikeData.class, R.layout.list_item_monitering, selectedBikeToLinksTo) {
-//            @Override
-//            protected void populateView(View v, BikeData model, int position) {
-//                //handling displaying of loading bar once data is recieved hide it.
-////                queryBikesUsingBeacons.addListenerForSingleValueEvent(new ValueEventListener() {
-////                    @Override
-////                    public void onDataChange(DataSnapshot dataSnapshot) {
-////                        Log.d("*count", " " + dataSnapshot.getChildrenCount());
-////                    }
-////
-////                    @Override
-////                    public void onCancelled(DatabaseError databaseError) {
-////                    }
-////                });
-//
-//                // Find the TextView IDs of list_item.xml
-//                TextView makeView = (TextView) v.findViewById(R.id.make);
-//                TextView modelView = (TextView) v.findViewById(model);
-//                TextView colorView = (TextView) v.findViewById(R.id.color);
-//                bike_image = (ImageView) v.findViewById(R.id.bike_image);
-//
-//                //setting the textViews to Bike data
-//                makeView.setText(model.getMake());
-//                modelView.setText(model.getModel());
-//                colorView.setText(model.getColor());
-//
-//                //call method to set image, which turns base64 string to image
-//                getBitMapFromString(model.getImageBase64());
-//
-//            }
-//        };
-//        listViewChooseBike.setAdapter(bikeAdapter);
-//
-//    }
-
-    public void changeFrag() {
-
-    }
 
 }

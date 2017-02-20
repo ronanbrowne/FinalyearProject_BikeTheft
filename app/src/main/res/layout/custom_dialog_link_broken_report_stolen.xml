@@ -27,23 +27,23 @@
             <!-- headinh -->
             <TextView
                 android:layout_width="0dp"
-                android:layout_weight="6"
+                android:layout_weight="16"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="14dp"
+                android:layout_marginLeft="18dp"
                 android:text="Report bike as stolen"
                 android:textColor="@color/colorPrimaryDark"
                 android:textStyle="bold" />
 
 
             <ImageView
-                android:id="@+id/infobeaconReport"
+                android:id="@+id/infoDialog"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right|center"
-                android:layout_marginRight="16dp"
-
+                android:layout_marginRight="8dp"
                 android:src="@drawable/ic_info_outline_black_24dp" />
+
         </LinearLayout>
 
         <!--bike-->
@@ -143,7 +143,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="14dp"
+            android:layout_marginLeft="18dp"
             android:layout_marginTop="24dp"
             android:text="Confirm last known location"
             android:textColor="@color/colorPrimaryDark"
@@ -173,6 +173,7 @@
                 <TextView
                     android:id="@+id/lastKnownLocation"
                     style="@style/EditorFieldStyle"
+                    android:background="?attr/editTextBackground"
                     android:layout_width="0dp"
                     android:layout_weight="2"
                     android:inputType="textCapWords" />
@@ -190,12 +191,13 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Date: "
-                    android:textStyle="bold" />
+                                        android:textStyle="bold" />
 
                 <!-- lastKnownDate field -->
                 <TextView
                     android:id="@+id/lastKnownDate"
                     style="@style/EditorFieldStyle"
+                    android:background="?attr/editTextBackground"
                     android:layout_width="0dp"
                     android:layout_weight="2"
                     android:inputType="textCapWords" />
@@ -227,7 +229,7 @@
 
 
             <android.support.design.widget.FloatingActionButton
-                android:id="@+id/floatingConfirmEdit"
+                android:id="@+id/floatingConfirmPopUp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="32dp"
