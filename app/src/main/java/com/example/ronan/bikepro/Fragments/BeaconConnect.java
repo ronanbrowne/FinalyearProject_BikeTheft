@@ -330,6 +330,8 @@ public class BeaconConnect extends Fragment implements DatePickerDialog.OnDateSe
     public void onStop() {
         super.onStop();
         client.disconnect();
+        beaconManager.stopMonitoring(region);
+        Log.d("*cycle","stop");
     }
 
     @Override
