@@ -48,7 +48,6 @@ public class Scan_For_Stolen extends Fragment {
 
 
     private BeaconListAdapter adapter;
-    private ArrayList mylist = new ArrayList();
     ArrayList<BikeData> matchedStolen = new ArrayList<>();
 
     List<BikeData> stolenBikes;
@@ -105,6 +104,13 @@ public class Scan_For_Stolen extends Fragment {
         ListView list = (ListView) rootView.findViewById(R.id.listRanging);
         list.setAdapter(adapter);
 
+        list.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
         //set up DB
         usersBikesDatabase = FirebaseDatabase.getInstance().getReference().child("Stolen Bikes");
         usersBikesDatabase.addValueEventListener(bikeDataListener);
@@ -127,7 +133,6 @@ public class Scan_For_Stolen extends Fragment {
                     stolenBikes = StolenBikesInArea(list);
 
                     Log.v("**test**", "Stolen bikes nearby: " + stolenBikes.size());
-
 
                     // UI update
                     adapter.replaceWith(stolenBikes);
@@ -170,14 +175,21 @@ public class Scan_For_Stolen extends Fragment {
     private List<BikeData> StolenBikesInArea(List<Beacon> beacon) {
         for (Beacon b : beacon) {
             //get the unique ID of beacon
+
+            if(matchedStolen.size()>3)
+                matchedStolen.clear();
+
             String beaconKey = String.valueOf(b.getMajor());
             for (BikeData data : bikes) {
 
                 Log.v("**test", "Major ID from bikes registered as stolen " + data.getBeaconUUID());
                 Log.v("**test", "comparing the above to  " + beaconKey);
 
+                String key = data.getBeaconUUID();
+                String major = key.split(":")[0];
+
                 //see if Firebase stored UUID matches that of ones in proximity, pull back match if so
-                if (data.getBeaconUUID().equals(beaconKey)) {
+                if (major.equals(beaconKey)) {
                     // check its aprox distance and set in Bike Object, need this for adapter class when populating UI
                     data.setBeaconAccuracy(Utils.computeAccuracy(b));
                     matchedStolen.add(data);
@@ -187,6 +199,7 @@ public class Scan_For_Stolen extends Fragment {
                 }
             }//end bike for
         }//end beacon for
+        Log.v("**test", "match size: "+matchedStolen.size());
 
         return matchedStolen;
     }//end method

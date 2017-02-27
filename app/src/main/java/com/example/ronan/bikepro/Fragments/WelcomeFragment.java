@@ -296,7 +296,7 @@ public class WelcomeFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 //show loading bar while working
-
+                thisStolen =0;
                 countStolen = dataSnapshot.getChildrenCount();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     BikeData bike = snapshot.getValue(BikeData.class);
