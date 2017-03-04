@@ -159,28 +159,28 @@ public class BeaconListAdapter extends BaseAdapter {
                 proximityColorResourceId = R.color.proximity1;
                 break;
             case 8:
-                proximityColorResourceId = R.color.proximity2;
+                proximityColorResourceId = R.color.proximity1;
                 break;
             case 7:
-                proximityColorResourceId = R.color.proximity2;
+                proximityColorResourceId = R.color.proximity1;
                 break;
             case 6:
-                proximityColorResourceId = R.color.proximity3;
+                proximityColorResourceId = R.color.proximity1;
                 break;
             case 5:
-                proximityColorResourceId = R.color.proximity3;
+                proximityColorResourceId = R.color.proximity1;
                 break;
             case 4:
-                proximityColorResourceId = R.color.proximity4;
+                proximityColorResourceId = R.color.proximity2;
                 break;
             case 3:
-                proximityColorResourceId = R.color.proximity5;
+                proximityColorResourceId = R.color.proximity3;
                 break;
             case 2:
-                proximityColorResourceId = R.color.proximity7;
+                proximityColorResourceId = R.color.proximity4;
                 break;
             case 1:
-                proximityColorResourceId = R.color.proximity9;
+                proximityColorResourceId = R.color.proximity7;
                 break;
             default:
                 proximityColorResourceId = R.color.proximity10plus;
