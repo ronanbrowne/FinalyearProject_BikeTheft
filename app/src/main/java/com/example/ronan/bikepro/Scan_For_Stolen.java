@@ -25,6 +25,7 @@ import android.view.animation.LinearInterpolator;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -66,6 +67,7 @@ public class Scan_For_Stolen extends Fragment implements
     private ArrayList<BikeData> bikes = new ArrayList<>();
     private DatabaseReference usersBikesDatabase;
     private TextView searchAreaHeading;
+    private ProgressBar loading_indicator_scan;
 
 
     private BeaconListAdapter adapter;
@@ -167,6 +169,7 @@ public class Scan_For_Stolen extends Fragment implements
         // set up adapter for list view
         adapter = new BeaconListAdapter(getContext());
         ListView list = (ListView) rootView.findViewById(R.id.listRanging);
+        loading_indicator_scan = (ProgressBar) rootView.findViewById(R.id.loading_indicator_scan);
          searchAreaHeading = (TextView) rootView.findViewById(R.id.temp);
         list.setAdapter(adapter);
 
@@ -201,6 +204,8 @@ public class Scan_For_Stolen extends Fragment implements
             @Override
             public void onBeaconsDiscovered(Region region, List<Beacon> list) {
                 if (!list.isEmpty()) {
+
+                    loading_indicator_scan.setVisibility(View.GONE);
 
                     //method to compare neary beacons to those listed as stollen
                     //returns a list of positive matches

@@ -134,7 +134,7 @@
                     android:layout_marginLeft="22dp"
                     android:layout_marginTop="16dp"
                     android:paddingBottom="8dp"
-                    android:text="Select bike to link"
+                    android:text="Which one of your bikes are you using today?"
                     android:textColor="@color/colorPrimaryDark"
                     android:textStyle="bold" />
 

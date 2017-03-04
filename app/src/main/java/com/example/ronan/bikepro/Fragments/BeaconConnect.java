@@ -35,6 +35,7 @@ import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -80,10 +81,12 @@ public class BeaconConnect extends Fragment implements DatePickerDialog.OnDateSe
     private LinearLayout selectedBike;
     private LinearLayout reportArea;
     private FloatingActionButton floatingConfirmReport;
+    private ProgressBar loading_indicator;
 
     private TextView makeView;
     private TextView modelView;
     private TextView colorView;
+    private TextView conectInfo;
 
     private Bitmap b;
     private Bitmap bitmap;
@@ -167,11 +170,13 @@ public class BeaconConnect extends Fragment implements DatePickerDialog.OnDateSe
         modelView = (TextView) rootView.findViewById(model);
         colorView = (TextView) rootView.findViewById(R.id.color);
         bike_image = (ImageView) rootView.findViewById(R.id.bike_image);
+        loading_indicator = (ProgressBar) rootView.findViewById(R.id.loading_indicator);
 
         selectedBike.setVisibility(View.INVISIBLE);
         reportArea.setVisibility(View.INVISIBLE);
         textStatus = (TextView) rootView.findViewById(R.id.textStatus);
         choose = (TextView) rootView.findViewById(R.id.chooseConnected);
+        conectInfo = (TextView) rootView.findViewById(R.id.conectInfo);
 
         beaconManager = new BeaconManager(getActivity().getApplicationContext());
 
@@ -205,6 +210,9 @@ public class BeaconConnect extends Fragment implements DatePickerDialog.OnDateSe
                 link.setImageResource(R.drawable.ic_bluetooth_connected_green_48dp);
                 selectedBike.setVisibility(View.VISIBLE);
                 reportArea.setVisibility(View.GONE);
+                loading_indicator.setVisibility(View.GONE);
+                choose.setText("Link established with");
+                conectInfo.setVisibility(View.GONE);
                 choose.setTextColor(ContextCompat.getColor(getContext(), R.color.colorPrimaryDark));
                 populateConnectedUIArea();
                 Log.v("**test", "Major ID: " + list.get(0).getMajor());
