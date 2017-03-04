@@ -1,7 +1,18 @@
 package com.example.ronan.bikepro;
 
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -11,8 +22,11 @@ import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.estimote.sdk.Beacon;
 import com.estimote.sdk.BeaconManager;
@@ -21,6 +35,11 @@ import com.estimote.sdk.SystemRequirementsChecker;
 import com.estimote.sdk.Utils;
 import com.example.ronan.bikepro.DataModel.BikeData;
 import com.example.ronan.bikepro.Helpers.BeaconListAdapter;
+import com.example.ronan.bikepro.Helpers.GetAddressFromLOcation;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -37,7 +56,8 @@ import java.util.UUID;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class Scan_For_Stolen extends Fragment {
+public class Scan_For_Stolen extends Fragment implements
+        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
 
     BeaconManager beaconManager;
 
@@ -45,6 +65,7 @@ public class Scan_For_Stolen extends Fragment {
     private Region region;
     private ArrayList<BikeData> bikes = new ArrayList<>();
     private DatabaseReference usersBikesDatabase;
+    private TextView searchAreaHeading;
 
 
     private BeaconListAdapter adapter;
@@ -53,11 +74,52 @@ public class Scan_For_Stolen extends Fragment {
     List<BikeData> stolenBikes;
 
     private ImageView infoLocator;
+    private BikeData bikeSelectedFromListAdapter;
+
+    private GoogleApiClient client;
+    protected Location mLastLocation;
+    private double latitude;
+    private double longditude;
+    private String LocationResult;
+    private String locationForMail;
 
 
     public Scan_For_Stolen() {
         // Required empty public constructor
     }
+
+    //===================================================================================
+    //=        dialog listener for pop up to send email to origional user
+    //===================================================================================
+    DialogInterface.OnClickListener dialogClickListenerForEmail = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            switch (which) {
+                case DialogInterface.BUTTON_POSITIVE:
+
+                    /// TODO: 30/12/2016  chage this to a email address
+                    String[] email = {bikeSelectedFromListAdapter.getRegisteredBy()};
+                    String subject = "Re: Confirmed sighting of your bike: " + bikeSelectedFromListAdapter.getMake();
+                    String body = "Hello, \n\n Regarding the sighting of your bike  (" + (bikeSelectedFromListAdapter.getColor() + " " + bikeSelectedFromListAdapter.getMake()) + "). " +
+                            "\n\n At the location " + searchAreaHeading.getText() + "\n\n" +
+                            "..." +
+                            "\n\n Regards.";
+
+
+                    composeEmail(email, subject, body);
+
+
+                    break;
+
+                case DialogInterface.BUTTON_NEGATIVE:
+
+                    //feedback
+                    Toast toastCanceled = Toast.makeText(getActivity().getApplicationContext(), " canceled", Toast.LENGTH_SHORT);
+                    toastCanceled.show();
+                    break;
+            }
+        }
+    };
 
     ValueEventListener bikeDataListener = new ValueEventListener() {
         @Override
@@ -96,18 +158,30 @@ public class Scan_For_Stolen extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_scan__for__stolen, container, false);
 
-         infoLocator = (ImageView) rootView.findViewById(R.id.infoLocator);
+        infoLocator = (ImageView) rootView.findViewById(R.id.infoLocator);
 
+        //set up location client
+        client = new GoogleApiClient.Builder(getActivity().getApplicationContext()).addApi(AppIndex.API).build();
+        buildGoogleApiClient();
 
         // set up adapter for list view
         adapter = new BeaconListAdapter(getContext());
         ListView list = (ListView) rootView.findViewById(R.id.listRanging);
+         searchAreaHeading = (TextView) rootView.findViewById(R.id.temp);
         list.setAdapter(adapter);
 
-        list.setOnClickListener(new View.OnClickListener() {
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
+
+                bikeSelectedFromListAdapter = (BikeData) adapterView.getAdapter().getItem(i);
+                Log.d("*click", " " + bikeSelectedFromListAdapter.getMake());
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle("Contact Owner").setMessage("Contact owner of this bike and report confirmed sighting?\n\n" +
+                        "This will launch your email client.").setPositiveButton("Proceed", dialogClickListenerForEmail)
+                        .setNegativeButton("Cancel", dialogClickListenerForEmail).show();
             }
         });
 
@@ -176,7 +250,7 @@ public class Scan_For_Stolen extends Fragment {
         for (Beacon b : beacon) {
             //get the unique ID of beacon
 
-            if(matchedStolen.size()>3)
+            if (matchedStolen.size() > 3)
                 matchedStolen.clear();
 
             String beaconKey = String.valueOf(b.getMajor());
@@ -192,6 +266,7 @@ public class Scan_For_Stolen extends Fragment {
                 if (major.equals(beaconKey)) {
                     // check its aprox distance and set in Bike Object, need this for adapter class when populating UI
                     data.setBeaconAccuracy(Utils.computeAccuracy(b));
+
                     matchedStolen.add(data);
                     Log.v("**test", "match found");
                 } else {
@@ -199,7 +274,7 @@ public class Scan_For_Stolen extends Fragment {
                 }
             }//end bike for
         }//end beacon for
-        Log.v("**test", "match size: "+matchedStolen.size());
+        Log.v("**test", "match size: " + matchedStolen.size());
 
         return matchedStolen;
     }//end method
@@ -222,9 +297,101 @@ public class Scan_For_Stolen extends Fragment {
     @Override
     public void onPause() {
         beaconManager.stopRanging(region);
-
         super.onPause();
     }
 
+    protected static final int PERMISSION_ACCESS_COARSE_LOCATION = 0;
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Log.i("*test", "Connection failed: ConnectionResult.getErrorCode() = " + connectionResult.getErrorCode());
+
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        if (ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(getActivity(), new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION},
+                    PERMISSION_ACCESS_COARSE_LOCATION);
+        } else {
+            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(client);
+            latitude = mLastLocation.getLatitude();
+            longditude = mLastLocation.getLongitude();
+
+            Log.i("*location", ""+latitude+" : "+longditude);
+
+            Log.v("*ya", "connected");
+
+
+
+            GetAddressFromLOcation.getAddressFromLocation(mLastLocation, getActivity().getApplicationContext(), new GeocoderHandler());
+
+
+        }
+    }
+
+    private class GeocoderHandler extends Handler {
+        @Override
+        public void handleMessage(Message message) {
+            switch (message.what) {
+                case 1:
+                    Bundle bundle = message.getData();
+                    LocationResult = bundle.getString("address");
+                    Log.i("*test", LocationResult);
+
+                    break;
+                default:
+                    LocationResult = null;
+            }
+
+            searchAreaHeading.setText(LocationResult);
+
+        }
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        Log.i("*test", "Connection suspended");
+        client.connect();
+    }
+
+    protected synchronized void buildGoogleApiClient() {
+        client = new GoogleApiClient.Builder(getActivity().getApplicationContext())
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+    }
+
+
+    //================================================================================
+    //   Method to compose a email called when a user clicks on bike item in listView.
+    //   Email generated to send to origional user.
+    //=================================================================================
+    public void composeEmail(String[] addresses, String subject, String body) {
+        Intent intent = new Intent(Intent.ACTION_SENDTO);
+        intent.setData(Uri.parse("mailto:")); // only email apps should handle this
+        intent.putExtra(Intent.EXTRA_EMAIL, addresses);
+        intent.putExtra(Intent.EXTRA_SUBJECT, subject);
+        intent.putExtra(Intent.EXTRA_TEXT, body);
+        //,ake sure user has a app capable of carrying out this intent
+        if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+            startActivity(intent);
+        }
+    }//end method
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        client.connect();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        beaconManager.stopRanging(region);
+        client.disconnect();
+        Log.d("*cycle","stop");
+    }
 
 }
