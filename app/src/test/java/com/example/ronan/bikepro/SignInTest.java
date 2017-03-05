@@ -15,6 +15,7 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowApplication;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertNotNull;
@@ -25,7 +26,7 @@ import static org.junit.Assert.assertNotNull;
 
 
 @RunWith(RobolectricTestRunner.class)
-@Config(constants = BuildConfig.class, sdk = 22)
+@Config(manifest = "app/src/main/AndroidManifest.xml", sdk = 23)
 public class SignInTest {
 
     private SignIn activity;
