@@ -40,7 +40,6 @@ import com.example.ronan.bikepro.Fragments.RegisterFragment;
 import com.example.ronan.bikepro.Fragments.ViewReportedSightingsFragment;
 import com.example.ronan.bikepro.Fragments.WelcomeFragment;
 import com.example.ronan.bikepro.R;
-import com.example.ronan.bikepro.Scan_For_Stolen;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -95,7 +94,7 @@ public class MainActivity extends AppCompatActivity
     ArrayList<String> keysForStolenBikes = new ArrayList<>();
 
     private boolean mapOpen = false;
-private long sightingsCount;
+    private long sightingsCount;
 
     //===================================================================================
     // Firebase event listener for counting "Mail"
@@ -103,11 +102,13 @@ private long sightingsCount;
     ValueEventListener countMail = new ValueEventListener() {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
+
+
             sightingsCount = dataSnapshot.getChildrenCount();
             Log.v("*", "sight: " + sightingsCount);
-          //  Toast.makeText(MainActivity.this, "(testing, delete later) mail Box:   "+sightingsCount, Toast.LENGTH_SHORT).show();
 
-            if (menuItem!=null) {
+
+            if (menuItem != null) {
                 menuItem.setIcon(buildCounterDrawable((int) sightingsCount, R.drawable.ic_remove_red_eye_black_24dp));
             }
         }
@@ -221,7 +222,6 @@ private long sightingsCount;
         setContentView(R.layout.activity_main);
 
 
-
         //setFragment
         WelcomeFragment mainFragment = new WelcomeFragment();
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
@@ -263,7 +263,6 @@ private long sightingsCount;
         mFirebaseAuth.addAuthStateListener(mAuthListener);
 
 
-
         //get current user
         mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         //if its not null grab email address then remove the @ bit , firebase cant take special symbols in node names
@@ -280,11 +279,9 @@ private long sightingsCount;
         userDataBase.addValueEventListener(fetchUserData);
 
 
-
-        userSightings= FirebaseDatabase.getInstance().getReference().child("Viewing bikes Reported Stolen").child(email);
+        userSightings = FirebaseDatabase.getInstance().getReference().child("Viewing bikes Reported Stolen").child(email);
         userSightings.addValueEventListener(countMail);
         Log.v("4", String.valueOf(sightingsCount));
-
 
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -349,23 +346,22 @@ private long sightingsCount;
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-         getMenuInflater().inflate(R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.main, menu);
 
 
         Log.v("4", String.valueOf(sightingsCount));
 
 
-
         menuItem = menu.findItem(R.id.testAction);
-      //  menuItem.setIcon(R.drawable.ic_mail_outline_white_24dp);
+        //  menuItem.setIcon(R.drawable.ic_mail_outline_white_24dp);
 
         //  menuItem.setIcon(buildCounterDrawable( counInt,  R.drawable.ic_mail_outline_white_24dp));
 
         return true;
     }
 
-        @TargetApi(Build.VERSION_CODES.KITKAT)
-        private Drawable buildCounterDrawable(int count, int backgroundImageId) {
+    @TargetApi(Build.VERSION_CODES.KITKAT)
+    private Drawable buildCounterDrawable(int count, int backgroundImageId) {
         LayoutInflater inflater = LayoutInflater.from(this);
         View view = inflater.inflate(R.layout.badge_layout_messenger_icon, null);
         //view.setBackgroundResource(backgroundImageId);
@@ -373,28 +369,35 @@ private long sightingsCount;
         if (count == 0) {
             View counterTextPanel = view.findViewById(R.id.counterValuePanel);
             counterTextPanel.setVisibility(View.GONE);
+
+            Bitmap b = BitmapFactory.decodeResource(this.getResources(), R.drawable.ic_remove_red_eye_black_24dp);
+            ;
+
+            return new BitmapDrawable(getResources(), b);
         } else {
             TextView textView = (TextView) view.findViewById(R.id.count);
             textView.setTextSize(40);
             textView.setText("" + count);
-        }
 
-        view.measure(
-                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
-                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
-        view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
+            view.measure(
+                    View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+                    View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+            view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
 
-        view.setDrawingCacheEnabled(true);
-        view.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
-        Bitmap bitmap = Bitmap.createBitmap(view.getDrawingCache());
-        view.setDrawingCacheEnabled(false);
+            view.setDrawingCacheEnabled(true);
+            view.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+            Bitmap bitmap = Bitmap.createBitmap(view.getDrawingCache());
+            view.setDrawingCacheEnabled(false);
 
 //
 //                bitmap.setWidth(90);
 //                bitmap.setHeight(90);
 
             return new BitmapDrawable(getResources(), bitmap);
+        }
+
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -497,7 +500,7 @@ private long sightingsCount;
             fm.beginTransaction().replace(R.id.fragment_container, new GmapFragment(), "mapp").commit();
 
 
-        }else if (id == R.id.nav_beacons) {
+        } else if (id == R.id.nav_beacons) {
 
             //setFragment
             Beacon_manager beaconsFragment = new Beacon_manager();
@@ -509,12 +512,10 @@ private long sightingsCount;
         }
 
 
-            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-
-
 
 
     @Override
@@ -524,15 +525,15 @@ private long sightingsCount;
         //set up file location
         ContextWrapper cw = new ContextWrapper(getApplicationContext());
         File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
-        File mypath=new File(directory,email); //file name
+        File mypath = new File(directory, email); //file name
 
         //sett if it has been previously created grab cached file it so
-        if(mypath.exists()){
+        if (mypath.exists()) {
             loadImageFromStorage(email);
-            Log.v("*File path exist", "true: "+mypath.getAbsolutePath());
+            Log.v("*File path exist", "true: " + mypath.getAbsolutePath());
         }
         //other wise grab remote file
-        else{
+        else {
             //     saveToInternalStorage(bitmap);
             loadProfileImage(email);
             //    upload_image.setImageBitmap(bitmap);
@@ -541,24 +542,20 @@ private long sightingsCount;
     }
 
 
-
-    private void loadImageFromStorage(String path)
-    {
+    private void loadImageFromStorage(String path) {
         try {
             Log.v("*File storage Load", "file exists retreving from storage");
             ContextWrapper cw = new ContextWrapper(getApplicationContext());
             File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
             // path for this user
-            File mypath=new File(directory,email); //file name
+            File mypath = new File(directory, email); //file name
 
             Bitmap b = BitmapFactory.decodeStream(new FileInputStream(mypath));
             navProvile.setImageBitmap(b);
 
             Log.v("*File storage Load", mypath.getAbsolutePath());
             Log.v("*File storage Load", email);
-        }
-        catch (FileNotFoundException e)
-        {
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
 
@@ -566,13 +563,13 @@ private long sightingsCount;
 
 
     //fill users image to selected view
-    public String loadProfileImage (final String userToLoad){
+    public String loadProfileImage(final String userToLoad) {
 
         // Create storage reference
         final StorageReference storageRef = storage.getReferenceFromUrl("gs://findmybike-1a1af.appspot.com/Profilers/");
 
         //set image based on user id
-        StorageReference  myProfilePic = storageRef.child(userToLoad);
+        StorageReference myProfilePic = storageRef.child(userToLoad);
 
         //set max image download size
         final long ONE_MEGABYTE = 10000 * 10000;
@@ -584,7 +581,7 @@ private long sightingsCount;
                 Bitmap userImage = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 
                 //save this user image to local device
-            //    saveToInternalStorage(userImage);
+                //    saveToInternalStorage(userImage);
 
                 navProvile.setImageBitmap(userImage);
             }
@@ -593,7 +590,7 @@ private long sightingsCount;
             public void onFailure(@NonNull Exception exception) {
                 //         reset to default image if no image is selected
                 StorageReference myProfilePic = storageRef.child("default.jpg");
-                myProfilePic.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>(){
+                myProfilePic.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                     @Override
                     public void onSuccess(byte[] bytes) {
                         //decode image

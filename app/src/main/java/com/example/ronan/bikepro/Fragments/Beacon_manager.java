@@ -1,15 +1,19 @@
 package com.example.ronan.bikepro.Fragments;
 
 
+import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -50,6 +54,37 @@ public class Beacon_manager extends Fragment {
     LinearLayout helpArea;
     ImageView infobeacon;
 
+    LocationManager locationManager;
+    boolean GpsStatus ;
+
+    public void CheckGpsStatus() {
+
+        locationManager = (LocationManager) getActivity().getApplicationContext().getSystemService(getActivity().getApplicationContext().LOCATION_SERVICE);
+
+        GpsStatus = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+        if (GpsStatus == true) {
+            Log.v("*gps","true");
+        } else {
+
+            new AlertDialog.Builder(getActivity())
+                    .setTitle("Enable location services")
+                    .setMessage("Location Services must be enabled to continue")
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent i = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                            startActivity(i);
+                        }
+                    })
+                    .setIcon(R.drawable.ic_gps_not_fixed_black_24dp)
+                    .show();
+
+            Log.v("*gps","false");
+
+        }
+
+    }
+
 
     public Beacon_manager() {
         // Required empty public constructor
@@ -62,6 +97,7 @@ public class Beacon_manager extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_beacon_manager, container, false);
 
+
         linkToBike = (LinearLayout) rootView.findViewById(R.id.monitering);
         scanForStolen = (LinearLayout) rootView.findViewById(R.id.ranging);
         helpArea = (LinearLayout) rootView.findViewById(R.id.help);
@@ -72,6 +108,9 @@ public class Beacon_manager extends Fragment {
         scanForStolen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                CheckGpsStatus();
+
+
                 //setFragment
                 FragmentManager fm = getFragmentManager();
                 fm.beginTransaction().replace(R.id.fragment_container, new Scan_For_Stolen()).commit();
@@ -83,6 +122,9 @@ public class Beacon_manager extends Fragment {
         linkToBike.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                CheckGpsStatus();
+
+
                 //setFragment
                 FragmentManager fm = getFragmentManager();
                 fm.beginTransaction().replace(R.id.fragment_container, new BeaconsFragment()).commit();

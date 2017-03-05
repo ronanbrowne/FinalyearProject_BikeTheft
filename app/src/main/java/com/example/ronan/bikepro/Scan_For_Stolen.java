@@ -6,10 +6,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -58,7 +60,10 @@ import java.util.UUID;
  * A simple {@link Fragment} subclass.
  */
 public class Scan_For_Stolen extends Fragment implements
-        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
+        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+
+
+    protected static final int PERMISSION_ACCESS_COARSE_LOCATION = 0;
 
     BeaconManager beaconManager;
 
@@ -170,7 +175,7 @@ public class Scan_For_Stolen extends Fragment implements
         adapter = new BeaconListAdapter(getContext());
         ListView list = (ListView) rootView.findViewById(R.id.listRanging);
         loading_indicator_scan = (ProgressBar) rootView.findViewById(R.id.loading_indicator_scan);
-         searchAreaHeading = (TextView) rootView.findViewById(R.id.temp);
+        searchAreaHeading = (TextView) rootView.findViewById(R.id.temp);
         list.setAdapter(adapter);
 
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -305,7 +310,6 @@ public class Scan_For_Stolen extends Fragment implements
         super.onPause();
     }
 
-    protected static final int PERMISSION_ACCESS_COARSE_LOCATION = 0;
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
@@ -313,27 +317,32 @@ public class Scan_For_Stolen extends Fragment implements
 
     }
 
+
+
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        if (ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(getActivity(), new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION},
-                    PERMISSION_ACCESS_COARSE_LOCATION);
-        } else {
-            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(client);
-            latitude = mLastLocation.getLatitude();
-            longditude = mLastLocation.getLongitude();
-
-            Log.i("*location", ""+latitude+" : "+longditude);
-
-            Log.v("*ya", "connected");
 
 
 
-            GetAddressFromLOcation.getAddressFromLocation(mLastLocation, getActivity().getApplicationContext(), new GeocoderHandler());
 
+        if (ContextCompat.checkSelfPermission(this.getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION},
+                    PERMISSION_ACCESS_COARSE_LOCATION);}
+     else {
+
+                mLastLocation = LocationServices.FusedLocationApi.getLastLocation(client);
+                latitude = mLastLocation.getLatitude();
+                longditude = mLastLocation.getLongitude();
+
+                Log.i("*location", "" + latitude + " : " + longditude);
+
+                Log.v("*ya", "connected");
+                GetAddressFromLOcation.getAddressFromLocation(mLastLocation, getActivity().getApplicationContext(), new GeocoderHandler());
 
         }
+
     }
+
 
     private class GeocoderHandler extends Handler {
         @Override
@@ -396,7 +405,7 @@ public class Scan_For_Stolen extends Fragment implements
         super.onStop();
         beaconManager.stopRanging(region);
         client.disconnect();
-        Log.d("*cycle","stop");
+        Log.d("*cycle", "stop");
     }
 
 }
