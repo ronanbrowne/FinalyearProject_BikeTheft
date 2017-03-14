@@ -173,8 +173,8 @@ public class ViewReportedSightingsFragment extends Fragment {
             }
         });
         //set the divider
-        myListView.setDivider(ContextCompat.getDrawable(getActivity(), R.drawable.divider));
-        myListView.setDividerHeight(2);
+      myListView.setDivider(ContextCompat.getDrawable(getActivity(), R.color.transperent_color));
+        myListView.setDividerHeight(40);
 
         //Firebase DB setup
         usersSightings = FirebaseDatabase.getInstance().getReference().child("Viewing bikes Reported Stolen").child(email);

@@ -49,6 +49,8 @@ dependencies {
     testCompile "org.robolectric:robolectric:3.2.2"
     testCompile "org.robolectric:shadows-support-v4:3.0"
     testCompile 'org.assertj:assertj-core:1.7.1'
+    compile 'com.codevscolor.materialpreference:mp:0.2.1'
+
 
 
 

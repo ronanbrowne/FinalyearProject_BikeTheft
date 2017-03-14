@@ -1,0 +1,38 @@
+<android.support.v7.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <com.codevscolor.materialpreference.widget.MaterialPreferenceCategory android:title="Category one">
+        <com.codevscolor.materialpreference.widget.ColorChooserPreference
+            android:key="secondary_color_position"
+            android:summary="select accent color"
+            android:title="secondary color" />
+        <android.support.v7.preference.SwitchPreferenceCompat
+            android:defaultValue="true"
+            android:key="switch_pref"
+            android:summary="Sample switch preference"
+            android:title="Click on it" />
+        <android.support.v7.preference.EditTextPreference
+            android:defaultValue="true"
+            android:key="edit_text"
+            android:summary="Edit text preference summary"
+            android:title="Sample Edit Text" />
+        <android.support.v7.preference.CheckBoxPreference
+            android:defaultValue="true"
+            android:key="Checkbox_true"
+            android:summary="Sample enabled checkbox"
+            android:title="Checkbox enabled" />
+    </com.codevscolor.materialpreference.widget.MaterialPreferenceCategory>
+
+    <com.codevscolor.materialpreference.widget.MaterialPreferenceCategory android:title="Category Two">
+        <android.support.v7.preference.CheckBoxPreference
+            android:defaultValue="false"
+            android:key="Checkbox_false"
+            android:summary="Sample disabled checkbox"
+            android:title="Checkbox disabled" />
+        <android.support.v7.preference.ListPreference
+            android:entries="@array/sample_array"
+            android:entryValues="@array/array_values"
+            android:key="list_preference"
+            android:summary="Theme preference"
+            android:title="Theme" />
+    </com.codevscolor.materialpreference.widget.MaterialPreferenceCategory>
+
+</android.support.v7.preference.PreferenceScreen>

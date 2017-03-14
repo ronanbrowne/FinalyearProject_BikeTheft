@@ -7,6 +7,8 @@
     <color name="white">#ffffff</color>
 
 
+        <color name="transperent_color">#00000000</color>
+
 
     <!-- Color for an bike with proximity 0 and 2 -->
     <color name="proximity1">#4A7BA7</color>

@@ -416,6 +416,9 @@ public class MainActivity extends AppCompatActivity
                     .setNegativeButton("No", dialogClickListener).show();
         } else if (id == R.id.action_sign_out) {
             mFirebaseAuth.signOut();
+        } else if (id == R.id.action_settings) {
+            Intent settingIntent = new Intent(this, SettingsActivity.class);
+            startActivity(settingIntent);
         } else if (id == R.id.testAction) {
             ViewReportedSightingsFragment reportSightingFragment = new ViewReportedSightingsFragment();
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
