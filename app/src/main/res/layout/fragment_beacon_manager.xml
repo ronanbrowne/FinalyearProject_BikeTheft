@@ -73,6 +73,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:textColor="@color/textColorPrimary"
                     android:gravity="center"
                     android:textStyle="bold"
                     android:padding="3dip"
@@ -105,6 +106,7 @@
                     android:gravity="center"
                     android:padding="3dip"
                     android:textStyle="bold"
+                    android:textColor="@color/textColorPrimary"
                     android:text="\nSearch for stolen bikes" />
             </LinearLayout>
 

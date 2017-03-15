@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
     tools:context="com.example.ronan.bikepro.Fragments.EditFragment">
 
     <ScrollView
@@ -40,6 +39,7 @@
 
             <!-- Image upload layout -->
             <LinearLayout
+                android:id="@+id/image_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/background_shadow"
@@ -55,7 +55,7 @@
                     android:layout_gravity="top"
                     android:layout_marginLeft="14dp"
                     android:text="Image"
-                    android:textColor="@color/colorPrimaryDark" />
+                    android:textColor="@color/bikeHeadings" />
 
 
                 <ImageView
@@ -83,6 +83,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/main_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/background_shadow"
@@ -98,7 +99,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="14dp"
                     android:text="Bike Details"
-                    android:textColor="@color/colorPrimaryDark"
+                    android:textColor="@color/bikeHeadings"
                     android:textStyle="bold"
 
                     />
@@ -275,6 +276,7 @@
 
             <!--stolen area layout-->
             <LinearLayout
+                android:id="@+id/stolen_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
@@ -291,7 +293,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="14dp"
                     android:text="Bike has been Stolen"
-                    android:textColor="@color/colorPrimaryDark"
+                    android:textColor="@color/bikeHeadings"
                     android:textStyle="bold" />
 
 

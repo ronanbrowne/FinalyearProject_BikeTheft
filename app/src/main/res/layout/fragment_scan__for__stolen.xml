@@ -1,7 +1,6 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="#FFFFFF"
     android:layout_height="match_parent"
     tools:context="com.example.ronan.bikepro.Scan_For_Stolen">
 
@@ -62,7 +61,7 @@
                 android:layout_marginLeft="4dp"
                 android:layout_marginTop="8dp"
                 android:text="Searching area for stolen bikes"
-                android:textColor="@color/colorPrimaryDark"
+                android:textColor="@color/textColorPrimary"
                 android:textStyle="bold" />
 
 

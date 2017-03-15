@@ -4,6 +4,7 @@ package com.example.ronan.bikepro.Fragments;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.preference.PreferenceManager;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.ronan.bikepro.DataModel.BikeData;
@@ -56,6 +59,8 @@ public class RegisterFragment extends Fragment {
     String base64 = "No image";
     private ImageView info;
     private ImageView infoUUID;
+    private LinearLayout container_image;
+    private LinearLayout container_main;
 
     private static final int SELECT_PICTURE = 0;
     private static final int REQUEST_IMAGE_CAPTURE = 1;
@@ -124,6 +129,11 @@ public class RegisterFragment extends Fragment {
         addBikeFloatingActionButton = (FloatingActionButton) rootView.findViewById(R.id.floatingAdd);
         info = (ImageView) rootView.findViewById(R.id.infoSize);
         infoUUID = (ImageView) rootView.findViewById(R.id.infoUUID);
+        container_image = (LinearLayout) rootView.findViewById(R.id.container_image);
+        container_main = (LinearLayout) rootView.findViewById(R.id.container_main);
+
+
+        setBackGroundImage();
 
         //setting up FireBase DB
         mDatabase = FirebaseDatabase.getInstance().getReference().child("Bikes Registered By User");
@@ -144,10 +154,10 @@ public class RegisterFragment extends Fragment {
             public void onClick(View view) {
                 Tooltip tooltip = new Tooltip.Builder(info)
                         .setText("This is the height of the bike.\nAverage adult male frame size: 22 \nAverage adult female frame size: 18\nAverage child's size (10+ years): 13")
-                        .setTextColor(ContextCompat.getColor(getContext(),R.color.white))
+                        .setTextColor(ContextCompat.getColor(getContext(), R.color.white))
                         .setDismissOnClick(true)
                         .setCancelable(true)
-                        .setBackgroundColor(ContextCompat.getColor(getContext(),R.color.cyan)).show();
+                        .setBackgroundColor(ContextCompat.getColor(getContext(), R.color.cyan)).show();
             }
         });
 
@@ -157,10 +167,10 @@ public class RegisterFragment extends Fragment {
             public void onClick(View view) {
                 Tooltip tooltip = new Tooltip.Builder(infoUUID)
                         .setText("This is the unique sensor code\nThis will allow your bike\nTo be tracked in event of theft")
-                        .setTextColor(ContextCompat.getColor(getContext(),R.color.white))
+                        .setTextColor(ContextCompat.getColor(getContext(), R.color.white))
                         .setDismissOnClick(true)
                         .setCancelable(true)
-                        .setBackgroundColor(ContextCompat.getColor(getContext(),R.color.cyan)).show();
+                        .setBackgroundColor(ContextCompat.getColor(getContext(), R.color.cyan)).show();
             }
         });
 
@@ -200,7 +210,7 @@ public class RegisterFragment extends Fragment {
                 else {
 
                     //newBike object using constructor to populate attributes
-                    BikeData newBike = new BikeData(make, frameSize, color, other, stolen, base64, model, "N/A", 0, 0, uniqueIdentifier,beacon_UUID,0);
+                    BikeData newBike = new BikeData(make, frameSize, color, other, stolen, base64, model, "N/A", 0, 0, uniqueIdentifier, beacon_UUID, 0);
 
                     //get id part of email use this for where to place in DB. Firebase cant have a @ in DB refrence
                     uniqueIdentifier = uniqueIdentifier.split("@")[0];
@@ -302,6 +312,22 @@ public class RegisterFragment extends Fragment {
         byte[] byteArray = bYtE.toByteArray();
         String imageFile = Base64.encodeToString(byteArray, Base64.DEFAULT);
         return imageFile;
+    }
+
+    public void setBackGroundImage(){
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+        String themePref = preferences.getString("list_preference", "");
+
+        if (themePref.equals("AppThemeSecondary")){
+            container_image.setBackground(ContextCompat.getDrawable(getActivity(),R.drawable.background_shadow_night));
+            container_main.setBackground(ContextCompat.getDrawable(getActivity(),R.drawable.background_shadow_night));
+        }
+        else{
+            container_image.setBackground(ContextCompat.getDrawable(getActivity(),R.drawable.background_shadow));
+            container_main.setBackground(ContextCompat.getDrawable(getActivity(),R.drawable.background_shadow));
+
+        }
     }
 
 

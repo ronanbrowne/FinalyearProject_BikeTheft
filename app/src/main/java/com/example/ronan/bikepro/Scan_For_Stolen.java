@@ -4,6 +4,7 @@ package com.example.ronan.bikepro;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
@@ -17,6 +18,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -171,8 +173,12 @@ public class Scan_For_Stolen extends Fragment implements
         client = new GoogleApiClient.Builder(getActivity().getApplicationContext()).addApi(AppIndex.API).build();
         buildGoogleApiClient();
 
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+        String themePref = preferences.getString("list_preference", "");
+
+
         // set up adapter for list view
-        adapter = new BeaconListAdapter(getContext());
+        adapter = new BeaconListAdapter(getContext(),themePref);
         ListView list = (ListView) rootView.findViewById(R.id.listRanging);
         loading_indicator_scan = (ProgressBar) rootView.findViewById(R.id.loading_indicator_scan);
         searchAreaHeading = (TextView) rootView.findViewById(R.id.temp);

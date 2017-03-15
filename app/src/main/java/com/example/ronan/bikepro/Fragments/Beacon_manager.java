@@ -4,11 +4,14 @@ package com.example.ronan.bikepro.Fragments;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -53,6 +56,7 @@ public class Beacon_manager extends Fragment {
         helpArea = (LinearLayout) rootView.findViewById(R.id.help);
         infobeacon = (ImageView) rootView.findViewById(R.id.infobeacon);
 
+        setBackGroundImage();
 
         //Button click to launch edit profile page
         scanForStolen.setOnClickListener(new View.OnClickListener() {
@@ -133,6 +137,22 @@ public class Beacon_manager extends Fragment {
             Log.v("*gps", "true");
         } else {
             Log.v("*gps", "false");
+        }
+    }
+
+    public void setBackGroundImage(){
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+        String themePref = preferences.getString("list_preference", "");
+
+        if (themePref.equals("AppThemeSecondary")){
+            linkToBike.setBackground(ContextCompat.getDrawable(getActivity(),R.drawable.border_night));
+            scanForStolen.setBackground(ContextCompat.getDrawable(getActivity(),R.drawable.border_night));
+        }
+        else{
+            linkToBike.setBackground(ContextCompat.getDrawable(getActivity(),R.drawable.border));
+            scanForStolen.setBackground(ContextCompat.getDrawable(getActivity(),R.drawable.border));
+
         }
     }
 

@@ -4,12 +4,14 @@ package com.example.ronan.bikepro.Fragments;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.preference.PreferenceManager;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,6 +22,7 @@ import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -212,6 +215,18 @@ public class ViewReportedSightingsFragment extends Fragment {
                 TextView reportedlocationView = (TextView) v.findViewById(R.id.sighting);
                 TextView reportedByUserView = (TextView) v.findViewById(R.id.reportedBy);
                 TextView dateReportedView = (TextView) v.findViewById(R.id.dateReported);
+                LinearLayout main = (LinearLayout) v.findViewById(R.id.container);
+
+
+
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+                String themePref = preferences.getString("list_preference", "");
+                if (themePref.equals("AppThemeSecondary")) {
+                    main.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.background_shadow_night));
+                } else {
+                    main.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.background_shadow));
+                }
+
 
                 //setting the textViews to Bike data
                 makeView.setText(model.getMake());

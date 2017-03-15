@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF5252</color>
-    <color name="cyan">#0000ff</color>
-    <color name="white">#ffffff</color>
-    <color name="bikeHeadings">#303F9F</color>
-    <color name="textColorPrimary">#212121</color>
-    <color name="textColorSecondary">#787878</color>
-    <color name="background">#ffffff</color>
+    <color name="colorPrimary">#555555</color>
+    <color name="colorPrimaryDark">#555555</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="textColorPrimary">#ffffff</color>
+    <color name="textColorSecondary">#ffffff</color>
+    <color name="background">#555555</color>
+    <color name="bikeHeadings">#ffffff</color>
+
+
+
 
     <color name="transperent_color">#00000000</color>
 

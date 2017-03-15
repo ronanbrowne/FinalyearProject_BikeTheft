@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -18,6 +19,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.preference.PreferenceManager;
 import android.util.Base64;
 import android.util.Log;
 import android.view.Gravity;
@@ -357,7 +359,19 @@ public class DatabaseFragment extends Fragment {
 
         //  ListView
         myListView = (ListView) rootView.findViewById(R.id.list);
-        myListView.setDivider(ContextCompat.getDrawable(getActivity(), R.drawable.divider));
+
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+        String themePref = preferences.getString("list_preference", "");
+
+        if (themePref.equals("AppThemeSecondary")){
+            myListView.setDivider(ContextCompat.getDrawable(getActivity(), R.drawable.divider_night));
+        }
+        else{
+            myListView.setDivider(ContextCompat.getDrawable(getActivity(), R.drawable.divider));
+        }
+
+
         myListView.setDividerHeight(1);
 
 

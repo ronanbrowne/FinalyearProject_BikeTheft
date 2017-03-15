@@ -13,11 +13,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.ronan.bikepro.DataModel.BikeData;
 import com.example.ronan.bikepro.R;
-import com.example.ronan.bikepro.Scan_For_Stolen;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -35,11 +35,13 @@ public class BeaconListAdapter extends BaseAdapter {
     private ArrayList<BikeData> bikes;
     private LayoutInflater inflater;
     Context myContext;
+    private String prefrence;
 
-    public BeaconListAdapter(Context context) {
+    public BeaconListAdapter(Context context, String themePref) {
         this.inflater = LayoutInflater.from(context);
         this.bikes = new ArrayList<>();
         this.myContext = context;
+        this.prefrence = themePref;
     }
 
     public void replaceWith(Collection<BikeData> newBikes) {
@@ -96,16 +98,16 @@ public class BeaconListAdapter extends BaseAdapter {
         proximityCircle.setColor(proximittColour);
 
 
-
     }
 
     private View inflateIfRequired(View view, int position, ViewGroup parent) {
         if (view == null) {
             view = inflater.inflate(R.layout.list_item_ranging, null);
-            view.setTag(new ViewHolder(view));
+            view.setTag(new ViewHolder(view, prefrence, myContext));
         }
         return view;
     }
+
 
     static class ViewHolder {
         final TextView makeView;
@@ -115,9 +117,13 @@ public class BeaconListAdapter extends BaseAdapter {
         final TextView lastLocationTextView;
         final TextView aproxDistance;
         final ImageView bikePic;
+        final LinearLayout main_layout;
+        final String pref;
+
+        Context c;
 
 
-        ViewHolder(View view) {
+        ViewHolder(View view, String pref, Context myContext) {
             // makeView = (TextView) view.findViewById(ma)
             makeView = (TextView) view.findViewById(R.id.make_ranging);
             modelTextView = (TextView) view.findViewById(R.id.model_ranging);
@@ -126,8 +132,23 @@ public class BeaconListAdapter extends BaseAdapter {
             lastLocationTextView = (TextView) view.findViewById(R.id.loaction_ranging);
             aproxDistance = (TextView) view.findViewById(R.id.Distance_ranging);
             bikePic = (ImageView) view.findViewById(R.id.bike_image_ranging);
+            main_layout = (LinearLayout) view.findViewById(R.id.main_layout);
+            this.pref = pref;
+            c = myContext;
+            checkBackgroundImage();
 
 
+        }
+
+
+
+
+        public void checkBackgroundImage() {
+            if (pref.equals("AppThemeSecondary")) {
+                main_layout.setBackground(ContextCompat.getDrawable(c, R.drawable.background_shadow_night));
+            } else {
+                main_layout.setBackground(ContextCompat.getDrawable(c, R.drawable.background_shadow));
+            }
         }
     }
 

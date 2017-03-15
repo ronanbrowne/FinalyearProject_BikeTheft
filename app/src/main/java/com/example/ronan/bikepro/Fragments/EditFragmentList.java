@@ -3,6 +3,7 @@ package com.example.ronan.bikepro.Fragments;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.preference.PreferenceManager;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -140,7 +142,21 @@ public class EditFragmentList extends Fragment {
         info = (ImageView) rootView.findViewById(R.id.infoReportEdit);
 
         //set the divider
-        myListView.setDivider(ContextCompat.getDrawable(getActivity(), R.drawable.divider));
+
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+        String themePref = preferences.getString("list_preference", "");
+
+        if (themePref.equals("AppThemeSecondary")){
+            myListView.setDivider(ContextCompat.getDrawable(getActivity(), R.drawable.divider_night));
+        }
+        else{
+            myListView.setDivider(ContextCompat.getDrawable(getActivity(), R.drawable.divider));
+        }
+
+
+
+
         myListView.setDividerHeight(1);
 
 

@@ -9,6 +9,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -25,6 +26,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.preference.PreferenceManager;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -36,6 +38,7 @@ import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -80,6 +83,8 @@ public class BeaconConnect extends Fragment implements DatePickerDialog.OnDateSe
     private ImageView bike_image;
     private LinearLayout selectedBike;
     private LinearLayout reportArea;
+    private LinearLayout scan_area;
+    private RelativeLayout info_area;
     private FloatingActionButton floatingConfirmReport;
     private ProgressBar loading_indicator;
 
@@ -164,6 +169,8 @@ public class BeaconConnect extends Fragment implements DatePickerDialog.OnDateSe
         floatingConfirmReport = (FloatingActionButton) rootView.findViewById(R.id.floatingConfirmReport);
         selectedBike = (LinearLayout) rootView.findViewById(R.id.selectedBike);
         reportArea = (LinearLayout) rootView.findViewById(R.id.reportArea);
+        scan_area = (LinearLayout) rootView.findViewById(R.id.scan_area);
+        info_area = (RelativeLayout) rootView.findViewById(R.id.info_area);
         b = BitmapFactory.decodeResource(getActivity().getResources(), R.drawable.ic_directions_bike_black_24dp);
 
         makeView = (TextView) rootView.findViewById(R.id.make);
@@ -177,6 +184,8 @@ public class BeaconConnect extends Fragment implements DatePickerDialog.OnDateSe
         textStatus = (TextView) rootView.findViewById(R.id.textStatus);
         choose = (TextView) rootView.findViewById(R.id.chooseConnected);
         conectInfo = (TextView) rootView.findViewById(R.id.conectInfo);
+
+        setBackGroundImage();
 
         beaconManager = new BeaconManager(getActivity().getApplicationContext());
 
@@ -518,4 +527,20 @@ public class BeaconConnect extends Fragment implements DatePickerDialog.OnDateSe
 
         }
     };
+
+    public void setBackGroundImage(){
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+        String themePref = preferences.getString("list_preference", "");
+
+        if (themePref.equals("AppThemeSecondary")){
+            scan_area.setBackground(ContextCompat.getDrawable(getActivity(),R.drawable.background_shadow_night));
+            info_area.setBackground(ContextCompat.getDrawable(getActivity(),R.drawable.background_shadow_night));
+        }
+        else{
+            scan_area.setBackground(ContextCompat.getDrawable(getActivity(),R.drawable.background_shadow));
+            info_area.setBackground(ContextCompat.getDrawable(getActivity(),R.drawable.background_shadow));
+
+        }
+    }
 }

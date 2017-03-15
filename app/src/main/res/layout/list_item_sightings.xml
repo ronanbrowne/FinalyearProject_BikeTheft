@@ -9,6 +9,7 @@
     android:orientation="vertical"
     android:paddingEnd="16dp"
     android:paddingLeft="16dp"
+    android:id="@+id/container"
     android:paddingBottom="16dp"
     android:paddingTop="16dp"
     android:paddingRight="16dp"
@@ -16,7 +17,7 @@
 
 
     <TextView
-        android:textColor="@color/colorPrimaryDark"
+        android:textColor="@color/textColorPrimary"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="16sp"
@@ -137,7 +138,7 @@
     </LinearLayout>
 
     <TextView
-        android:textColor="@color/colorPrimaryDark"
+        android:textColor="@color/textColorPrimary"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="16sp"

@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
     tools:context="com.example.ronan.bikepro.Fragments.ViewReportedSightingsFragment">
 
     <ScrollView
@@ -29,6 +28,7 @@
 
                 <TextView
                     android:id="@+id/heading"
+                    android:textColor="@color/textColorPrimary"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="8"

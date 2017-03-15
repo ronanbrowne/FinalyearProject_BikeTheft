@@ -4,6 +4,7 @@ package com.example.ronan.bikepro.Fragments;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Address;
@@ -16,6 +17,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.preference.PreferenceManager;
 import android.util.Base64;
 import android.util.Log;
 import android.view.Gravity;
@@ -74,6 +76,9 @@ public class EditFragment extends Fragment {
     private FloatingActionButton geoCode;
     private FloatingActionButton floatingDelete;
     private LinearLayout geoCodeArea;
+    private LinearLayout main_container;
+    private LinearLayout image_container;
+    private LinearLayout stolen_container;
     private ImageView upload_image;
     private ImageView infoStolen;
     private ImageView infoSize;
@@ -294,6 +299,11 @@ public class EditFragment extends Fragment {
         geoCode = (FloatingActionButton) rootView.findViewById(R.id.floatingGeoCode);
         floatingDelete = (FloatingActionButton) rootView.findViewById(R.id.floatingDelete);
         geoCodeArea = (LinearLayout) rootView.findViewById(R.id.geoLocationLayout);
+        main_container = (LinearLayout) rootView.findViewById(R.id.main_container);
+        stolen_container = (LinearLayout) rootView.findViewById(R.id.stolen_container);
+        image_container = (LinearLayout) rootView.findViewById(R.id.image_container);
+
+        setBackGroundImage();
 
 
         //listener for checkbox, reveal extra stolen options if stolen
@@ -304,7 +314,7 @@ public class EditFragment extends Fragment {
                     geoCodeArea.setVisibility(View.VISIBLE);
                 } else {
                     geoCodeArea.setVisibility(View.GONE);
-                   // bikeLastSeen.setText("");
+                    // bikeLastSeen.setText("");
                 }
             }
         });
@@ -345,10 +355,10 @@ public class EditFragment extends Fragment {
             public void onClick(View view) {
                 Tooltip tooltip = new Tooltip.Builder(infoUUID)
                         .setText("This is the unique sensor code\nThis will allow your bike\nTo be tracked in event of theft")
-                        .setTextColor(ContextCompat.getColor(getContext(),R.color.white))
+                        .setTextColor(ContextCompat.getColor(getContext(), R.color.white))
                         .setDismissOnClick(true)
                         .setCancelable(true)
-                        .setBackgroundColor(ContextCompat.getColor(getContext(),R.color.cyan)).show();
+                        .setBackgroundColor(ContextCompat.getColor(getContext(), R.color.cyan)).show();
             }
         });
 
@@ -402,7 +412,7 @@ public class EditFragment extends Fragment {
                     Toast.makeText(getActivity().getApplicationContext(), "\"All fields are required except \"other\"", Toast.LENGTH_SHORT).show();
                 } else {
 
-                    BikeData newBike = new BikeData(make, frameSize, color, other, stolen, base64, model, lastSeen, latitude, longitud, emailFull,beaconID,0);
+                    BikeData newBike = new BikeData(make, frameSize, color, other, stolen, base64, model, lastSeen, latitude, longitud, emailFull, beaconID, 0);
                     mDatabase.setValue(newBike);
 
                     if (stolen) {
@@ -615,6 +625,23 @@ public class EditFragment extends Fragment {
         galleryIntent.setType("image/*");
         galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(galleryIntent, "Select Picture"), SELECT_PICTURE);
+    }
+
+
+    public void setBackGroundImage() {
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+        String themePref = preferences.getString("list_preference", "");
+
+        if (themePref.equals("AppThemeSecondary")) {
+            image_container.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.background_shadow_night));
+            main_container.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.background_shadow_night));
+            stolen_container.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.background_shadow_night));
+        } else {
+            image_container.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.background_shadow));
+            main_container.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.background_shadow));
+            stolen_container.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.background_shadow));
+        }
     }
 
 

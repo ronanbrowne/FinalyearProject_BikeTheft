@@ -1,10 +1,10 @@
 package com.example.ronan.bikepro.Activities;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.content.SharedPreferences;
 import android.support.annotation.Nullable;
-import android.os.Bundle;
+import android.support.v7.app.AppCompatDelegate;
 import android.widget.Toast;
 
 import com.codevscolor.materialpreference.activity.MaterialPreferenceActivity;
@@ -55,12 +55,25 @@ public class SettingsActivity extends MaterialPreferenceActivity implements Mate
     @Override
     public void onPreferenceSettingsChanged(SharedPreferences sharedPreferences, String name) {
 
-//
-//        String p = sharedPreferences.getString(
-//                "list_preference",
-//                "");
 
-        Toast.makeText(this, "preference with key " + name + " changed", Toast.LENGTH_LONG).show();
+        String themePref = sharedPreferences.getString(
+                "list_preference",
+                "");
+
+
+        if (themePref.equals("AppThemeSecondary")){
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+            Intent i=new Intent(SettingsActivity.this,MainActivity.class);
+            startActivity(i);}
+
+        else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+            Intent i=new Intent(SettingsActivity.this,MainActivity.class);
+            startActivity(i);
+        }
+
+
+        Toast.makeText(this, "preference with key " + themePref + " changed", Toast.LENGTH_LONG).show();
 
 
     }

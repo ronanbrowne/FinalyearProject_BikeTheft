@@ -1,11 +1,13 @@
 package com.example.ronan.bikepro.Fragments;
 
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.preference.PreferenceManager;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,7 +18,9 @@ import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.ronan.bikepro.DataModel.BikeData;
@@ -45,6 +49,7 @@ public class BeaconsFragment extends Fragment {
     private Query queryBikesUsingBeacons;
     private FirebaseUser mFirebaseUser;
     private String uniqueIdentifier;
+    private RelativeLayout main_choose_bike;
 
 
     public BeaconsFragment() {
@@ -59,8 +64,11 @@ public class BeaconsFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_beacons, container, false);
 
         info = (ImageView) rootView.findViewById(R.id.infobeacon);
+        main_choose_bike = (RelativeLayout) rootView.findViewById(R.id.main_choose_bike);
         listArea = (TextView) rootView.findViewById(R.id.choose);
         listViewChooseBike = (ListView) rootView.findViewById(R.id.listViewChooseBike);
+
+        setBackGroundImage();
 
         mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         if (mFirebaseUser != null) {
@@ -196,6 +204,18 @@ public class BeaconsFragment extends Fragment {
             iv.setImageBitmap(bitmap);
         }
     }// end getBitMapFromString
+
+    public void setBackGroundImage() {
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+        String themePref = preferences.getString("list_preference", "");
+
+        if (themePref.equals("AppThemeSecondary")) {
+            main_choose_bike.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.background_shadow_night));
+        } else {
+            main_choose_bike.setBackground(ContextCompat.getDrawable(getActivity(), R.drawable.background_shadow));
+        }
+    }
 
 
 }

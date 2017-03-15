@@ -86,18 +86,21 @@
 
                 <TextView
                     android:visibility="gone"
+                    android:textColor="@color/textColorPrimary"
                     android:id="@+id/bikesRegistered"
                     style="@style/WelcomeCategoryStyle"
                     tools:text="Bikes registered to you: " />
 
                 <TextView
                     android:visibility="gone"
+                    android:textColor="@color/textColorPrimary"
                     android:id="@+id/personalStolen"
                     style="@style/WelcomeCategoryStyle"
                     tools:text="Bikes you've listed as stolen: " />
 
 
                 <TextView
+                    android:textColor="@color/textColorPrimary"
                     android:visibility="gone"
                     android:id="@+id/totalStolen"
                     style="@style/WelcomeCategoryStyle"
