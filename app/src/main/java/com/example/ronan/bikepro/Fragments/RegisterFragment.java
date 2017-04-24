@@ -1,6 +1,7 @@
 package com.example.ronan.bikepro.Fragments;
 
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -69,13 +70,79 @@ public class RegisterFragment extends Fragment {
     private DatabaseReference mDatabase;
     private StorageReference storageRef;
     private FirebaseUser mFirebaseUser;
+    Activity contex;
 
     private String uniqueIdentifier = "";
-
+    private String make;
+    private String model;
+    private String color;
+    private String other;
+    private String frameSizeString;
+    private String beacon_UUID;
+    int frameSize = 0;
+    boolean stolen = false;
 
     public RegisterFragment() {
         // Required empty public constructor
     }
+
+
+
+    //======================================================================================
+    // dialog listener for proceeding with no image
+    //======================================================================================
+    DialogInterface.OnClickListener dialogClickListenerNoImage = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            switch (which) {
+                case DialogInterface.BUTTON_POSITIVE:
+
+                    //newBike object using constructor to populate attributes
+                    BikeData newBike = new BikeData(make, frameSize, color, other, stolen, base64, model, "N/A", 0, 0, uniqueIdentifier, beacon_UUID, 0);
+
+                    //get id part of email use this for where to place in DB. Firebase cant have a @ in DB refrence
+                    uniqueIdentifier = uniqueIdentifier.split("@")[0];
+
+                    //push this newBike object to the DB under the child node of a users uniqueIdentifier
+                    //in this case uniqueIdentifier would be ronan if email address was ronan@gmail.com
+                    mDatabase.child(uniqueIdentifier).push().setValue(newBike);
+
+                    //re set fields after
+                    bikeMake.setText("");
+                    bikeModel.setText("");
+                    bikeColor.setText("");
+                    bikeFrameSize.setText("");
+                    bikeOther.setText("");
+                    edit_bike_UUID.setText("");
+                    mThumbnailPreview.setImageResource(R.drawable.uploadimage);
+
+                    //return user to welcome screen
+                    FragmentManager fm = getFragmentManager();
+                     fm.beginTransaction().replace(R.id.fragment_container, new WelcomeFragment()).commit();
+
+                    //user feedback
+                    Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Bike Data Registered without image", Toast.LENGTH_SHORT);
+                    toast.show();
+
+
+                    break;
+
+                case DialogInterface.BUTTON_NEGATIVE:
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(contex);
+                    builder.setMessage("Use picture from Gallery or launch camera?").setPositiveButton("Gallery", dialogClickListener)
+                            .setNegativeButton("Camera", dialogClickListener).show();
+
+                    //feedback
+                    Toast.makeText(contex.getApplicationContext(), "Select image", Toast.LENGTH_SHORT).show();
+
+                    break;
+            }
+        }
+    };
+
+
+
 
     //======================================================================================
     // dialog listener for pop up to decide to launch camera or gallery
@@ -104,6 +171,7 @@ public class RegisterFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        contex= getActivity();
 
         //get current user
         mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -180,16 +248,15 @@ public class RegisterFragment extends Fragment {
             public void onClick(View v) {
 
                 //set up
-                int frameSize = 0;
-                boolean stolen = false;
+
 
                 //grab Text from UI
-                String make = bikeMake.getText().toString();
-                String model = bikeModel.getText().toString();
-                String color = bikeColor.getText().toString();
-                String other = bikeOther.getText().toString();
-                String frameSizeString = bikeFrameSize.getText().toString();
-                String beacon_UUID = edit_bike_UUID.getText().toString();
+                 make = bikeMake.getText().toString();
+                 model = bikeModel.getText().toString();
+                 color = bikeColor.getText().toString();
+                 other = bikeOther.getText().toString();
+                 frameSizeString = bikeFrameSize.getText().toString();
+                 beacon_UUID = edit_bike_UUID.getText().toString();
 
                 //if framesize has data turn into int and catch exception
                 if (frameSizeString != null || !frameSizeString.isEmpty()) {
@@ -204,36 +271,51 @@ public class RegisterFragment extends Fragment {
 
                 //Validate editText fields that they are not empty
                 if ((bikeMake.getText().toString().trim().length() == 0) || (bikeModel.getText().toString().trim().length() == 0) || (bikeColor.getText().toString().trim().length() == 0) || (bikeFrameSize.getText().toString().trim().length() == 0)) {
-                    Toast.makeText(getActivity().getApplicationContext(), "All fields are required except \"other\"", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity().getApplicationContext(), "All fields are required except \"other\" and \"Beacon ID\"", Toast.LENGTH_SHORT).show();
                 }
                 //if all fields are vilid
                 else {
 
-                    //newBike object using constructor to populate attributes
-                    BikeData newBike = new BikeData(make, frameSize, color, other, stolen, base64, model, "N/A", 0, 0, uniqueIdentifier, beacon_UUID, 0);
+                    if(base64.equals("No image")){
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                        builder.setTitle("No image set");
+                        builder.setMessage("Are you sure you wish to proceed without uploading a bike image?\n\n" +
+                                "Having a picture of your bike will greatly increase the chances of it being returned if stolen.").setPositiveButton("Proceed with no image", dialogClickListenerNoImage)
+                                .setNegativeButton("Select image now", dialogClickListenerNoImage).show();
+                    }
+                    else{
 
-                    //get id part of email use this for where to place in DB. Firebase cant have a @ in DB refrence
-                    uniqueIdentifier = uniqueIdentifier.split("@")[0];
+                        //newBike object using constructor to populate attributes
+                        BikeData newBike = new BikeData(make, frameSize, color, other, stolen, base64, model, "N/A", 0, 0, uniqueIdentifier, beacon_UUID, 0);
 
-                    //push this newBike object to the DB under the child node of a users uniqueIdentifier
-                    //in this case uniqueIdentifier would be ronan if email address was ronan@gmail.com
-                    mDatabase.child(uniqueIdentifier).push().setValue(newBike);
+                        //get id part of email use this for where to place in DB. Firebase cant have a @ in DB refrence
+                        uniqueIdentifier = uniqueIdentifier.split("@")[0];
 
-                    //re set fields after
-                    bikeMake.setText("");
-                    bikeModel.setText("");
-                    bikeColor.setText("");
-                    bikeFrameSize.setText("");
-                    bikeOther.setText("");
-                    mThumbnailPreview.setImageResource(R.drawable.uploadimage);
+                        //push this newBike object to the DB under the child node of a users uniqueIdentifier
+                        //in this case uniqueIdentifier would be ronan if email address was ronan@gmail.com
+                        mDatabase.child(uniqueIdentifier).push().setValue(newBike);
 
-                    //return user to welcome screen
-                    FragmentManager fm = getFragmentManager();
-                    fm.beginTransaction().replace(R.id.fragment_container, new WelcomeFragment()).commit();
+                        //re set fields after
+                        bikeMake.setText("");
+                        bikeModel.setText("");
+                        bikeColor.setText("");
+                        bikeFrameSize.setText("");
+                        bikeOther.setText("");
+                        edit_bike_UUID.setText("");
+                        mThumbnailPreview.setImageResource(R.drawable.uploadimage);
 
-                    //user feedback
-                    Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Bike Data Registered", Toast.LENGTH_SHORT);
-                    toast.show();
+                   //     return user to welcome screen
+                        FragmentManager fm = getFragmentManager();
+                         fm.beginTransaction().replace(R.id.fragment_container, new WelcomeFragment()).commit();
+
+                        //user feedback
+                        Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Bike Data Registered", Toast.LENGTH_SHORT);
+                        toast.show();
+
+
+                    }
+
+
                 }
             }
         });
