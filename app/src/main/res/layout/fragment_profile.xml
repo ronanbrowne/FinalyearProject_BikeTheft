@@ -101,11 +101,13 @@
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:paddingLeft="4dp"
+            android:paddingTop="8dp"
             android:orientation="vertical">
 
             <LinearLayout
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
+                android:layout_marginBottom="16dp"
                 android:orientation="horizontal">
 
                 <ImageView
@@ -116,6 +118,7 @@
 
             <!-- Name field -->
             <EditText
+                android:layout_marginLeft="8dp"
                 android:id="@+id/username"
                 android:hint="User name"
                 android:inputType="textCapWords"
@@ -126,6 +129,7 @@
             <LinearLayout
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
+                android:layout_marginBottom="16dp"
                 android:orientation="horizontal">
 
                 <ImageView
@@ -135,6 +139,7 @@
 
             <!-- color field -->
             <EditText
+                android:layout_marginLeft="8dp"
                 android:id="@+id/email"
                 android:hint="Email"
                 android:inputType="textCapWords"
@@ -155,6 +160,7 @@
 
             <!-- size field -->
             <EditText
+                android:layout_marginLeft="8dp"
                 android:id="@+id/address"
                 android:hint="Enter Address"
                 android:inputType="textCapWords"
