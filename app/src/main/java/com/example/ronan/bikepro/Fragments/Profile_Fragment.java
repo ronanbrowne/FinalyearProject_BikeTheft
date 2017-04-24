@@ -391,7 +391,7 @@ public class Profile_Fragment extends Fragment {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                         // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
-                        Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                      //  Uri downloadUrl = taskSnapshot.getDownloadUrl();
                         Log.i("**", "uploaded from cam");
                     }
                 });
