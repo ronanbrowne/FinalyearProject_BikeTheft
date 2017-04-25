@@ -98,12 +98,13 @@ public class EditFragmentList extends Fragment {
     ValueEventListener checkList = new ValueEventListener() {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
-            if (dataSnapshot.getValue() != null) {
-                noData.setVisibility(View.GONE);
-            } else {
+            if (!dataSnapshot.hasChildren() ) {
                 noData.setVisibility(View.VISIBLE);
                 loadingIndicator.setVisibility(View.GONE);
 
+                Log.d("*check","no kids ");
+            } else {
+                Log.d("*check"," kids ");
             }
         }
 
@@ -119,6 +120,7 @@ public class EditFragmentList extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
 
         //get current user. im using users email to uniquely ID JSON nodes in DB.
         // Firebase cant accept special characters in node reference
@@ -140,6 +142,7 @@ public class EditFragmentList extends Fragment {
         loadingIndicator = rootView.findViewById(R.id.loading_indicator_edit);
         noData = (TextView) rootView.findViewById(R.id.empty_view_Notification);
         info = (ImageView) rootView.findViewById(R.id.infoReportEdit);
+        noData.setVisibility(View.GONE);
 
         //set the divider
 
@@ -194,6 +197,9 @@ public class EditFragmentList extends Fragment {
         //Firebase DB setup
         usersBikesDatabase = FirebaseDatabase.getInstance().getReference().child("Bikes Registered By User").child(uniqueIdentifier);
 
+        Log.d("*check"," "+usersBikesDatabase.getRef().toString());
+
+
         usersBikesDatabase.addValueEventListener(checkList);
 
 
@@ -208,7 +214,13 @@ public class EditFragmentList extends Fragment {
                 usersBikesDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        loadingIndicator.setVisibility(View.GONE);
+
+                        if(dataSnapshot.hasChildren()){
+                            loadingIndicator.setVisibility(View.GONE);
+                        }else{
+                            noData.setVisibility(View.VISIBLE);
+                        }
+
                     }
 
                     @Override

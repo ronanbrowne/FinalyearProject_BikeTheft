@@ -47,32 +47,33 @@
             android:id="@+id/loading_indicator_edit"
             style="@style/Widget.AppCompat.ProgressBar"
             android:layout_width="wrap_content"
+            android:paddingTop="12dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             />
 
-<ListView
-    android:longClickable="true"
-    android:id="@+id/list"
-    android:paddingTop="5dp"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:divider="@null"
-    android:dividerHeight="1dp"
-    android:orientation="vertical" />
+        <TextView
+            android:id="@+id/empty_view_Notification"
+            android:layout_width="wrap_content"
+            android:paddingTop="12dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="No bikes associated with this user"
+            android:textAppearance="?android:textAppearanceMedium" />
 
 
-<!-- Empty view is only visible when the list has no items-->
-    <TextView
-        android:visibility="gone"
-        android:id="@+id/empty_view_Notification"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="50dp"
-        android:layout_centerHorizontal="true"
-        android:layout_centerInParent="true"
-        android:text="No bikes associated with this user"
-        android:textAppearance="?android:textAppearanceMedium" />
+        <ListView
+            android:id="@+id/list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="@null"
+            android:dividerHeight="1dp"
+            android:longClickable="true"
+            android:orientation="vertical"
+            android:paddingTop="5dp" />
+
+
+        <!-- Empty view is only visible when the list has no items-->
 
 
 
