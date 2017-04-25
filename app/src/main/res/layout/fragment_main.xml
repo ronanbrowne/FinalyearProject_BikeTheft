@@ -77,7 +77,7 @@
             android:layout_marginTop="16dp"
             android:background="@drawable/background_shadow"
             android:orientation="horizontal"
-            android:paddingBottom="8dp"
+            android:paddingBottom="16dp"
             android:paddingTop="20dp">
 
             <!-- Input fields -->
@@ -200,6 +200,7 @@
             android:layout_marginRight="32dp"
             android:layout_marginTop="20dp"
             android:clickable="true"
+            app:backgroundTint="#00CD00"
             app:fabSize="mini"
             app:srcCompat="@drawable/ic_done_all_black_24dp" />
 

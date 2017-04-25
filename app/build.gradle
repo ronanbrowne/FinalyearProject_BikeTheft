@@ -50,6 +50,11 @@ dependencies {
     testCompile "org.robolectric:shadows-support-v4:3.0"
     testCompile 'org.assertj:assertj-core:1.7.1'
     compile 'com.codevscolor.materialpreference:mp:0.2.1'
+    compile 'com.google.android.gms:play-services-places:10.0.1'
+    compile 'com.google.guava:guava:20.0'
+    compile 'com.google.android.gms:play-services-location:10.0.1'
+
+
 
 
 
