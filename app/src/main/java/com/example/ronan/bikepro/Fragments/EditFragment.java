@@ -34,6 +34,12 @@ import android.widget.Toast;
 
 import com.example.ronan.bikepro.DataModel.BikeData;
 import com.example.ronan.bikepro.R;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
+import com.google.android.gms.location.places.ui.PlaceSelectionListener;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.common.base.Strings;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -92,7 +98,9 @@ public class EditFragment extends Fragment {
     private String dB_KeyRefrence_fromBundle;
     private double latitude = 0;
     private double longitud = 0;
+    private LatLng coOrdinatesFromAutoCompleteLastSeen;
     private String name;
+    private String LocationNameLastSeen = "N/A";
 
     private Bitmap bitmap;
 
@@ -111,6 +119,9 @@ public class EditFragment extends Fragment {
 
     //holds all DB keys for bikes listed as stolen
     List<String> stolenKeysList;
+
+    PlaceAutocompleteFragment lastSeenAutoComplete;
+
 
     //===================================================================================
     //=        dialog listener for pop up to confirm delete
@@ -207,6 +218,15 @@ public class EditFragment extends Fragment {
             //grab snapshot and put in bike Object
             BikeData mybike = dataSnapshot.getValue(BikeData.class);
 
+
+            if(geoCodeArea.isShown()) {
+                if (mybike.getLastSeen().equals("N/A")) {
+                    lastSeenAutoComplete.setText("");
+                } else {
+                    lastSeenAutoComplete.setText(mybike.getLastSeen());
+                }
+            }
+
             //set UI fields from data
             bikeMake.setText(mybike.getMake());
             bikeUUID.setText(mybike.getBeaconUUID());
@@ -214,7 +234,6 @@ public class EditFragment extends Fragment {
             bikeColor.setText(mybike.getColor());
             bikeSize.setText(String.valueOf(mybike.getFrameSize()));
             bikeOther.setText(mybike.getOther());
-            bikeLastSeen.setText(mybike.getLastSeen());
             base64 = mybike.getImageBase64();
             getBitMapFromString(base64);
 
@@ -281,9 +300,9 @@ public class EditFragment extends Fragment {
         }
 
         //get UI id's
-        lastSeen = (TextView) rootView.findViewById(R.id.lastSeen);
+        //    lastSeen = (TextView) rootView.findViewById(R.id.lastSeen);
         bikeMake = (EditText) rootView.findViewById(R.id.edit_bike_make);
-        bikeLastSeen = (EditText) rootView.findViewById(R.id.edit_last_seen);
+        //  bikeLastSeen = (EditText) rootView.findViewById(R.id.edit_last_seen);
         bikeModel = (EditText) rootView.findViewById(R.id.edit_bike_model);
         bikeColor = (EditText) rootView.findViewById(R.id.edit_bike_colour);
         bikeSize = (EditText) rootView.findViewById(R.id.edit_bike_size);
@@ -296,7 +315,7 @@ public class EditFragment extends Fragment {
         infoUUID = (ImageView) rootView.findViewById(R.id.infoUUID);
         imageUpload = (FloatingActionButton) rootView.findViewById(R.id.floatingUpload);
         comfirmEdit = (FloatingActionButton) rootView.findViewById(R.id.floatingConfirmEdit);
-        geoCode = (FloatingActionButton) rootView.findViewById(R.id.floatingGeoCode);
+        //   geoCode = (FloatingActionButton) rootView.findViewById(R.id.floatingGeoCode);
         floatingDelete = (FloatingActionButton) rootView.findViewById(R.id.floatingDelete);
         geoCodeArea = (LinearLayout) rootView.findViewById(R.id.geoLocationLayout);
         main_container = (LinearLayout) rootView.findViewById(R.id.main_container);
@@ -304,6 +323,24 @@ public class EditFragment extends Fragment {
         image_container = (LinearLayout) rootView.findViewById(R.id.image_container);
 
         setBackGroundImage();
+
+        lastSeenAutoComplete = (PlaceAutocompleteFragment) getActivity().getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment_last_seen);
+
+        lastSeenAutoComplete.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+               Toast.makeText(getActivity().getApplicationContext(), place.getName() + " selected. " , Toast.LENGTH_LONG).show();
+                coOrdinatesFromAutoCompleteLastSeen = place.getLatLng();
+                LocationNameLastSeen = place.getName().toString();
+                latitude = coOrdinatesFromAutoCompleteLastSeen.latitude;
+                longitud = coOrdinatesFromAutoCompleteLastSeen.longitude;
+            }
+
+            @Override
+            public void onError(Status status) {
+                // TODO: Handle the error.
+            }
+        });
 
 
         //listener for checkbox, reveal extra stolen options if stolen
@@ -394,7 +431,7 @@ public class EditFragment extends Fragment {
                 String frameSizeString = bikeSize.getText().toString();
                 String color = bikeColor.getText().toString();
                 String other = bikeOther.getText().toString();
-                String lastSeen = bikeLastSeen.getText().toString();
+
                 String beaconID = bikeUUID.getText().toString();
 
                 //if frame size has data turn into int and catch exception
@@ -412,23 +449,22 @@ public class EditFragment extends Fragment {
                     Toast.makeText(getActivity().getApplicationContext(), "\"All fields are required except \"other\"", Toast.LENGTH_SHORT).show();
                 } else {
 
-                    BikeData newBike = new BikeData(make, frameSize, color, other, stolen, base64, model, lastSeen, latitude, longitud, emailFull, beaconID, 0);
+                    BikeData newBike = new BikeData(make, frameSize, color, other, stolen, base64, model, LocationNameLastSeen, latitude, longitud, emailFull, beaconID, 0);
                     mDatabase.setValue(newBike);
 
                     if (stolen) {
+                        if ((!Strings.isNullOrEmpty(LocationNameLastSeen) && !LocationNameLastSeen.equals("N/A"))) {
 
-                        if ((lastSeen != null && !lastSeen.isEmpty() && !lastSeen.equals("N/A"))) {
-
-                            if (geoCodeClicked) {
-                                //add current bike to stolen DB use same key value.
-                                stolenBikesDatabse.child(dB_KeyRefrence_fromBundle).setValue(newBike);
-                                //user feedback
-                                Toast.makeText(getActivity().getApplicationContext(), "Added to stolen DB", Toast.LENGTH_SHORT).show();
-                                successfullEdit = true;
-                            } else {
-                                Toast.makeText(getActivity().getApplicationContext(), "retrieve geo code first", Toast.LENGTH_SHORT).show();
-                                successfullEdit = false;
-                            }
+                            //if (geoCodeClicked) {
+                            //add current bike to stolen DB use same key value.
+                            stolenBikesDatabse.child(dB_KeyRefrence_fromBundle).setValue(newBike);
+                            //user feedback
+                            Toast.makeText(getActivity().getApplicationContext(), "Added to stolen DB", Toast.LENGTH_SHORT).show();
+                            successfullEdit = true;
+//                            } else {
+//                                Toast.makeText(getActivity().getApplicationContext(), "retrieve geo code first", Toast.LENGTH_SHORT).show();
+//                                successfullEdit = false;
+//                            }
                         } else {
                             Toast.makeText(getActivity().getApplicationContext(), "Last seen can not be blank if stolen", Toast.LENGTH_SHORT).show();
                             successfullEdit = false;
@@ -447,6 +483,8 @@ public class EditFragment extends Fragment {
                             Toast.makeText(getActivity().getApplicationContext(), "Removed from stolen DB", Toast.LENGTH_SHORT).show();
                             //reset check
                             inStolenDB = true;
+                            successfullEdit = true;
+
                         }
                         //other wise different output to user
                         else {
@@ -455,7 +493,7 @@ public class EditFragment extends Fragment {
                         }
                     }
 
-                    //if the edit has bee successfull return user to main screen
+                    //if the edit has bee successful return user to main screen
                     if (successfullEdit) {
                         FragmentManager fm = getFragmentManager();
                         fm.beginTransaction().replace(R.id.fragment_container, new WelcomeFragment()).commit();
@@ -465,13 +503,13 @@ public class EditFragment extends Fragment {
         });
 
         //floating action button listener for the geocoding - gets lat and long co-ordinates
-        geoCode.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                new GeocodeAsyncTask().execute();
-
-            }
-        });
+//        geoCode.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                new GeocodeAsyncTask().execute();
+//
+//            }
+//        });
 
         //button to delete bike listeer
         floatingDelete.setOnClickListener(new View.OnClickListener() {
@@ -644,5 +682,12 @@ public class EditFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
 
+        PlaceAutocompleteFragment autocompleteFragment1 = (PlaceAutocompleteFragment) getActivity().getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment_last_seen);
+        if (autocompleteFragment1 != null)
+            getActivity().getFragmentManager().beginTransaction().remove(autocompleteFragment1).commit();
+    }
 }//end class
