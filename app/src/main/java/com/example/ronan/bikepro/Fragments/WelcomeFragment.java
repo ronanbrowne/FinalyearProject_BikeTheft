@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.icu.text.LocaleDisplayNames;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -79,9 +80,9 @@ public class WelcomeFragment extends Fragment {
         // Required empty public constructor
     }
 
-    private Bitmap bitmap;;
+    private Bitmap bitmap;
+    ;
     private String imageValue = "";
-   // ContextWrapper cw = new ContextWrapper(getActivity().getApplicationContext());
     //======================================================================================
     // FireBase listener to grab the specific user data
     //======================================================================================
@@ -97,66 +98,11 @@ public class WelcomeFragment extends Fragment {
             user = dataSnapshot.getValue(UserData.class);
             imageValue = user.getUser_image_In_Base64();
 
-//            //if there was a image set grab it and set pic
-//            if (!imageValue.equals("imageValue")) {
-//                getBitMapFromString(imageValue);
-////                Log.v("*File path exist", "settign bitmap image");
-////
-////                Activity activity = getActivity();
-////
-////                //set up file location
-////                ContextWrapper cw = new ContextWrapper(activity.getApplicationContext());
-////                File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
-////                File mypath=new File(directory,uniqueIdentifier); //file name
-////
-////                //sett if it has been previously created grab cached file it so
-////                if(mypath.exists()){
-////                    loadImageFromStorage(uniqueIdentifier);
-////                    Log.v("*File path exist", "true: "+mypath.getAbsolutePath());
-////                }
-////                //other wise grab remote file
-////                else{
-////                   // saveToInternalStorage(bitmap);
-////                    profielPic.setImageBitmap(bitmap);
-////                    Log.v("*File path exist", "false");
-////                }
-//
-//
-//
-//            }
-
-
-            //if there was a image set grab it and set pic
-//            if (!imageValue.equals("imageValue")) {
-//               // getBitMapFromString(imageValue);
-//                Log.v("*File path exist", "settign bitmap image");
-//
-//                //set up file location
-//                ContextWrapper cw = new ContextWrapper(getActivity().getApplicationContext());
-//                File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
-//                File mypath=new File(directory,uniqueIdentifier); //file name
-//
-//                //sett if it has been previously created grab cached file it so
-//                if(mypath.exists()){
-//                    loadImageFromStorage(uniqueIdentifier);
-//                    Log.v("*File path exist", "true: "+mypath.getAbsolutePath());
-//                }
-//                //other wise grab remote file
-//                else{
-//                    saveToInternalStorage(bitmap);
-//                    loadProfileImage(uniqueIdentifier);
-//                    //    upload_image.setImageBitmap(bitmap);
-//                    Log.v("*File path exist", "false");
-//                }
-//
-//
-//
-//            }
 
             //if no username is set use uniqueIdentifier from users email
             if (user.getUsername() != null) {
                 userHeading.setText(user.getUsername());
-            }else{
+            } else {
                 userHeading.setText(uniqueIdentifier);
             }
 
@@ -171,47 +117,28 @@ public class WelcomeFragment extends Fragment {
     };
 
 
-    //======================================================================================
-    // extract bitmap helper, this sets image view
-    //======================================================================================
-    public void getBitMapFromString(String imageAsString) {
-        if (imageAsString != null) {
-            if (imageAsString.equals("No image") || imageAsString == null) {
-                // bike_image.setImageResource(R.drawable.not_uploaded);
-                Log.v("***", "No image Found");
-            } else {
-                byte[] decodedString = Base64.decode(imageAsString, Base64.DEFAULT);
-                Bitmap bitmap = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-              //  profielPic.setImageBitmap(bitmap);
-            }
-        } else {
-            Log.v("***", "Null paramater passed into getBitMapFromString");
-        }
-    }
+//    @Override
+//    public void onStart() {
+//        super.onStart();
 
-
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        //set up file location
-        ContextWrapper cw = new ContextWrapper(getActivity().getApplicationContext());
-        File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
-        File mypath=new File(directory,uniqueIdentifier); //file name
-
-        //sett if it has been previously created grab cached file it so
-        if(mypath.exists()){
-            loadImageFromStorage(uniqueIdentifier);
-            Log.v("*File path exist", "true: "+mypath.getAbsolutePath());
-        }
-        //other wise grab remote file
-        else{
-       //     saveToInternalStorage(bitmap);
-            loadProfileImage(uniqueIdentifier);
-            //    upload_image.setImageBitmap(bitmap);
-            Log.v("*File path exist", "false");
-        }
-    }
+//        //set up file location
+//        ContextWrapper cw = new ContextWrapper(getActivity().getApplicationContext());
+//        File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
+//        File mypath=new File(directory,uniqueIdentifier); //file name
+//
+//        //sett if it has been previously created grab cached file it so
+//        if(mypath.exists()){
+//            loadImageFromStorage(uniqueIdentifier);
+//            Log.v("*File path exist", "true: "+mypath.getAbsolutePath());
+//        }
+//        //other wise grab remote file
+//        else{
+//       //     saveToInternalStorage(bitmap);
+//            loadProfileImage(uniqueIdentifier);
+//            //    upload_image.setImageBitmap(bitmap);
+//            Log.v("*File path exist", "false");
+//        }
+//    }
 
 
     //======================================================================================
@@ -233,6 +160,9 @@ public class WelcomeFragment extends Fragment {
             emailFull = mFirebaseUser.getEmail();
             uniqueIdentifier = emailFull.split("@")[0];
         }
+
+
+        loadProfileImage(uniqueIdentifier);
 
 
         //seting up firebase DB refrences
@@ -285,6 +215,7 @@ public class WelcomeFragment extends Fragment {
                 }
 
             }
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
             }
@@ -296,11 +227,11 @@ public class WelcomeFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 //show loading bar while working
-                thisStolen =0;
+                thisStolen = 0;
                 countStolen = dataSnapshot.getChildrenCount();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     BikeData bike = snapshot.getValue(BikeData.class);
- ;
+                    ;
                     //check field is not null
                     if (bike.getRegisteredBy() != null) {
                         //check bikes in stolen DB to see if ay were registered by curret user if so note it
@@ -315,7 +246,7 @@ public class WelcomeFragment extends Fragment {
                 stolen.setText("My stolen bikes: " + thisStolen);
                 systemStolen.setText("Total bikes stolen in system: " + countStolen);
 
-               //set UI
+                //set UI
 
             }
 
@@ -325,14 +256,13 @@ public class WelcomeFragment extends Fragment {
         }; //end listener
 
 
-
         //event listener for checking if bike is on stolen DB used to give correct user feedback
         ValueEventListener reportedStolenListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 countReg = dataSnapshot.getChildrenCount();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        //keys for all sightings
+                    //keys for all sightings
                     sightingBikeKeys.add(snapshot.getKey().toString());
                     BikeData bike = snapshot.getValue(BikeData.class);
 
@@ -374,12 +304,10 @@ public class WelcomeFragment extends Fragment {
         }; //end listener
 
 
-
         //call the listeners that set UI data
         mDatabase.addValueEventListener(CountRegListener);
         stolenBikesDatabse.addValueEventListener(CountStolenListener);
         reportedStolen.addValueEventListener(reportedStolenListener);
-
 
 
         return rootView;
@@ -387,24 +315,20 @@ public class WelcomeFragment extends Fragment {
     }// end onCreateView
 
 
-
-    private void loadImageFromStorage(String path)
-    {
+    private void loadImageFromStorage(String path) {
         try {
             Log.v("*File storage Load", "file exists retreving from storage");
             ContextWrapper cw = new ContextWrapper(getActivity().getApplicationContext());
             File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
             // path for this user
-            File mypath=new File(directory,uniqueIdentifier); //file name
+            File mypath = new File(directory, uniqueIdentifier); //file name
 
             Bitmap b = BitmapFactory.decodeStream(new FileInputStream(mypath));
             profielPic.setImageBitmap(b);
 
             Log.v("*File storage Load", mypath.getAbsolutePath());
             Log.v("*File storage Load", uniqueIdentifier);
-        }
-        catch (FileNotFoundException e)
-        {
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
 
@@ -412,13 +336,14 @@ public class WelcomeFragment extends Fragment {
 
 
     //fill users image to selected view
-    public String loadProfileImage (final String userToLoad){
+    public String loadProfileImage(final String userToLoad) {
 
+        Log.d("*aaa", "load me ");
         // Create storage reference
         final StorageReference storageRef = storage.getReferenceFromUrl("gs://findmybike-1a1af.appspot.com/Profilers/");
 
         //set image based on user id
-        StorageReference  myProfilePic = storageRef.child(userToLoad);
+        StorageReference myProfilePic = storageRef.child(userToLoad);
 
         //set max image download size
         final long ONE_MEGABYTE = 10000 * 10000;
@@ -430,16 +355,18 @@ public class WelcomeFragment extends Fragment {
                 Bitmap userImage = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 
                 //save this user image to local device
-                saveToInternalStorage(userImage);
+//                saveToInternalStorage(userImage);
 
                 profielPic.setImageBitmap(userImage);
+                Log.d("*aaa", "get mine");
+
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
-       //         reset to default image if no image is selected
+                //         reset to default image if no image is selected
                 StorageReference myProfilePic = storageRef.child("default.jpg");
-                myProfilePic.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>(){
+                myProfilePic.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                     @Override
                     public void onSuccess(byte[] bytes) {
                         //decode image
@@ -447,6 +374,8 @@ public class WelcomeFragment extends Fragment {
 
 
                         profielPic.setImageBitmap(userImage);
+                        Log.d("*aaa", "get default");
+
                     }
                 });
 
@@ -457,31 +386,6 @@ public class WelcomeFragment extends Fragment {
         return null;
     }
 
-    //save user images when downloaded
-    private String saveToInternalStorage(Bitmap bitmapImage){
-        Log.v("*File storage Load", "saving to local storage no image here");
-        ContextWrapper cw = new ContextWrapper(getActivity().getApplicationContext());
-        // path to /data/data/yourapp/app_data/imageDir
-        File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
-        // Create imageDir
-        File mypath=new File(directory, uniqueIdentifier);
-
-        FileOutputStream fos = null;
-        try {
-            fos = new FileOutputStream(mypath);
-            // Use the compress method on the BitMap object to write image to the OutputStream
-            bitmapImage.compress(Bitmap.CompressFormat.PNG, 100, fos);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                fos.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return directory.getAbsolutePath();
-    }
 
 }//end class
 
