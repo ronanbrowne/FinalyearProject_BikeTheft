@@ -4,13 +4,11 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.icu.text.LocaleDisplayNames;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,8 +33,6 @@ import com.google.firebase.storage.StorageReference;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -117,30 +113,6 @@ public class WelcomeFragment extends Fragment {
     };
 
 
-//    @Override
-//    public void onStart() {
-//        super.onStart();
-
-//        //set up file location
-//        ContextWrapper cw = new ContextWrapper(getActivity().getApplicationContext());
-//        File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
-//        File mypath=new File(directory,uniqueIdentifier); //file name
-//
-//        //sett if it has been previously created grab cached file it so
-//        if(mypath.exists()){
-//            loadImageFromStorage(uniqueIdentifier);
-//            Log.v("*File path exist", "true: "+mypath.getAbsolutePath());
-//        }
-//        //other wise grab remote file
-//        else{
-//       //     saveToInternalStorage(bitmap);
-//            loadProfileImage(uniqueIdentifier);
-//            //    upload_image.setImageBitmap(bitmap);
-//            Log.v("*File path exist", "false");
-//        }
-//    }
-
-
     //======================================================================================
     // onCreateView
     //======================================================================================
@@ -150,9 +122,7 @@ public class WelcomeFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_welcome, container, false);
         final View loadingIndicator = rootView.findViewById(R.id.loading_indicator_edit);
-//
-//        if(!imageValue.equals("")){
-//        }
+
 
         //get user uniqueIdentifier
         mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();

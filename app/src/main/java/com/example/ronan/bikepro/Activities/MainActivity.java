@@ -485,16 +485,7 @@ public class MainActivity extends AppCompatActivity
             mapOpen = false;
 
         }
-// else if (id == R.id.nav_profile) {
-//            //setFragment
-//            Profile_Fragment profileFragment = new Profile_Fragment();
-//            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-//            fragmentTransaction.replace(R.id.fragment_container, profileFragment);
-//            fragmentTransaction.commit();
-//
-//            mapOpen=false;
-//
-//        }
+
         else if (id == R.id.map_data) {
 
             mapOpen = true;
@@ -529,48 +520,19 @@ public class MainActivity extends AppCompatActivity
     public void onStart() {
         super.onStart();
 
-        //set up file location
-        ContextWrapper cw = new ContextWrapper(getApplicationContext());
-        File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
-        File mypath = new File(directory, email); //file name
+        loadProfileImage(email);
 
-        //sett if it has been previously created grab cached file it so
-        if (mypath.exists()) {
-            loadImageFromStorage(email);
-            Log.v("*File path exist", "true: " + mypath.getAbsolutePath());
-        }
-        //other wise grab remote file
-        else {
-            //     saveToInternalStorage(bitmap);
-            loadProfileImage(email);
-            //    upload_image.setImageBitmap(bitmap);
-            Log.v("*File path exist", "false");
-        }
+
     }
 
 
-    private void loadImageFromStorage(String path) {
-        try {
-            Log.v("*File storage Load", "file exists retreving from storage");
-            ContextWrapper cw = new ContextWrapper(getApplicationContext());
-            File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
-            // path for this user
-            File mypath = new File(directory, email); //file name
-
-            Bitmap b = BitmapFactory.decodeStream(new FileInputStream(mypath));
-            navProvile.setImageBitmap(b);
-
-            Log.v("*File storage Load", mypath.getAbsolutePath());
-            Log.v("*File storage Load", email);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
-    }
 
 
     //fill users image to selected view
     public String loadProfileImage(final String userToLoad) {
+
+        Log.v("*storage", userToLoad);
+
 
         // Create storage reference
         final StorageReference storageRef = storage.getReferenceFromUrl("gs://findmybike-1a1af.appspot.com/Profilers/");
@@ -587,8 +549,8 @@ public class MainActivity extends AppCompatActivity
                 //decode image
                 Bitmap userImage = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 
-                //save this user image to local device
-                //    saveToInternalStorage(userImage);
+                Log.v("*storage", "user uploaded");
+
 
                 navProvile.setImageBitmap(userImage);
             }
@@ -605,6 +567,8 @@ public class MainActivity extends AppCompatActivity
 
 
                         navProvile.setImageBitmap(userImage);
+                        Log.v("*storage", "default");
+
                     }
                 });
 
