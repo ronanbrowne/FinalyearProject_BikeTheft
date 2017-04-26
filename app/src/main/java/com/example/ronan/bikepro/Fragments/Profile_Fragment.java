@@ -29,6 +29,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.common.base.Strings;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -102,10 +103,10 @@ public class Profile_Fragment extends Fragment {
             imageValue = user.getUser_image_In_Base64();
 
             //if no username is set use uniqueIdentifier from users email
-            if (user.getUsername() != null) {
+            if (!Strings.isNullOrEmpty(user.getUsername())) {
                 profileHeading.setText(user.getUsername());
             } else {
-                profileHeading.setText(uniqueIdentifier);
+                profileHeading.setText(email);
             }
 
 
@@ -127,12 +128,6 @@ public class Profile_Fragment extends Fragment {
     }
 
 
-//    @Override
-//    public void onStart() {
-//        super.onStart();
-//
-//
-//    }
 
     //================================================================================
     //=      onCreateView
@@ -170,7 +165,7 @@ public class Profile_Fragment extends Fragment {
         picUpdate.setVisibility(View.VISIBLE);
 
         emailET.setText(email);
-        profileHeading.setText(uniqueIdentifier);
+       // profileHeading.setText(uniqueIdentifier);
 
         //upload image
         picUpdate.setOnClickListener(new View.OnClickListener() {
@@ -194,7 +189,6 @@ public class Profile_Fragment extends Fragment {
                 String address = addressET.getText().toString();
 
 
-                //todo remove date
                 mDatabase = FirebaseDatabase.getInstance().getReference().child("User Profile Data");
                 long date = System.currentTimeMillis();
                 SimpleDateFormat sdf = new SimpleDateFormat("MMM MM dd, yyyy h:mm a");
@@ -208,8 +202,7 @@ public class Profile_Fragment extends Fragment {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         Toast.makeText(getActivity().getApplicationContext(), "Profile Updated", Toast.LENGTH_SHORT).show();
-                        Intent i = new Intent(getActivity(), MainActivity.class);
-                        startActivity(i);
+               
                     }
                 });
 

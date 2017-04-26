@@ -46,6 +46,7 @@ import com.example.ronan.bikepro.R;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.common.base.Strings;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -78,7 +79,7 @@ public class MainActivity extends AppCompatActivity
     private DatabaseReference stolenBikesDatabse;
     private DatabaseReference usersBikesDatabase;
     private DatabaseReference userSightings;
-
+    private FirebaseUser userFirebase;
     // storage
     FirebaseStorage storage = FirebaseStorage.getInstance();
     String email = "";
@@ -243,11 +244,11 @@ public class MainActivity extends AppCompatActivity
         FirebaseAuth.AuthStateListener mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null) {
+                 userFirebase = firebaseAuth.getCurrentUser();
+                if (userFirebase != null) {
                     // User is signed in
-                    Log.d("look_here***", "onAuthStateChanged:signed_in:" + user.getUid() + user.getEmail());
-                    mEmail = user.getEmail();
+                    Log.d("look_here***", "onAuthStateChanged:signed_in:" + userFirebase.getUid() + userFirebase.getEmail());
+                    mEmail = userFirebase.getEmail();
                     mUsername = mEmail.split("@")[0];
                     Log.d("look_here***", "onAuthStateChanged:signed_in:" + mEmail);
 
@@ -519,9 +520,15 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onStart() {
         super.onStart();
-
         loadProfileImage(email);
 
+//        if(userFirebase!=null) {
+//            loadProfileImage(email);
+//            Log.v("*storage", "not null start"+email);
+//        }else{
+//            Log.v("*storage", "null"+email);
+//
+//        }
 
     }
 
@@ -530,6 +537,12 @@ public class MainActivity extends AppCompatActivity
 
     //fill users image to selected view
     public String loadProfileImage(final String userToLoad) {
+        if(Strings.isNullOrEmpty(userToLoad)){
+            Log.v("*storage", "break");
+
+            return null;
+
+        }
 
         Log.v("*storage", userToLoad);
 

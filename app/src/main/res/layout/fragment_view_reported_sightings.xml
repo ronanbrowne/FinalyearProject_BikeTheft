@@ -34,7 +34,7 @@
                     android:layout_weight="8"
                     android:padding="12dp"
                     android:paddingTop="20dp"
-                    android:text="Other users have reported a possible sighting of the following bikes:"
+                    android:text="Here you can view suspected sighting of your stolen bikes:"
                     android:textStyle="bold" />
 
                 <ImageView
@@ -63,6 +63,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal" />
+
+            <TextView
+                android:id="@+id/empty_view_Notification"
+                android:layout_width="wrap_content"
+                android:paddingTop="12dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="No Reported Sightings"
+                android:textAppearance="?android:textAppearanceMedium" />
+
 
             <ListView
                 android:id="@+id/list_sightings"

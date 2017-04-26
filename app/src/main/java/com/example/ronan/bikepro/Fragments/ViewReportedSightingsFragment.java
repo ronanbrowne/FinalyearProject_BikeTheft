@@ -24,6 +24,7 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -54,11 +55,34 @@ public class ViewReportedSightingsFragment extends Fragment {
     private ImageView bike_image;
     private ImageView info;
     private BikeData stolenBike;
+    private TextView noDataAvailable;
+    private ProgressBar loadingIndicator;
 
     public ViewReportedSightingsFragment() {
         // Required empty public constructor
     }
 
+    //===========================================================================================================
+    //  Firebase listeer to handel displaying either a loading bar or empty message depending in state of DB
+    //===========================================================================================================
+    ValueEventListener checkList = new ValueEventListener() {
+        @Override
+        public void onDataChange(DataSnapshot dataSnapshot) {
+            if (!dataSnapshot.hasChildren() ) {
+                noDataAvailable.setVisibility(View.VISIBLE);
+                loadingIndicator.setVisibility(View.GONE);
+
+                Log.d("*check","no kids ");
+            } else {
+                Log.d("*check"," kids ");
+            }
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+
+        }
+    };
 
     //===================================================================================
     //=        dialog listener for pop up to send email to origional user
@@ -143,7 +167,9 @@ public class ViewReportedSightingsFragment extends Fragment {
 
         final ListView myListView = (ListView) rootView.findViewById(R.id.list_sightings);
         //  get ID of loading bar
-        final View loadingIndicator = rootView.findViewById(R.id.loading_indicator_edit);
+       loadingIndicator = (ProgressBar) rootView.findViewById(R.id.loading_indicator_edit);
+        noDataAvailable = (TextView) rootView.findViewById(R.id.empty_view_Notification);
+        noDataAvailable.setVisibility(View.GONE);
 
 
         info.setOnClickListener(new View.OnClickListener() {
@@ -181,7 +207,7 @@ public class ViewReportedSightingsFragment extends Fragment {
 
         //Firebase DB setup
         usersSightings = FirebaseDatabase.getInstance().getReference().child("Viewing bikes Reported Stolen").child(email);
-
+        usersSightings.addValueEventListener(checkList);
         //listAdapter
         // here we set content of list items
         final FirebaseListAdapter<BikeData> bikeAdapter = new FirebaseListAdapter<BikeData>

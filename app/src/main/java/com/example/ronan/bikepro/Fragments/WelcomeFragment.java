@@ -20,6 +20,7 @@ import com.example.ronan.bikepro.DataModel.UserData;
 import com.example.ronan.bikepro.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.common.base.Strings;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -94,12 +95,11 @@ public class WelcomeFragment extends Fragment {
             user = dataSnapshot.getValue(UserData.class);
             imageValue = user.getUser_image_In_Base64();
 
-
             //if no username is set use uniqueIdentifier from users email
-            if (user.getUsername() != null) {
+            if (!Strings.isNullOrEmpty(user.getUsername())) {
                 userHeading.setText(user.getUsername());
             } else {
-                userHeading.setText(uniqueIdentifier);
+                userHeading.setText(emailFull);
             }
 
         }
@@ -285,11 +285,12 @@ public class WelcomeFragment extends Fragment {
     }// end onCreateView
 
 
-
-
-
     //fill users image to selected view
     public String loadProfileImage(final String userToLoad) {
+
+        if(Strings.isNullOrEmpty(userToLoad)){
+          return null;
+        }
 
         Log.d("*aaa", "load me ");
         // Create storage reference
