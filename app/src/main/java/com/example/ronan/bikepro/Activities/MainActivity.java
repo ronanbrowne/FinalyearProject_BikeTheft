@@ -521,17 +521,7 @@ public class MainActivity extends AppCompatActivity
     public void onStart() {
         super.onStart();
         loadProfileImage(email);
-
-//        if(userFirebase!=null) {
-//            loadProfileImage(email);
-//            Log.v("*storage", "not null start"+email);
-//        }else{
-//            Log.v("*storage", "null"+email);
-//
-//        }
-
     }
-
 
 
 
@@ -539,13 +529,9 @@ public class MainActivity extends AppCompatActivity
     public String loadProfileImage(final String userToLoad) {
         if(Strings.isNullOrEmpty(userToLoad)){
             Log.v("*storage", "break");
-
             return null;
-
         }
-
-        Log.v("*storage", userToLoad);
-
+        
 
         // Create storage reference
         final StorageReference storageRef = storage.getReferenceFromUrl("gs://findmybike-1a1af.appspot.com/Profilers/");

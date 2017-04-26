@@ -197,6 +197,9 @@ public class Profile_Fragment extends Fragment {
 
                 UserData userData = new UserData(address, username, base64, dateString, email);
 
+                MainActivity activity = (MainActivity) getActivity();
+                activity.loadProfileImage(uniqueIdentifier);
+
 
                 mDatabase.child(uniqueIdentifier).setValue(userData).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
