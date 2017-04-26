@@ -30,17 +30,18 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.google.maps.android:android-maps-utils:0.4.+'
-    compile 'com.google.firebase:firebase-storage:10.0.1'
-    compile 'com.google.firebase:firebase-auth:10.0.1'
-    compile 'com.google.firebase:firebase-core:10.0.1'
+    compile 'com.google.firebase:firebase-storage:10.2.1'
+    compile 'com.google.firebase:firebase-auth:10.2.1'
+    compile 'com.google.firebase:firebase-core:10.2.1'
+    compile 'com.firebaseui:firebase-ui-storage:1.2.0'
     compile 'com.android.support:appcompat-v7:24.2.1'
     compile 'com.android.support:design:24.2.1'
     compile 'de.hdodenhof:circleimageview:2.1.0'
     compile 'com.android.support:support-v4:24.2.1'
     compile 'com.firebase:firebase-client-android:2.5.0'
-    compile 'com.google.firebase:firebase-database:10.0.1'
+    compile 'com.google.firebase:firebase-database:10.2.1'
     compile 'com.firebaseui:firebase-ui-database:0.4.0'
-    compile 'com.google.android.gms:play-services:10.0.1'
+    compile 'com.google.android.gms:play-services:10.2.1'
     compile 'com.joanzapata.iconify:android-iconify-fontawesome:2.1.+'
     compile 'com.github.vihtarb:tooltip:0.1.9'
     compile 'com.estimote:sdk:0.16.0@aar'
@@ -50,9 +51,10 @@ dependencies {
     testCompile "org.robolectric:shadows-support-v4:3.0"
     testCompile 'org.assertj:assertj-core:1.7.1'
     compile 'com.codevscolor.materialpreference:mp:0.2.1'
-    compile 'com.google.android.gms:play-services-places:10.0.1'
+    compile 'com.google.android.gms:play-services-places:10.2.1'
     compile 'com.google.guava:guava:20.0'
-    compile 'com.google.android.gms:play-services-location:10.0.1'
+    compile 'com.google.android.gms:play-services-location:10.2.1'
+    compile 'com.github.bumptech.glide:glide:3.7.0'
 
 
 
