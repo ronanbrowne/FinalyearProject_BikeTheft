@@ -285,24 +285,7 @@ public class WelcomeFragment extends Fragment {
     }// end onCreateView
 
 
-    private void loadImageFromStorage(String path) {
-        try {
-            Log.v("*File storage Load", "file exists retreving from storage");
-            ContextWrapper cw = new ContextWrapper(getActivity().getApplicationContext());
-            File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
-            // path for this user
-            File mypath = new File(directory, uniqueIdentifier); //file name
 
-            Bitmap b = BitmapFactory.decodeStream(new FileInputStream(mypath));
-            profielPic.setImageBitmap(b);
-
-            Log.v("*File storage Load", mypath.getAbsolutePath());
-            Log.v("*File storage Load", uniqueIdentifier);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
-    }
 
 
     //fill users image to selected view
