@@ -1,9 +1,9 @@
 package com.example.ronan.bikepro.Fragments;
 
-import android.content.Context;
-import android.content.ContextWrapper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -32,9 +33,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -48,8 +46,9 @@ public class WelcomeFragment extends Fragment {
     private TextView stolen;
     private TextView systemStolen;
     private TextView userHeading;
-    private LinearLayout circleHolder;;
-    private CircleImageView profielPic;
+    private LinearLayout circleHolder;
+    ;
+    private ImageView profielPic;
     private FloatingActionButton floatingEditProfile;
     private String uniqueIdentifier = "";
     private String emailFull = "";
@@ -152,7 +151,7 @@ public class WelcomeFragment extends Fragment {
         systemStolen = (TextView) rootView.findViewById(R.id.totalStolen);
         userHeading = (TextView) rootView.findViewById(R.id.userProfile);
         floatingEditProfile = (FloatingActionButton) rootView.findViewById(R.id.floatingConfirmEdit);
-        profielPic = (CircleImageView) rootView.findViewById(R.id.profile_image);
+        profielPic = (ImageView) rootView.findViewById(R.id.profile_image);
         circleHolder = (LinearLayout) rootView.findViewById(R.id.circleHolder);
 
         circleHolder.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
@@ -285,6 +284,8 @@ public class WelcomeFragment extends Fragment {
         stolenBikesDatabse.addValueEventListener(CountStolenListener);
         reportedStolen.addValueEventListener(reportedStolenListener);
 
+        profielPic.setLayerType(View.LAYER_TYPE_NONE, null);
+
 
         return rootView;
 
@@ -294,8 +295,8 @@ public class WelcomeFragment extends Fragment {
     //fill users image to selected view
     public String loadProfileImage(final String userToLoad) {
 
-        if(Strings.isNullOrEmpty(userToLoad)){
-          return null;
+        if (Strings.isNullOrEmpty(userToLoad)) {
+            return null;
         }
 
         Log.d("*aaa", "load me ");
@@ -314,11 +315,12 @@ public class WelcomeFragment extends Fragment {
                 //decode image
                 Bitmap userImage = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 
-                //save this user image to local device
-//                saveToInternalStorage(userImage);
 
-                profielPic.setImageBitmap(userImage);
-                Log.d("*aaa", "get mine");
+
+                Drawable drawable = new BitmapDrawable(getContext().getResources(), userImage);
+
+
+                profielPic.setImageDrawable(drawable);
 
             }
         }).addOnFailureListener(new OnFailureListener() {
@@ -333,8 +335,14 @@ public class WelcomeFragment extends Fragment {
                         Bitmap userImage = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 
 
-                        profielPic.setImageBitmap(userImage);
-                        Log.d("*aaa", "get default");
+                       // profielPic.setImageBitmap(userImage);
+                        //Log.d("*aaa", "get default");
+
+
+                        Drawable drawable = new BitmapDrawable(getContext().getResources(), userImage);
+
+
+                        profielPic.setImageDrawable(drawable);
 
                     }
                 });

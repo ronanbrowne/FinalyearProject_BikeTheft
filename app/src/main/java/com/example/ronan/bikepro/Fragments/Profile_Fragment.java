@@ -21,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -78,7 +79,7 @@ public class Profile_Fragment extends Fragment {
     private EditText usernameET;
     private EditText emailET;
     private EditText addressET;
-    private CircleImageView profielPic;
+    private ImageView profielPic;
 
 
     TextView profileHeading;
@@ -161,7 +162,7 @@ public class Profile_Fragment extends Fragment {
         profileHeading = (TextView) rootView.findViewById(R.id.userProfile);
         update = (FloatingActionButton) rootView.findViewById(R.id.floatingConfirmEditProfile);
         picUpdate = (FloatingActionButton) rootView.findViewById(R.id.updatePic);
-        profielPic = (CircleImageView) rootView.findViewById(R.id.profile_image);
+        profielPic = (ImageView) rootView.findViewById(R.id.profile_image);
         containerCircle = (LinearLayout) rootView.findViewById(R.id.viewA);
 
        // containerCircle.containerCircle
@@ -222,6 +223,8 @@ public class Profile_Fragment extends Fragment {
 
             }
         });
+
+        profielPic.setLayerType(View.LAYER_TYPE_NONE, null);
 
         return rootView;
     } //end onCreateView
