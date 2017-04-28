@@ -164,6 +164,7 @@ public class WelcomeFragment extends Fragment {
                 //setFragment
                 FragmentManager fm = getFragmentManager();
                 fm.beginTransaction().replace(R.id.fragment_container, new Profile_Fragment()).commit();
+                getActivity().getSupportFragmentManager().beginTransaction().remove(WelcomeFragment.this).commit();
 
             }
         });
@@ -315,12 +316,7 @@ public class WelcomeFragment extends Fragment {
                 //decode image
                 Bitmap userImage = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 
-
-
-                Drawable drawable = new BitmapDrawable(getContext().getResources(), userImage);
-
-
-                profielPic.setImageDrawable(drawable);
+                profielPic.setImageBitmap(userImage);
 
             }
         }).addOnFailureListener(new OnFailureListener() {
@@ -334,15 +330,7 @@ public class WelcomeFragment extends Fragment {
                         //decode image
                         Bitmap userImage = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 
-
-                       // profielPic.setImageBitmap(userImage);
-                        //Log.d("*aaa", "get default");
-
-
-                        Drawable drawable = new BitmapDrawable(getContext().getResources(), userImage);
-
-
-                        profielPic.setImageDrawable(drawable);
+                        profielPic.setImageBitmap(userImage);
 
                     }
                 });

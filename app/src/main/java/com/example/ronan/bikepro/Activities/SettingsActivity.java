@@ -73,7 +73,7 @@ public class SettingsActivity extends MaterialPreferenceActivity implements Mate
         }
 
 
-        Toast.makeText(this, "preference with key " + themePref + " changed", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Theme changed", Toast.LENGTH_LONG).show();
 
 
     }

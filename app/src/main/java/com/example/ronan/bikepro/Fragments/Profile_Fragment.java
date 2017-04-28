@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -16,6 +17,8 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatDelegate;
+import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -81,6 +84,10 @@ public class Profile_Fragment extends Fragment {
     private EditText addressET;
     private ImageView profielPic;
 
+    private ImageView facePic;
+    private ImageView emailPic;
+    private ImageView placePic;
+
 
     TextView profileHeading;
     FloatingActionButton update;
@@ -133,7 +140,6 @@ public class Profile_Fragment extends Fragment {
     }
 
 
-
     //================================================================================
     //=      onCreateView
     //=================================================================================
@@ -142,7 +148,6 @@ public class Profile_Fragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
-
         mDatabase = FirebaseDatabase.getInstance().getReference().child("User Profile Data");
 
 
@@ -163,17 +168,21 @@ public class Profile_Fragment extends Fragment {
         update = (FloatingActionButton) rootView.findViewById(R.id.floatingConfirmEditProfile);
         picUpdate = (FloatingActionButton) rootView.findViewById(R.id.updatePic);
         profielPic = (ImageView) rootView.findViewById(R.id.profile_image);
+        placePic = (ImageView) rootView.findViewById(R.id.placeImage);
+        facePic = (ImageView) rootView.findViewById(R.id.faceImage);
+        emailPic = (ImageView) rootView.findViewById(R.id.emailImage);
         containerCircle = (LinearLayout) rootView.findViewById(R.id.viewA);
+        checkTheme();
 
-       // containerCircle.containerCircle
-     //   containerCircle.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        // containerCircle.containerCircle
+        //   containerCircle.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 
         mDatabase.child(uniqueIdentifier).addValueEventListener(userDataListener);
 
         picUpdate.setVisibility(View.VISIBLE);
 
         emailET.setText(email);
-       // profileHeading.setText(uniqueIdentifier);
+        // profileHeading.setText(uniqueIdentifier);
 
         //upload image
         picUpdate.setOnClickListener(new View.OnClickListener() {
@@ -213,7 +222,7 @@ public class Profile_Fragment extends Fragment {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         Toast.makeText(getActivity().getApplicationContext(), "Profile Updated", Toast.LENGTH_SHORT).show();
-               
+
                     }
                 });
 
@@ -288,7 +297,7 @@ public class Profile_Fragment extends Fragment {
                     e.printStackTrace();
                     Log.v("Exception", " : " + e.toString());
                 }
-              //  profielPic.setImageBitmap(bitmap);
+                //  profielPic.setImageBitmap(bitmap);
 
 
                 // Create storage reference
@@ -384,10 +393,7 @@ public class Profile_Fragment extends Fragment {
                 //decode image
                 Bitmap userImage = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 
-                Drawable drawable = new BitmapDrawable(getContext().getResources(), userImage);
-
-
-                profielPic.setImageDrawable(drawable);
+                profielPic.setImageBitmap(userImage);
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -400,11 +406,7 @@ public class Profile_Fragment extends Fragment {
                         //decode image
                         Bitmap userImage = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 
-                        Drawable drawable = new BitmapDrawable(getContext().getResources(), userImage);
-
-
-                        profielPic.setImageDrawable(drawable);
-                      //  profielPic.setImageBitmap(userImage);
+                        profielPic.setImageBitmap(userImage);
                     }
                 });
 
@@ -414,5 +416,22 @@ public class Profile_Fragment extends Fragment {
 
         return null;
     }
+
+
+    public void checkTheme() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+
+        String themePref = preferences.getString("list_preference", "");
+
+        if (themePref.equals("AppTheme"))
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+
+            placePic.setImageResource(R.drawable.ic_add_location_white_24dp);
+            facePic.setImageResource(R.drawable.ic_mail_outline_white_48dp);
+            emailPic.setImageResource(R.drawable.ic_face_white_48dp);
+
+        }    }
 
 }// end class
