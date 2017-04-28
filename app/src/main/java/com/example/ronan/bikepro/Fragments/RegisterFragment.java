@@ -47,6 +47,7 @@ import static android.app.Activity.RESULT_OK;
 public class RegisterFragment extends Fragment {
 
     // variables
+    private final String DEFAULT_BIKE_IMAGE = "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";
     private EditText bikeMake;
     private EditText bikeColor;
     private EditText bikeFrameSize;
@@ -57,7 +58,7 @@ public class RegisterFragment extends Fragment {
     private FloatingActionButton addBikeFloatingActionButton;
     private ImageView mThumbnailPreview;
     Bitmap bitmap;
-    String base64 = "No image";
+    String base64 = DEFAULT_BIKE_IMAGE ;
     private ImageView info;
     private ImageView infoUUID;
     private LinearLayout container_image;
@@ -134,7 +135,7 @@ public class RegisterFragment extends Fragment {
                             .setNegativeButton("Camera", dialogClickListener).show();
 
                     //feedback
-                    Toast.makeText(contex.getApplicationContext(), "Select image", Toast.LENGTH_SHORT).show();
+                   // Toast.makeText(contex.getApplicationContext(), "Select image", Toast.LENGTH_SHORT).show();
 
                     break;
             }
@@ -276,7 +277,7 @@ public class RegisterFragment extends Fragment {
                 //if all fields are vilid
                 else {
 
-                    if(base64.equals("No image")){
+                    if(base64.equals(DEFAULT_BIKE_IMAGE)){
                         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                         builder.setTitle("No image set");
                         builder.setMessage("Are you sure you wish to proceed without uploading a bike image?\n\n" +

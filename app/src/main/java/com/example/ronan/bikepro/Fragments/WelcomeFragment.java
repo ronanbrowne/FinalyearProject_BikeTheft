@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.ronan.bikepro.DataModel.BikeData;
@@ -47,6 +48,7 @@ public class WelcomeFragment extends Fragment {
     private TextView stolen;
     private TextView systemStolen;
     private TextView userHeading;
+    private LinearLayout circleHolder;;
     private CircleImageView profielPic;
     private FloatingActionButton floatingEditProfile;
     private String uniqueIdentifier = "";
@@ -151,6 +153,10 @@ public class WelcomeFragment extends Fragment {
         userHeading = (TextView) rootView.findViewById(R.id.userProfile);
         floatingEditProfile = (FloatingActionButton) rootView.findViewById(R.id.floatingConfirmEdit);
         profielPic = (CircleImageView) rootView.findViewById(R.id.profile_image);
+        circleHolder = (LinearLayout) rootView.findViewById(R.id.circleHolder);
+
+        circleHolder.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+
 
         //Button click to launch edit profile page
         floatingEditProfile.setOnClickListener(new View.OnClickListener() {

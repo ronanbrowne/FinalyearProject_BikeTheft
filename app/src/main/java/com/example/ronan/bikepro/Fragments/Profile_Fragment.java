@@ -8,6 +8,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -19,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -64,6 +67,7 @@ public class Profile_Fragment extends Fragment {
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private String uniqueIdentifier;
     private String email;
+    private LinearLayout containerCircle;
 
     private FirebaseUser mFirebaseUser;
     private DatabaseReference mDatabase;
@@ -158,7 +162,10 @@ public class Profile_Fragment extends Fragment {
         update = (FloatingActionButton) rootView.findViewById(R.id.floatingConfirmEditProfile);
         picUpdate = (FloatingActionButton) rootView.findViewById(R.id.updatePic);
         profielPic = (CircleImageView) rootView.findViewById(R.id.profile_image);
+        containerCircle = (LinearLayout) rootView.findViewById(R.id.viewA);
 
+       // containerCircle.containerCircle
+     //   containerCircle.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 
         mDatabase.child(uniqueIdentifier).addValueEventListener(userDataListener);
 
@@ -278,7 +285,7 @@ public class Profile_Fragment extends Fragment {
                     e.printStackTrace();
                     Log.v("Exception", " : " + e.toString());
                 }
-                profielPic.setImageBitmap(bitmap);
+              //  profielPic.setImageBitmap(bitmap);
 
 
                 // Create storage reference
@@ -317,7 +324,7 @@ public class Profile_Fragment extends Fragment {
             if (resultCode == RESULT_OK) {
                 Bundle extras = data.getExtras();
                 Bitmap imageBitmap = (Bitmap) extras.get("data");
-                profielPic.setImageBitmap(imageBitmap);
+                //profielPic.setImageBitmap(imageBitmap);
 
                 //  saveToInternalStorage(imageBitmap);
 
@@ -374,8 +381,10 @@ public class Profile_Fragment extends Fragment {
                 //decode image
                 Bitmap userImage = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 
+                Drawable drawable = new BitmapDrawable(getContext().getResources(), userImage);
 
-                profielPic.setImageBitmap(userImage);
+
+                profielPic.setImageDrawable(drawable);
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -388,8 +397,11 @@ public class Profile_Fragment extends Fragment {
                         //decode image
                         Bitmap userImage = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 
+                        Drawable drawable = new BitmapDrawable(getContext().getResources(), userImage);
 
-                        profielPic.setImageBitmap(userImage);
+
+                        profielPic.setImageDrawable(drawable);
+                      //  profielPic.setImageBitmap(userImage);
                     }
                 });
 

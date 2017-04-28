@@ -531,7 +531,7 @@ public class MainActivity extends AppCompatActivity
             Log.v("*storage", "break");
             return null;
         }
-        
+
 
         // Create storage reference
         final StorageReference storageRef = storage.getReferenceFromUrl("gs://findmybike-1a1af.appspot.com/Profilers/");
