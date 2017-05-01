@@ -6,9 +6,6 @@
 
     <string name="clear_data">Clear User Data</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-
 
     <!--firebase-->
 
@@ -69,6 +66,85 @@
     <string name="bike_detais"><u>Bike Detais</u></string>
     <string name="owner_details"><u>Owner Details</u></string>
     <string name="aproximate_distance"><u>Aproximate Distance</u></string>
+    <string name="sign_in_heading">Please sign in or create a new account if this is your first time here</string>
+    <string name="email">email</string>
+    <string name="password">password</string>
+    <string name="sign_in_btn">sign in</string>
+    <string name="create_account_btn">create account</string>
+    <string name="signed_out_status">signed_out</string>
+    <string name="bike_managment">Bike Managment</string>
+    <string name="home_screen">Home Screen</string>
+    <string name="my_bikes">My Bikes</string>
+    <string name="register_bike">Register Bike</string>
+    <string name="edit_bike">Edit Bike</string>
+    <string name="theft_data">Theft Data</string>
+    <string name="view_stolen_database">View Stolen Database</string>
+    <string name="theft_map_analytics">Theft Map Analytics</string>
+    <string name="link_to_bike">Link To Bike</string>
+    <string name="theft_prevention">Theft Prevention</string>
+    <string name="my_settings">My Settings</string>
+    <string name="beacon_manager">Beacon manager</string>
+    <string name="nlink_your_bike">Link your bike</string>
+    <string name="nsearch_for_stolen_bikes">Search for stolen bikes</string>
+    <string name="link_you_bike_enables_you_to_establish_a_connection_between_the_sensor_on_your_bike_and_your_phone_you_will_be_notified_of_anybreak_in_this_link">\'Link you bike\' enables you to establish a connection between the sensor on your bike and your phone, you will be notified of anybreak in this link.</string>
+    <string name="search_for_stolen_bikes_allows_you_to_turn_your_phone_into_a_scanning_device_your_phone_will_search_your_current_location_for_bikes_on_this_system_that_have_been_listed_as_stolen_should_any_be_found_bike_details_and_aproximate_distance_are_returned">\'Search for stolen bikes\' allows you to turn your phone into a scanning device, your phone will search your current location for bikes on this system that have been listed as stolen.should any be found bike details and aproximate distance are returned.</string>
+    <string name="beacon_manager_">Beacon manager</string>
+    <string name="status">Status:</string>
+    <string name="no_connection">No Connection.</string>
+    <string name="scanning_for_connection">Scanning for connection</string>
+    <string name="ensure_you_are_beside_your_bike_to_establish_connection">Ensure you are beside your bike to establish connection.</string>
+    <string name="make">Make:</string>
+    <string name="model">Model:</string>
+    <string name="colour">Colour:</string>
+    <string name="report_stolen">Report Stolen</string>
+    <string name="report_bike_as_stolen">Report bike as stolen</string>
+    <string name="confirm_last_known_location">Confirm last known location</string>
+    <string name="last_seen">Last Seen:</string>
+    <string name="date">Date:</string>
+    <string name="confirm">Confirm</string>
+    <string name="beacon_manager__">Beacon manager</string>
+    <string name="which_one_of_your_bikes_are_you_using_today">Which one of your bikes are you using today?</string>
+    <string name="size">Size:</string>
+    <string name="other">Other:</string>
+    <string name="last_known_location">Last Known Location:</string>
+    <string name="viewing_all_bikes_reported_stolen">Viewing all bikes reported stolen</string>
+    <string name="location">Location</string>
+    <string name="run_query">Run query</string>
+    <string name="within_months">Within months:</string>
+    <string name="show_map">Show map</string>
+    <string name="no_bikes_have_been_listed_as_stolen">No bikes have been listed as stolen</string>
+    <string name="update_bike_details_or_report_theft">Update bike details or report theft:</string>
+    <string name="image">Image</string>
+    <string name="bike_details">Bike Details</string>
+    <string name="frame_size">Frame Size:</string>
+    <string name="beacon_id">Beacon ID:</string>
+    <string name="bike_has_been_stolen">Bike has been Stolen</string>
+    <string name="last_seen_location">Last Seen location:</string>
+    <string name="select_bike_to_edit">Select bike to edit:</string>
+    <string name="no_bikes_associated_with_this_user">No bikes associated with this user</string>
+    <string name="heat_map">Heat Map</string>
+    <string name="default_map">Default</string>
+    <string name="update_profie">Update profie</string>
+    <string name="user_name">User Name</string>
+    <string name="email_profile">Email</string>
+    <string name="enter_address">Enter Address</string>
+    <string name="register_new_bike_here">Register new bike here:</string>
+    <string name="make_hint">Make</string>
+    <string name="model_hint">Model</string>
+    <string name="colour_hint">Colour</string>
+    <string name="frame_size_hint">Frame Size</string>
+    <string name="beacon_id_hint">Beacon ID</string>
+    <string name="other_features">Other Features</string>
+    <string name="last_known_location_">Last Known Location:</string>
+    <string name="sighting_location">Sighting Location:</string>
+    <string name="reported_by">Reported By:</string>
+    <string name="date_reported">Date Reported:</string>
+    <string name="my_stolen_bikes">My stolen bikes:</string>
+    <string name="total_stolen">Total bikes stolen in system:</string>
+    <string name="my_bikes_">My Bikes:</string>
+    <string name="welcome_back">Welcome Back</string>
+    <string name="edit">Edit\n</string>
+    <string name="profile_summary">Profile summary</string>
 </resources>
 
 

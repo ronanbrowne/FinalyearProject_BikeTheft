@@ -72,7 +72,9 @@ public class WelcomeFragment extends Fragment {
     ArrayList<String> sightingBikeKeys = new ArrayList<>();
     ArrayList<BikeData> reportedSightingsList = new ArrayList<>();
     ArrayList<BikeData> registeredBikesList = new ArrayList<>();
-
+    private ValueEventListener CountRegListener;
+    private ValueEventListener CountStolenListener;
+    private ValueEventListener reportedStolenListener;
 
     public WelcomeFragment() {
         // Required empty public constructor
@@ -113,6 +115,17 @@ public class WelcomeFragment extends Fragment {
         }
     };
 
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.d("*stope", "syope");
+
+        mDatabase.removeEventListener(CountRegListener);
+        stolenBikesDatabse.removeEventListener(CountStolenListener);
+        reportedStolen.removeEventListener(reportedStolenListener);
+
+    }
 
     //======================================================================================
     // onCreateView
@@ -171,13 +184,13 @@ public class WelcomeFragment extends Fragment {
 
 
         //event listener for checking how many bikes registered to you
-        ValueEventListener CountRegListener = new ValueEventListener() {
+         CountRegListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 //cout children nodes in this DB area.
                 loadingIndicator.setVisibility(View.GONE);
                 countReg = dataSnapshot.getChildrenCount();
-                registered.setText("My Bikes: " + countReg);
+                registered.setText(getString(R.string.my_bikes_) + countReg);
                 registered.setVisibility(View.VISIBLE);
                 stolen.setVisibility(View.VISIBLE);
                 systemStolen.setVisibility(View.VISIBLE);
@@ -199,7 +212,7 @@ public class WelcomeFragment extends Fragment {
 
 
         //event listener for checking if any of your bikes are in stolrn system and how many total in DB
-        ValueEventListener CountStolenListener = new ValueEventListener() {
+         CountStolenListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 //show loading bar while working
@@ -219,8 +232,8 @@ public class WelcomeFragment extends Fragment {
                         }
                     }
                 }//end for
-                stolen.setText("My stolen bikes: " + thisStolen);
-                systemStolen.setText("Total bikes stolen in system: " + countStolen);
+                stolen.setText(getString(R.string.my_stolen_bikes) + thisStolen);
+                systemStolen.setText(getString(R.string.total_stolen) + countStolen);
 
                 //set UI
 
@@ -233,7 +246,7 @@ public class WelcomeFragment extends Fragment {
 
 
         //event listener for checking if bike is on stolen DB used to give correct user feedback
-        ValueEventListener reportedStolenListener = new ValueEventListener() {
+         reportedStolenListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 countReg = dataSnapshot.getChildrenCount();
@@ -284,6 +297,7 @@ public class WelcomeFragment extends Fragment {
         mDatabase.addValueEventListener(CountRegListener);
         stolenBikesDatabse.addValueEventListener(CountStolenListener);
         reportedStolen.addValueEventListener(reportedStolenListener);
+
 
         profielPic.setLayerType(View.LAYER_TYPE_NONE, null);
 

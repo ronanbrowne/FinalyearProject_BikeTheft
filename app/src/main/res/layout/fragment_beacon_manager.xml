@@ -32,7 +32,7 @@
                 android:layout_weight="5"
                 android:padding="12dp"
                 android:paddingTop="20dp"
-                android:text="Beacon manager"
+                android:text="@string/beacon_manager"
                 android:textStyle="bold" />
 
             <ImageView
@@ -77,7 +77,7 @@
                     android:gravity="center"
                     android:textStyle="bold"
                     android:padding="3dip"
-                    android:text="\nLink your bike" />
+                    android:text="@string/nlink_your_bike" />
 
 
             </LinearLayout>
@@ -107,7 +107,7 @@
                     android:padding="3dip"
                     android:textStyle="bold"
                     android:textColor="@color/textColorPrimary"
-                    android:text="\nSearch for stolen bikes" />
+                    android:text="@string/nsearch_for_stolen_bikes" />
             </LinearLayout>
 
 
@@ -129,7 +129,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="16dp"
-            android:text="'Link you bike' enables you to establish a connection between the sensor on your bike and your phone, you will be notified of anybreak in this link. " />
+            android:text="@string/link_you_bike_enables_you_to_establish_a_connection_between_the_sensor_on_your_bike_and_your_phone_you_will_be_notified_of_anybreak_in_this_link" />
 
 
 
@@ -138,7 +138,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="16dp"
-            android:text="'Search for stolen bikes' allows you to turn your phone into a scanning device, your phone will search your current location for bikes on this system that have been listed as stolen.should any be found bike details and aproximate distance are returned.  " />
+            android:text="@string/search_for_stolen_bikes_allows_you_to_turn_your_phone_into_a_scanning_device_your_phone_will_search_your_current_location_for_bikes_on_this_system_that_have_been_listed_as_stolen_should_any_be_found_bike_details_and_aproximate_distance_are_returned" />
 
 
 

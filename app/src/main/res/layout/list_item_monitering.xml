@@ -39,14 +39,14 @@
         android:layout_height="wrap_content"
         android:textSize="16sp"
         android:textStyle="bold"
-        android:text="Make: " />
+        android:text="@string/make" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:text="Model: " />
+            android:text="@string/model" />
 
 
         <TextView
@@ -54,7 +54,7 @@
             android:layout_height="wrap_content"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:text="Colour: " />
+            android:text="@string/colour" />
 
 
 

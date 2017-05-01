@@ -10,6 +10,8 @@ import android.widget.Toast;
 import com.codevscolor.materialpreference.activity.MaterialPreferenceActivity;
 import com.codevscolor.materialpreference.callback.MaterialPreferenceCallback;
 import com.codevscolor.materialpreference.util.MaterialPrefUtil;
+import com.example.ronan.bikepro.R;
+
 /**
  * Created by ronan.browne on 14/03/2017.
  */
@@ -25,7 +27,7 @@ public class SettingsActivity extends MaterialPreferenceActivity implements Mate
         useDarkTheme(false);
 
         //set toolbar title
-        setToolbarTitle("My Settings");
+        setToolbarTitle(getString(R.string.my_settings));
 
         //set primary color
         setPrimaryColor(MaterialPrefUtil.COLOR_BLUE);

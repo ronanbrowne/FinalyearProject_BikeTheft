@@ -39,7 +39,7 @@
             android:layout_height="wrap_content"
             android:padding="12dp"
             android:paddingTop="20dp"
-            android:text="Viewing all bikes reported stolen"
+            android:text="@string/viewing_all_bikes_reported_stolen"
             android:textStyle="bold" />
 
         <ImageView
@@ -77,7 +77,7 @@
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:hint="Location"
+                android:hint="@string/location"
                 android:maxLines="1" />
 
             <RelativeLayout
@@ -116,7 +116,7 @@
                 android:background="@drawable/btn_background"
                 android:layout_height="30dp"
                 android:layout_weight="1"
-                android:text="Run query" />
+                android:text="@string/run_query" />
 
 
         </LinearLayout>
@@ -136,7 +136,7 @@
                 android:layout_weight="1"
                 android:textSize="18sp"
                 android:layout_height="wrap_content"
-                android:text=" Within months:   "
+                android:text="@string/within_months"
                 android:id="@+id/textView6"
                 android:layout_gravity="right|center"/>
 
@@ -156,7 +156,7 @@
                 android:background="@drawable/btn_background"
                 android:layout_height="30dp"
                 android:layout_weight="1"
-                android:text="Show map" />
+                android:text="@string/show_map" />
         </LinearLayout>
 
     </LinearLayout>
@@ -170,7 +170,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="No bikes have been listed as stolen"
+            android:text="@string/no_bikes_have_been_listed_as_stolen"
             android:textAppearance="?android:textAppearanceMedium" />
 
 

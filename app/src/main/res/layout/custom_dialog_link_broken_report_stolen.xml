@@ -4,15 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
->
+    android:orientation="vertical">
 
 
     <LinearLayout
 
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-         android:background="@drawable/background_shadow_custom_dialog"
+        android:background="@drawable/background_shadow_custom_dialog"
         android:orientation="vertical"
         android:paddingBottom="24dp"
         android:paddingRight="16dp"
@@ -27,10 +26,10 @@
             <!-- headinh -->
             <TextView
                 android:layout_width="0dp"
-                android:layout_weight="16"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="18dp"
-                android:text="Report bike as stolen"
+                android:layout_weight="16"
+                android:text="@string/report_bike_as_stolen"
                 android:textColor="@color/colorPrimaryDark"
                 android:textStyle="bold" />
 
@@ -38,10 +37,10 @@
             <ImageView
                 android:id="@+id/infoDialog"
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right|center"
                 android:layout_marginRight="8dp"
+                android:layout_weight="1"
                 android:src="@drawable/ic_info_outline_black_24dp" />
 
         </LinearLayout>
@@ -79,14 +78,14 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Make: "
+                        android:text="@string/make"
                         android:textSize="16sp"
                         android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Model: "
+                        android:text="@string/model"
                         android:textSize="16sp"
                         android:textStyle="bold" />
 
@@ -94,7 +93,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Colour: "
+                        android:text="@string/colour"
                         android:textSize="16sp"
                         android:textStyle="bold" />
 
@@ -145,7 +144,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="18dp"
             android:layout_marginTop="24dp"
-            android:text="Confirm last known location"
+            android:text="@string/confirm_last_known_location"
             android:textColor="@color/colorPrimaryDark"
             android:textStyle="bold" />
 
@@ -166,65 +165,63 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Last Seen: "
+                    android:text="@string/last_seen"
                     android:textStyle="bold" />
 
                 <!-- lastKnownLocation field -->
                 <TextView
                     android:id="@+id/lastKnownLocation"
                     style="@style/EditorFieldStyle"
-                    android:background="?attr/editTextBackground"
                     android:layout_width="0dp"
                     android:layout_weight="2"
+                    android:background="?attr/editTextBackground"
                     android:inputType="textCapWords" />
 
             </LinearLayout>
 
             <LinearLayout
-                android:layout_marginTop="16dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
                 android:orientation="horizontal">
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Date: "
-                                        android:textStyle="bold" />
+                    android:text="@string/date"
+                    android:textStyle="bold" />
 
                 <!-- lastKnownDate field -->
                 <TextView
                     android:id="@+id/lastKnownDate"
                     style="@style/EditorFieldStyle"
-                    android:background="?attr/editTextBackground"
                     android:layout_width="0dp"
                     android:layout_weight="2"
+                    android:background="?attr/editTextBackground"
                     android:inputType="textCapWords" />
 
             </LinearLayout>
 
 
-
         </LinearLayout>
 
         <RelativeLayout
-            android:layout_marginTop="24dp"
-            android:layout_marginBottom="24dp"
             android:id="@+id/rlRight"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-         >
+            android:layout_marginBottom="24dp"
+            android:layout_marginTop="24dp">
 
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="12dp"
-                android:paddingTop="20dp"
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="65dp"
-                android:text="Confirm "
+                android:padding="12dp"
+                android:paddingTop="20dp"
+                android:text="@string/confirm"
                 android:textStyle="bold" />
 
 
@@ -232,14 +229,14 @@
                 android:id="@+id/floatingConfirmPopUp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginEnd="32dp"
                 android:layout_marginRight="32dp"
                 android:clickable="true"
                 app:fabSize="mini"
-                app:srcCompat="@drawable/ic_done_all_black_24dp"
-                android:layout_marginEnd="32dp"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true" />
+                app:srcCompat="@drawable/ic_done_all_black_24dp" />
 
 
         </RelativeLayout>

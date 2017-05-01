@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:paddingBottom="16dp"
             android:paddingTop="16dp"
-            android:text="Register new bike here: "
+            android:text="@string/register_new_bike_here"
             android:textStyle="bold" />
 
 
@@ -41,7 +41,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="top"
                 android:layout_marginLeft="10dp"
-                android:text="Image"
+                android:text="@string/image"
                 android:textColor="@color/bikeHeadings" />
 
 
@@ -96,7 +96,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
-                    android:text="Bike Details  "
+                    android:text="@string/bike_details"
                     android:textColor="@color/bikeHeadings" />
 
 
@@ -117,19 +117,19 @@
                 <EditText
                     android:id="@+id/edit_bike_make"
                     style="@style/EditorFieldStyle"
-                    android:hint="Make" />
+                    android:hint="@string/make_hint" />
 
                 <!-- make field -->
                 <EditText
                     android:id="@+id/edit_bike_model"
                     style="@style/EditorFieldStyle"
-                    android:hint="Model" />
+                    android:hint="@string/model_hint" />
 
                 <!-- color field -->
                 <EditText
                     android:id="@+id/edit_bike_colour"
                     style="@style/EditorFieldStyle"
-                    android:hint="Colour" />
+                    android:hint="@string/colour_hint" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -142,7 +142,7 @@
                         style="@style/EditorFieldStyle"
                         android:layout_width="0dp"
                         android:layout_weight="2.4"
-                        android:hint="Frame Size"
+                        android:hint="@string/frame_size_hint"
                         android:inputType="number" />
 
 
@@ -167,7 +167,7 @@
                         style="@style/EditorFieldStyle"
                         android:layout_width="0dp"
                         android:layout_weight="2.4"
-                        android:hint="Beacon ID" />
+                        android:hint="@string/beacon_id_hint" />
 
 
                     <ImageView
@@ -184,7 +184,7 @@
                 <EditText
                     android:id="@+id/edit_othe_features"
                     style="@style/EditorFieldStyle"
-                    android:hint="Other Features" />
+                    android:hint="@string/other_features" />
 
 
             </LinearLayout>

@@ -24,7 +24,7 @@
             android:layout_width="240dp"
             android:layout_height="wrap_content"
             android:paddingTop="8dp"
-            android:text="Please sign in or create a new account if this is your first time here" />
+            android:text="@string/sign_in_heading" />
 
         <RelativeLayout
             android:layout_width="fill_parent"
@@ -46,7 +46,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:hint="email"
+                    android:hint="@string/email"
                     android:layout_marginRight="12dp"
                     android:inputType="textEmailAddress" />
 
@@ -56,7 +56,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:hint="password"
+                    android:hint="@string/password"
                     android:layout_marginLeft="10dp"
                     android:inputType="textPassword" />
             </LinearLayout>
@@ -78,7 +78,7 @@
                     android:layout_weight="1"
                     android:layout_marginRight="10dp"
                     android:background="@drawable/btn_background"
-                    android:text="sign in" />
+                    android:text="@string/sign_in_btn" />
 
 
 
@@ -90,7 +90,7 @@
                     android:layout_marginLeft="10dp"
                     android:layout_weight="1"
                     android:background="@drawable/btn_background"
-                    android:text="create account" />
+                    android:text="@string/create_account_btn" />
 
             </LinearLayout>
 
@@ -117,7 +117,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingTop="55dp"
-                android:text="signed_out" />
+                android:text="@string/signed_out_status" />
 
             <TextView
                 android:id="@+id/detail"
