@@ -32,7 +32,7 @@
                     android:layout_height="50dp"
                     android:gravity="center_horizontal"
                     android:paddingTop="12dp"
-                    android:text="Welcome Back"
+                    android:text="@string/welcome_back"
                     android:textAppearance="@style/TextAppearance.AppCompat.Large"
                     android:textColor="#ffffff" />
 
@@ -71,7 +71,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="left"
                     android:padding="12dp"
-                    android:text="Profile summary"
+                    android:text="@string/profile_summary"
                     android:textColor="@color/colorAccent"
                     android:textSize="16sp"
                     android:textStyle="bold" />
@@ -124,7 +124,7 @@
             android:layout_marginRight="8dp"
             app:layout_anchor="@id/floatingConfirmEdit"
             app:layout_anchorGravity="top|center|"
-            android:text="Edit                "/>
+            android:text="@string/edit"/>
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/floatingConfirmEdit"

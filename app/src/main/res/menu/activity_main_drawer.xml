@@ -4,46 +4,46 @@
 
     <group
         android:checkableBehavior="single"
-        android:title="Bike Managment">
+        android:title="@string/bike_managment">
         <item
             android:id="@+id/nav_welcome"
             android:icon="@drawable/ic_home_black_24dp"
-            android:title="Home Screen" />
+            android:title="@string/home_screen" />
 
-        <item android:title="My Bikes">
+        <item android:title="@string/my_bikes">
             <menu>
                 <item
                     android:id="@+id/nav_register"
                     android:icon="@drawable/ic_motorcycle_black_24dp"
-                    android:title="Register Bike" />
+                    android:title="@string/register_bike" />
                 <item
                     android:id="@+id/nav_edit"
                     android:icon="@drawable/ic_mode_edit_black_24dp"
-                    android:title="Edit Bike" />
+                    android:title="@string/edit_bike" />
 
             </menu>
         </item>
 </group>
-    <item android:title="Theft Data">
+    <item android:title="@string/theft_data">
         <menu>
         <item
             android:id="@+id/nav_db"
             android:icon="@drawable/ic_menu_slideshow"
-            android:title="View Stolen Database" />
+            android:title="@string/view_stolen_database" />
 
         <item
             android:id="@+id/map_data"
             android:icon="@drawable/ic_add_location_black_24dp"
-            android:title="Theft Map Analytics " />
+            android:title="@string/theft_map_analytics" />
 </menu>
     </item>
 
-    <item android:title="Theft Prevention">
+    <item android:title="@string/theft_prevention">
         <menu>
             <item
                 android:id="@+id/nav_beacons"
                 android:icon="@drawable/ic_router_black_24dp"
-                android:title="Link To Bike" />
+                android:title="@string/link_to_bike" />
 
         </menu>
     </item>

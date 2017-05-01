@@ -34,7 +34,7 @@
                 android:layout_height="wrap_content"
                 android:paddingBottom="16dp"
                 android:paddingTop="16dp"
-                android:text="Update bike details or report theft: "
+                android:text="@string/update_bike_details_or_report_theft"
                 android:textStyle="bold" />
 
             <!-- Image upload layout -->
@@ -55,7 +55,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="top"
                     android:layout_marginLeft="14dp"
-                    android:text="Image"
+                    android:text="@string/image"
                     android:textColor="@color/bikeHeadings"
                     android:layout_weight="0.18" />
 
@@ -100,7 +100,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="14dp"
-                    android:text="Bike Details"
+                    android:text="@string/bike_details"
                     android:textColor="@color/bikeHeadings"
                     android:textStyle="bold"
 
@@ -124,7 +124,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Make: "
+                            android:text="@string/make"
                             android:textStyle="bold" />
 
                         <!-- Make field -->
@@ -147,7 +147,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Model: "
+                            android:text="@string/model"
                             android:textStyle="bold" />
 
                         <!-- Make field -->
@@ -169,7 +169,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Colour: "
+                            android:text="@string/colour"
                             android:textStyle="bold" />
 
                         <!-- Make field -->
@@ -192,7 +192,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Frame Size: "
+                            android:text="@string/frame_size"
                             android:textStyle="bold" />
 
                         <!-- Make field -->
@@ -226,7 +226,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Beacon ID: "
+                            android:text="@string/beacon_id"
                             android:textStyle="bold" />
 
                         <!-- Make field -->
@@ -257,7 +257,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Other: "
+                            android:text="@string/other"
                             android:textStyle="bold" />
 
                         <!-- Make field -->
@@ -293,7 +293,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="14dp"
-                    android:text="Bike has been Stolen"
+                    android:text="@string/bike_has_been_stolen"
                     android:textColor="@color/bikeHeadings"
                     android:textStyle="bold" />
 
@@ -343,7 +343,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:gravity="bottom"
-                        android:text="Last Seen location:   "
+                        android:text="@string/last_seen_location"
                         android:textStyle="bold" />
 
                     <!-- Make field -->

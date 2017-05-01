@@ -84,7 +84,7 @@
         android:layout_height="wrap_content"
         android:gravity="left"
         android:padding="12dp"
-        android:text="Update profie"
+        android:text="@string/update_profie"
         android:textColor="@color/colorAccent"
         android:textSize="16sp"
         android:textStyle="bold" />
@@ -120,7 +120,7 @@
             <EditText
                 android:layout_marginLeft="8dp"
                 android:id="@+id/username"
-                android:hint="User name"
+                android:hint="@string/user_name"
                 android:inputType="textCapWords"
                 style="@style/EditorFieldStyle" />
 
@@ -142,7 +142,7 @@
             <EditText
                 android:layout_marginLeft="8dp"
                 android:id="@+id/email"
-                android:hint="Email"
+                android:hint="@string/email_profile"
                 android:inputType="textCapWords"
                 style="@style/EditorFieldStyle" />
 
@@ -164,7 +164,7 @@
             <EditText
                 android:layout_marginLeft="8dp"
                 android:id="@+id/address"
-                android:hint="Enter Address"
+                android:hint="@string/enter_address"
                 android:inputType="textCapWords"
                 style="@style/EditorFieldStyle" />
 

@@ -29,7 +29,7 @@
                 android:layout_weight="5"
                 android:padding="12dp"
                 android:paddingTop="20dp"
-                android:text="Beacon manager"
+                android:text="@string/beacon_manager__"
                 android:textStyle="bold" />
 
             <ImageView
@@ -135,7 +135,7 @@
                 android:layout_marginLeft="22dp"
                 android:layout_marginTop="16dp"
                 android:paddingBottom="8dp"
-                android:text="Which one of your bikes are you using today?"
+                android:text="@string/which_one_of_your_bikes_are_you_using_today"
                 android:textColor="@color/textColorPrimary"
                 android:textStyle="bold" />
 
